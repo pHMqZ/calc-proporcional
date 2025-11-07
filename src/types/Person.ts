@@ -1,11 +1,11 @@
 export interface Person {
-    id: number;
+    id: string;
     name: string;
     salary: number;
     reservePercentage: number;
 }
 
-export interface PersonCalculations extends Person {
+export interface PersonCalculation extends Person {
     percentage: number;
     reserveAmount: number;
     billsTotal: number;

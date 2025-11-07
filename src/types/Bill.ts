@@ -6,7 +6,7 @@ export interface Bill {
 
 export interface BillDistribution {
     billId: string;
-    personId: number;
+    personId: string;
     amount: number;
     percentage: number;
 }
