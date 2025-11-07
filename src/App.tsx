@@ -1,35 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { PeopleList } from "./component/people/peopleList";
+import { AppProvider } from "./context/AppContext";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App(){
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <AppProvider>
+      <div className="min-h-screen bg-[#f6f7fb] p-5">
+        <div className="max-w-[1400px] mx-auto space-y-3.5">
+          <h1 className="text-2xl md:text-3xl font-bold m-0 mb-1">
+            Calculadora de contas compartilhadas
+          </h1>
+          <div className="text-[#6b7280] mb-3">
+            Distribui contas e reserva proporcionalmente ao salário dos participantes.
+          </div>
 
-export default App
+          <PeopleList />
+
+          <div className="text-xs text-[#6b7280]">
+            Basta preencher os salários, porcentagens da reserva e contas e tudo será atualizado automaticamente
+          </div>
+        </div>     
+      </div>
+    </AppProvider>
+  );
+}
