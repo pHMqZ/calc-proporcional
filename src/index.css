@@ -1,4 +1,4 @@
-/* src/index.css - SUBSTITUIR TODO O CONTEÚDO */
+/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,13 +16,134 @@ body {
   margin: 0;
 }
 
-/* Estilos customizados para inputs number */
+/* ==================== COMPONENTES CUSTOMIZADOS ==================== */
+
+/* Cards */
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 12px 24px -14px rgba(0, 0, 0, 0.15);
+  padding: 18px;
+}
+
+/* Pills (badges) */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  font-size: 13px;
+}
+
+/* KPI Items */
+.kpi-item {
+  background: #fafafa;
+  border: 1px dashed #e5e7eb;
+  border-radius: 14px;
+  padding: 10px;
+}
+
+/* ==================== INPUTS ==================== */
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+  background: #fff;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Setas do input number */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   opacity: 1;
 }
 
-/* Scrollbar customizada */
+/* ==================== BOTÕES ==================== */
+
+button {
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.secondary {
+  background: #fff;
+  color: #222;
+  border: 1px solid #e5e7eb;
+}
+
+button.secondary:hover {
+  background: #f9fafb;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== TABELAS ==================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  text-align: left;
+  font-weight: 700;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+tfoot td {
+  font-weight: 700;
+  border-top: 2px solid #e5e7eb;
+}
+
+/* ==================== SCROLLBAR CUSTOMIZADA ==================== */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -40,4 +161,14 @@ input[type="number"]::-webkit-outer-spin-button {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* ==================== UTILITÁRIOS ==================== */
+
+.text-right {
+  text-align: right;
+}
+
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
 }

@@ -82,8 +82,8 @@ export const PeopleList: React.FC = () =>{
                 </div>
                 {calculations.map((calc) => (
                     <div key={calc.id} className="kpi-item">
-                        <div className="text-[#6b7280] text-sx">% {calc.name}</div>
-                        <div className="font-bold text-lg">{PC.format(calc.percentage * 100)}%</div>
+                        <div className="text-[#6b7280] text-sx">% de {calc.name}</div>
+                        <div className="font-bold text-lg">{PC.format(calc.percentage)}</div>
                     </div>
                 ))}
             </div>

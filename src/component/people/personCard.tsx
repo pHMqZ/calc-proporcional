@@ -45,7 +45,8 @@ export const PersonCard:  React.FC<PersonCardProps> = ({
                         <label className="text-xs text-[#6b7280] block mb-1">Salário</label>
                         <input 
                             type="number"
-                            value={person.salary}
+                            step="0.01"
+                            value={person.salary || ''}
                             onChange={(e) => onUpdate(person.id, { salary: Number(e.target.value) })}
                             placeholder="0.00"
                             />
@@ -56,7 +57,7 @@ export const PersonCard:  React.FC<PersonCardProps> = ({
                             type="number"
                             min="0"
                             max="100"
-                            value={person.reservePercentage}
+                            value={person.reservePercentage || ''}
                             onChange={(e) => 
                                 onUpdate(person.id, { reservePercentage: Number(e.target.value) })}
                             placeholder="0"
