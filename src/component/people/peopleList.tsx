@@ -14,8 +14,8 @@ export const PeopleList: React.FC = () =>{
 
     const PC = new Intl.NumberFormat("pt-BR", {
         style: "percent",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
     });
 
    const handleAddPerson = () => {

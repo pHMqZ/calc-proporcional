@@ -11,7 +11,7 @@ export class CalculationService {
     }
 
     static calculateReserveAmount(person: Person): number {
-        return person.salary * person.reservePercentage;
+        return person.salary * (person.reservePercentage / 100);
     }
 
     static calculateBillDistribution(

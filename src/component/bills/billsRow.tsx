@@ -17,7 +17,7 @@ export const BillRow: React.FC<BillRowProps> = ({
     onRemove
 }) => {
     const BRL = new Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' });
-    const PC = new Intl.NumberFormat('pt-br', {maximumFractionDigits:2, minimumFractionDigits:2});
+    const PC = new Intl.NumberFormat('pt-br', {maximumFractionDigits:1, minimumFractionDigits:1});
 
     return(
         <tr>
@@ -37,7 +37,7 @@ export const BillRow: React.FC<BillRowProps> = ({
             </td>
             {calculations.map((calc) => (
                 <React.Fragment key={calc.id}>
-                    <td className="text-right">{PC.format(calc.percentage)}</td>
+                    <td className="text-right">{PC.format(calc.percentage * 100)}</td>
                     <td className="text-right">{BRL.format(bill.totalAmount * calc.percentage)}</td>
                 </React.Fragment>
             ))}

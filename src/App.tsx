@@ -1,5 +1,6 @@
 import { BillsTable } from "./component/bills/billTable";
 import { PeopleList } from "./component/people/peopleList";
+import { Summary } from "./component/summary";
 import { AppProvider } from "./context/AppContext";
 
 export default function App(){
@@ -16,6 +17,7 @@ export default function App(){
 
           <PeopleList />
           <BillsTable />
+          <Summary />
 
           <div className="text-xs text-[#6b7280]">
             Basta preencher os salários, porcentagens da reserva e contas e tudo será atualizado automaticamente
