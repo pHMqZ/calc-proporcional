@@ -17,7 +17,7 @@ export const BillsTable: React.FC = () => {
     const BRL = new Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' });
 
     return(
-        <section className="billTable">
+        <section className="card">
             <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
                 <h3 className="text-lg font-semibold">Contas compartilhadas</h3>
                 <div className="flex gap-2 flex-wrap">

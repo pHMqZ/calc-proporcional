@@ -7,7 +7,7 @@ export default function App(){
   return (
     <AppProvider>
       <div className="min-h-screen bg-[#f6f7fb] p-5">
-        <div className="max-w-[1400px] mx-auto space-y-3.5">
+        <div className="max-w-[1400px] mx-auto space-y-6">
           <h1 className="text-2xl md:text-3xl font-bold m-0 mb-1">
             Calculadora de contas compartilhadas
           </h1>

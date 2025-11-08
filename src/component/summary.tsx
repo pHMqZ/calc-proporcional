@@ -14,7 +14,7 @@ export const Summary: React.FC = () => {
 
     return (
         <>
-        <section className="summary">
+        <section className="card">
             <h3 className="text-lg font-semibold mb-3">Resumo</h3>
             <div className="mb-4">
                 <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Conta + Reserva</h4>
