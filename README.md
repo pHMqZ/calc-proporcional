@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# Calculadora de Contas Compartilhadas
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Divida contas de forma justa e proporcional à renda de cada participante.
 
-Currently, two official plugins are available:
+![React](https://img.shields.io/badge/React-18.2-blue?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?logo=tailwindcss)
+![Vite](https://img.shields.io/badge/Vite-5.0-646cff?logo=vite)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Sobre o Projeto
 
-## React Compiler
+Uma aplicação web para calcular e dividir despesas compartilhadas de forma proporcional ao salário de cada participante. Ideal para casais, colegas de apartamento ou grupos que dividem custos mensais.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Funcionalidades
 
-## Expanding the ESLint configuration
+- **Divisão Proporcional**: Calcula automaticamente quanto cada pessoa deve pagar baseado na renda
+- **Múltiplos Participantes**: Adicione quantas pessoas forem necessárias
+- **Reserva Financeira**: Configure percentual de reserva individual para cada participante
+- **Gestão de Contas**: Adicione, edite e remova contas compartilhadas
+- **Cálculo Automático**: Atualização em tempo real de todos os valores
+- **Exportação PNG**: Gere imagem do resumo para compartilhar
+- **Tema Escuro**: Interface adaptável para modo claro e escuro
+- **Persistência Local**: Dados salvos automaticamente no navegador
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Motivação
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Este projeto foi desenvolvido como:
+- Base de estudos para aprofundamento em **React + TypeScript**
+- Prática de arquitetura escalável e modular
+- Solução real para um problema pessoal de divisão de despesas
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tecnologias Utilizadas
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Core
+- **React 18.2** - Biblioteca UI
+- **TypeScript 5.2** - Tipagem estática
+- **Vite 5.0** - Build tool e dev server
+
+### Styling
+- **Tailwind CSS 3.4** - Framework CSS utility-first
+- **CSS Custom Properties** - Variáveis e temas
+
+### Arquitetura
+- **Context API** - Gerenciamento de estado global
+- **Custom Hooks** - Lógica reutilizável
+- **Service Layer** - Separação de lógica de negócio
+
+## Como Executar
+
+### Pré-requisitos
+- Node.js 18+ instalado
+- npm ou yarn
+
+### Instalação
+
+```bash
+# Clone o repositório
+git clone
+
+# Entre na pasta
+cd calculadora-contas
+
+# Instale as dependências
+npm install
+
+# Execute o projeto
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Acesse: `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Estrutura do Projeto
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/          # Componentes React
+│   ├── bills/          # Componentes de contas
+│   ├── people/         # Componentes de pessoas
+│   ├── ImageGenerator  # Gerador de imagem PNG
+│   ├── Summary         # Resumo final
+│   └── ThemeToggle     # Toggle de tema
+├── context/            # Context API (estado global)
+│   ├── AppContext      # Estado da aplicação
+│   └── ThemeContext    # Estado do tema
+├── services/           # Lógica de negócio
+│   └── calculation     # Serviço de cálculos
+├── types/              # Definições TypeScript
+│   ├── Bill           # Tipos de contas
+│   └── Person         # Tipos de pessoas
+├── App.tsx            # Componente raiz
+├── main.tsx           # Entry point
+└── index.css          # Estilos globais
 ```
