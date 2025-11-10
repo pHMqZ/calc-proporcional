@@ -48,7 +48,7 @@ export const PeopleList: React.FC = () =>{
                 </div>
 
                 { showAddForm && (
-                    <div className="card mb-4 bg-[#f9fafb] border-2 border-dashed border-[#c7d2fe]">
+                    <div className="bg-[#eef2ff] border-2 border-dashed border-[#c7d2fe] rounded-xl p-4 mb-4">
                         <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Nova Pessoa</h4>
                         <div className="flex gap-2 items-end">
                             <div className="flex-1">
@@ -80,38 +80,42 @@ export const PeopleList: React.FC = () =>{
                 </div>
 
                 {people.length === 0 &&(
-                    <div className="text-center py-8 text-[#6b7280] text-sm">
+                    <div className="text-center py-8 text-[#6b7280] text-sm bg-[#f9fafb] rounded-xl border border-dashed border-[#e5e7eb]">
                         Nenhum participante adicionado ainda.
                     </div>
                 )}
-
-               <div className="border-t border-[#e5e7eb] pt-4 mb-4">
-                <div className="kpi-item">
-                    <div className="text-[#6b7280] text-xs">Salário Total</div>
-                    <div className="font-bold text-lg">{BRL.format(totalSalary)}</div>
-                </div>
-               </div>
-
-               <div className="border-t border-[#e5e7eb] pt-4 mt-4">
-                <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Participaçao nos custos</h4>
-                <div className="grid grid-cols-2 gap-2">
-                    {calculations.map((calc) => (
+                {people.length > 0 && (
+                    <>
+                    <div className="border-t border-[#e5e7eb] pt-4 mb-4">
                         <div className="kpi-item">
-                            <div className="text-[#6b7280] text-xs">{calc.name}</div>
-                            <div className="font-bold text-base">{PC.format(calc.percentage)}</div>
+                            <div className="text-[#6b7280] text-xs">Salário Total</div>
+                            <div className="font-bold text-lg">{BRL.format(totalSalary)}</div>
                         </div>
-                    ))}
-                </div>
-               </div>
+                    </div>
+
+                    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+                        <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Participaçao nos custos</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                            {calculations.map((calc) => (
+                                <div className="kpi-item">
+                                    <div className="text-[#6b7280] text-xs">{calc.name}</div>
+                                    <div className="font-bold text-base">{PC.format(calc.percentage)}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    </>
+                )}
+               
             </section>
             <section className="card">
                 <h3 className="text-lg font-semibold mb-4">Reserva</h3>
 
-                <div className="sapce-y-2 mb-4">
+                <div className="space-y-2 mb-4">
                     {calculations.map((calc) => (
                         <div key={calc.id} className="pill justify-between w-full">
-                            <strong>{calc.name}</strong>
-                            <span>
+                            <strong className="text-sm">{calc.name}</strong>
+                            <span className="text-sm font-semibold">
                                 {BRL.format(calc.reserveAmount)} ({calc.reservePercentage}%)
                             </span>
                         </div>
@@ -119,17 +123,19 @@ export const PeopleList: React.FC = () =>{
                 </div>
 
                 {calculations.length === 0 && (
-                    <div className="text-center py-8 text-[#6b7280] text-sm">
+                    <div className="text-center py-8 text-[#6b7280] text-sm bg-[#f9fafb] rounded-xl border border-dashed border-[#e5e7eb]">
                         Nenhum participante adicionado ainda.
                     </div>
                 )}
 
-                <div className="border-t border-[#e5e7eb] pt-4 mt-4">
-                    <div className="kpi-item">
-                        <div className="text-[#6b7280] text-xs">Total da Reserva</div>
-                        <div className="font-bold">{BRL.format(totalReserve)}</div>
+               {calculations.length > 0 && (
+                    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+                        <div className="kpi-item">
+                            <div className="text-[#6b7280] text-xs">Total da Reserva</div>
+                            <div className="font-bold">{BRL.format(totalReserve)}</div>
+                        </div>
                     </div>
-                </div>
+                )}
 
             </section>
         </div>

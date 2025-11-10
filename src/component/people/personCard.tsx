@@ -15,24 +15,19 @@ export const PersonCard:  React.FC<PersonCardProps> = ({
     onRemove,
     showRemove = true
     }) => {
-        const BRL = Intl.NumberFormat("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        });
-
         return (
-            <div className="person-card">
-                <div className="flex justify-between items-center mb-3">
+            <div className="person-card bg-[#f9fafb] border border-[#e5e7eb] rounded-xl p-4">
+                <div className="flex justify-between items-start mb-3">
                     <input
                         type="text"
                         value={person.name}
                         onChange={(e) => onUpdate(person.id, { name: e.target.value })}
-                        className="text-lg font-semibold bg-transparent border-none outline-none"
+                        className="text-lg font-semibold bg-transparent border-none outline-none p-0 flex-1"
                         placeholder="Nome" 
                     />
                     { showRemove && (
                         <button
-                            className="secondary text-xl leading-none px-2 py-1"
+                            className="secondary text-xl leading-none px-2 py-1 ml-2"
                             onClick={() => onRemove(person.id)}
                             title="Remover pessoa"
                         >
