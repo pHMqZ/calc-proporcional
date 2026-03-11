@@ -5,8 +5,6 @@ import com.pms.calprop.repositories.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class BillService {
 
@@ -18,16 +16,13 @@ public class BillService {
     }
 
     public Bill updateBill(Long id, Bill updatedBill) {
-        Optional<Bill> billOptional = billRepository.findById(id);
+        Bill existingBill = billRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Conta com ID "+ id + " não encontrada!"));
 
-        if(billOptional.isPresent()) {
-            Bill existingBill = billOptional.get();
-            existingBill.setDescription(updatedBill.getDescription());
-            existingBill.setTotalAmount(updatedBill.getTotalAmount());
-            return billRepository.save(existingBill);
-        } else {
-            throw new RuntimeException("Conta com ID " + id + " não encontrada!");
-        }
+        existingBill.setDescription(updatedBill.getDescription());
+        existingBill.setTotalAmount(updatedBill.getTotalAmount());
+
+        return billRepository.save(existingBill);
     }
 
     public void deleteBill(long id) {

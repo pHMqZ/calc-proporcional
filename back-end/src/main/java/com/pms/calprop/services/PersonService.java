@@ -5,8 +5,6 @@ import com.pms.calprop.repositories.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class PersonService {
 
@@ -18,17 +16,14 @@ public class PersonService {
     }
 
     public Person updatePerson(Long id, Person updatePerson) {
-        Optional<Person> personOptional = personRepository.findById(id);
 
-        if (personOptional.isPresent()) {
-            Person existingPerson = personOptional.get();
-            existingPerson.setName(updatePerson.getName());
-            existingPerson.setSalary(updatePerson.getSalary());
-            existingPerson.setReservePercentage(updatePerson.getReservePercentage());
-            return personRepository.save(existingPerson);
-        } else {
-            throw new RuntimeException("Pessoa com ID " + id + " não encontrada!");
-        }
+        Person existingPerson = personRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pessoa com ID "+ id + " não encontrada!"));
+
+        existingPerson.setSalary(updatePerson.getSalary());
+        existingPerson.setReservePercentage(updatePerson.getReservePercentage());
+
+        return personRepository.save(existingPerson);
     }
 
     public void deletePerson (Long id) {
