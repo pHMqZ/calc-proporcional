@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 @Entity(name="persons")
 public class Person {
@@ -12,10 +14,13 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty(message = "Preencha o nome do usuário")
     private String name;
 
+    @NotEmpty(message = "Preencha o salario liquido")
     private  Number salary;
 
+    @Size(message = "`${validatedValue} precisa ser maior ou igual {min}`")
     private Number reservePercentage;
 
     public  Person() {
