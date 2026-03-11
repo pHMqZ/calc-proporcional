@@ -15,4 +15,38 @@ public class Bill {
     private String description;
 
     private Number totalAmount;
+
+    public Bill() {
+
+    }
+
+    public Bill(Long id, String description, Number totalAmount) {
+        this.id = id;
+        this.description = description;
+        this.totalAmount = totalAmount;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Number getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Number totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 }
