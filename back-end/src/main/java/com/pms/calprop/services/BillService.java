@@ -2,13 +2,13 @@ package com.pms.calprop.services;
 
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.repositories.BillRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BillService {
 
-    @Autowired
     private BillRepository billRepository;
 
     public Bill addBill(Bill newBill) {
@@ -25,7 +25,7 @@ public class BillService {
         return billRepository.save(existingBill);
     }
 
-    public void deleteBill(long id) {
+    public void deleteBill(Long id) {
         if (!billRepository.existsById(id)){
             throw new RuntimeException("Conta com ID " + id + " não encontrada!");
         }

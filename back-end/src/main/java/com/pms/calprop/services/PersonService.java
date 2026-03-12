@@ -2,13 +2,14 @@ package com.pms.calprop.services;
 
 import com.pms.calprop.entities.Person;
 import com.pms.calprop.repositories.PersonRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PersonService {
 
-    @Autowired
     private PersonRepository personRepository;
 
     public Person addPerson(Person newPerson) {
