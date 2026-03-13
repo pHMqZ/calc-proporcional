@@ -1,11 +1,13 @@
 package com.pms.calprop.entities;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity(name="bills")
+@Entity(name = "bills")
 public class Bill {
 
     @Id
@@ -14,13 +16,13 @@ public class Bill {
 
     private String description;
 
-    private Number totalAmount;
+    private BigDecimal totalAmount;
 
     public Bill() {
 
     }
 
-    public Bill(Long id, String description, Number totalAmount) {
+    public Bill(Long id, String description, BigDecimal totalAmount) {
         this.id = id;
         this.description = description;
         this.totalAmount = totalAmount;
@@ -42,11 +44,11 @@ public class Bill {
         this.description = description;
     }
 
-    public Number getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Number totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 }

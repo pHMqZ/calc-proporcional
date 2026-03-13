@@ -1,5 +1,7 @@
 package com.pms.calprop.entities;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-@Entity(name="persons")
+@Entity(name = "persons")
 public class Person {
 
     @Id
@@ -18,16 +20,16 @@ public class Person {
     private String name;
 
     @NotEmpty(message = "Preencha o salario liquido")
-    private  Number salary;
+    private BigDecimal salary;
 
     @Size(message = "`${validatedValue} precisa ser maior ou igual {min}`")
-    private Number reservePercentage;
+    private Double reservePercentage;
 
-    public  Person() {
+    public Person() {
 
     }
 
-    public Person(Long id, String name, Number salary, Number reservePercentage) {
+    public Person(Long id, String name, BigDecimal salary, Double reservePercentage) {
         this.id = id;
         this.name = name;
         this.salary = salary;
@@ -50,19 +52,19 @@ public class Person {
         this.name = name;
     }
 
-    public Number getSalary() {
+    public BigDecimal getSalary() {
         return salary;
     }
 
-    public void setSalary(Number salary) {
+    public void setSalary(BigDecimal salary) {
         this.salary = salary;
     }
 
-    public Number getReservePercentage() {
+    public Double getReservePercentage() {
         return reservePercentage;
     }
 
-    public void setReservePercentage(Number reservePercentage) {
+    public void setReservePercentage(Double reservePercentage) {
         this.reservePercentage = reservePercentage;
     }
 }
