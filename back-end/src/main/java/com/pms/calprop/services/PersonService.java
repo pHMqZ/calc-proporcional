@@ -3,7 +3,6 @@ package com.pms.calprop.services;
 import com.pms.calprop.entities.Person;
 import com.pms.calprop.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +18,7 @@ public class PersonService {
     public Person updatePerson(Long id, Person updatePerson) {
 
         Person existingPerson = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pessoa com ID "+ id + " não encontrada!"));
+                .orElseThrow(() -> new RuntimeException("Pessoa com ID " + id + " não encontrada!"));
 
         existingPerson.setSalary(updatePerson.getSalary());
         existingPerson.setReservePercentage(updatePerson.getReservePercentage());
@@ -27,10 +26,10 @@ public class PersonService {
         return personRepository.save(existingPerson);
     }
 
-    public void deletePerson (Long id) {
-       if(!personRepository.existsById(id)) {
-           throw new RuntimeException("Pessoa com ID " + id + " não encontrada!");
-       }
-       personRepository.deleteById(id);
+    public void deletePerson(Long id) {
+        if (!personRepository.existsById(id)) {
+            throw new RuntimeException("Pessoa com ID " + id + " não encontrada!");
+        }
+        personRepository.deleteById(id);
     }
 }

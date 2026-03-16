@@ -37,8 +37,8 @@ class PersonServiceTest {
     }
 
     @Test
-    @DisplayName("Sholud save and bring user data")
-    void  testAddPerson () {
+    @DisplayName("Should save and bring user data")
+    void testAddPerson() {
         when(personRepository.save(any(Person.class))).thenReturn(person);
 
         Person savedPerson = personService.addPerson(new Person());
@@ -46,12 +46,12 @@ class PersonServiceTest {
         assertNotNull(savedPerson);
         assertEquals("Elis", savedPerson.getName());
 
-        verify(personRepository,times(1)).save(any(Person.class));
+        verify(personRepository, times(1)).save(any(Person.class));
     }
 
     @Test
     @DisplayName("Should update user data successfully")
-    void testSuccessUpdatedPerson(){
+    void testSuccessUpdatedPerson() {
         Person updatedInfo = new Person();
         updatedInfo.setSalary(new BigDecimal("5000.00"));
         updatedInfo.setReservePercentage(25.0);
@@ -64,24 +64,24 @@ class PersonServiceTest {
         assertNotNull(result);
         assertEquals(new BigDecimal("5000.00"), result.getSalary());
 
-        verify(personRepository,times(1)).findById(1L);
-        verify(personRepository,times(1)).save(any(Person.class));
+        verify(personRepository, times(1)).findById(1L);
+        verify(personRepository, times(1)).save(any(Person.class));
     }
 
     @Test
     @DisplayName("Should throw an exception when trying to update a user that doesn't exist")
-    void testNotFoundPersonToUpdate(){
+    void testNotFoundPersonToUpdate() {
         when(personRepository.findById(99L)).thenReturn(Optional.empty());
 
         Person updatedInfo = new Person();
         updatedInfo.setReservePercentage(30.0);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, ( ) ->
-            personService.updatePerson(99L, updatedInfo));
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> personService.updatePerson(99L, updatedInfo));
 
         assertEquals("Pessoa com ID 99 não encontrada!", exception.getMessage());
 
-        verify(personRepository,never()).save(any(Person.class));
+        verify(personRepository, never()).save(any(Person.class));
 
     }
 
@@ -98,11 +98,10 @@ class PersonServiceTest {
 
     @Test
     @DisplayName("Should throw an exception when trying to delete a user that doesn't exist")
-    void testNotFoundPersonToDelete (){
+    void testNotFoundPersonToDelete() {
         when(personRepository.existsById(99L)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, ( ) ->
-            personService.deletePerson(99L));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> personService.deletePerson(99L));
 
         assertEquals("Pessoa com ID 99 não encontrada!", exception.getMessage());
         verify(personRepository, never()).deleteById(anyLong());
