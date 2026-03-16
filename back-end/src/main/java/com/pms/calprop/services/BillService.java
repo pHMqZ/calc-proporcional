@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BillService {
 
-    private BillRepository billRepository;
+    private final BillRepository billRepository;
 
     public Bill addBill(Bill newBill) {
         return billRepository.save(newBill);
@@ -17,7 +17,7 @@ public class BillService {
 
     public Bill updateBill(Long id, Bill updatedBill) {
         Bill existingBill = billRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Conta com ID "+ id + " não encontrada!"));
+                .orElseThrow(() -> new RuntimeException("Conta com ID " + id + " não encontrada!"));
 
         existingBill.setDescription(updatedBill.getDescription());
         existingBill.setTotalAmount(updatedBill.getTotalAmount());
@@ -26,7 +26,7 @@ public class BillService {
     }
 
     public void deleteBill(Long id) {
-        if (!billRepository.existsById(id)){
+        if (!billRepository.existsById(id)) {
             throw new RuntimeException("Conta com ID " + id + " não encontrada!");
         }
         billRepository.deleteById(id);
