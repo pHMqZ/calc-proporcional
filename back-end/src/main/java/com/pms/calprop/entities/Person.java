@@ -6,8 +6,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 @Entity(name = "persons")
 public class Person {
@@ -19,10 +22,13 @@ public class Person {
     @NotEmpty(message = "Preencha o nome do usuário")
     private String name;
 
-    @NotEmpty(message = "Preencha o salario liquido")
+    @NotNull
+    @DecimalMin(value = "0.00", inclusive = false, message = "O salário deve ser maior que zero")
     private BigDecimal salary;
 
-    @Size(message = "`${validatedValue} precisa ser maior ou igual {min}`")
+    @Min(0)
+    @Max(100)
+    @NotNull
     private Double reservePercentage;
 
     public Person() {
