@@ -1,8 +1,12 @@
 package com.pms.calprop.services;
 
 import com.pms.calprop.entities.Person;
+import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,10 +20,18 @@ public class PersonService {
         return personRepository.save(newPerson);
     }
 
+    public List<Person> findAllPeople() {
+        return personRepository.findAll();
+    }
+
+    public Person findPersonById(Long id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pessoa com ID " + id + " não encontrada!"));
+    }
+
     public Person updatePerson(Long id, Person updatePerson) {
 
-        Person existingPerson = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pessoa com ID " + id + " não encontrada!"));
+        Person existingPerson = this.findPersonById(id);
 
         existingPerson.setSalary(updatePerson.getSalary());
         existingPerson.setReservePercentage(updatePerson.getReservePercentage());
@@ -28,9 +40,8 @@ public class PersonService {
     }
 
     public void deletePerson(Long id) {
-        if (!personRepository.existsById(id)) {
-            throw new RuntimeException("Pessoa com ID " + id + " não encontrada!");
-        }
+        this.findPersonById(id);
         personRepository.deleteById(id);
     }
+
 }
