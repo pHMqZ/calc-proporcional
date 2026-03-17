@@ -12,5 +12,5 @@ public record PersonData(
         BigDecimal billsTotal,
         BigDecimal totalToPay,
         BigDecimal remainingSalary,
-        List<BillDistribuition> billDistribuitions) {
+        List<BillDistribution> billDistributions) {
 }

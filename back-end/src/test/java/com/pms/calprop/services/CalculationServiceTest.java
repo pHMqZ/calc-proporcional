@@ -1,5 +1,6 @@
 package com.pms.calprop.services;
 
+// ### 1. Imports não Utilizados ✅
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
@@ -10,15 +11,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.pms.calprop.dto.BillDistribuition;
+import com.pms.calprop.dto.BillDistribution;
 import com.pms.calprop.dto.PersonData;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
-import com.pms.calprop.repositories.BillRepository;
-import com.pms.calprop.repositories.PersonRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculationServiceTest {
@@ -27,6 +25,7 @@ public class CalculationServiceTest {
     private CalculationService calculationService;
 
     private Person Alceu;
+    // ### 2. Typo (Erro de Digitação no DTO) ✅
     private Person Toalha;
     private Bill Aluguel;
     private Bill Internet;
@@ -122,7 +121,7 @@ public class CalculationServiceTest {
     }
 
     @Test
-    @DisplayName("Should calculate percentage when total reserve amount is zero")
+    @DisplayName("Should calculate percentage when### 3. Falta Validadores na Conta (Discussão em Aberto)")
     void testCalculatePercentageWhenTotalReserveAmountIsZero() {
         Alceu.setReservePercentage(0.0);
         Toalha.setReservePercentage(0.0);
@@ -158,53 +157,53 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
         List<Person> people = List.of(Alceu, Toalha);
 
-        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
 
-        assertEquals(8, billDistribuitions.size());
+        assertEquals(8, billDistributions.size());
 
-        assertEquals(Aluguel.getId(), billDistribuitions.get(0).billId());
-        assertEquals(Alceu.getId(), billDistribuitions.get(0).personId());
-        assertEquals(Toalha.getId(), billDistribuitions.get(1).personId());
-        assertEquals(new BigDecimal("681.75"), billDistribuitions.get(0).amount());
-        assertEquals(new BigDecimal("818.25"), billDistribuitions.get(1).amount());
+        assertEquals(Aluguel.getId(), billDistributions.get(0).billId());
+        assertEquals(Alceu.getId(), billDistributions.get(0).personId());
+        assertEquals(Toalha.getId(), billDistributions.get(1).personId());
+        assertEquals(new BigDecimal("681.75"), billDistributions.get(0).amount());
+        assertEquals(new BigDecimal("818.25"), billDistributions.get(1).amount());
 
-        assertEquals(Internet.getId(), billDistribuitions.get(2).billId());
-        assertEquals(Alceu.getId(), billDistribuitions.get(2).personId());
-        assertEquals(Toalha.getId(), billDistribuitions.get(3).personId());
-        assertEquals(new BigDecimal("45.45"), billDistribuitions.get(2).amount());
-        assertEquals(new BigDecimal("54.55"), billDistribuitions.get(3).amount());
+        assertEquals(Internet.getId(), billDistributions.get(2).billId());
+        assertEquals(Alceu.getId(), billDistributions.get(2).personId());
+        assertEquals(Toalha.getId(), billDistributions.get(3).personId());
+        assertEquals(new BigDecimal("45.45"), billDistributions.get(2).amount());
+        assertEquals(new BigDecimal("54.55"), billDistributions.get(3).amount());
 
-        assertEquals(Energia.getId(), billDistribuitions.get(4).billId());
-        assertEquals(Alceu.getId(), billDistribuitions.get(4).personId());
-        assertEquals(Toalha.getId(), billDistribuitions.get(5).personId());
-        assertEquals(new BigDecimal("68.18"), billDistribuitions.get(4).amount());
-        assertEquals(new BigDecimal("81.82"), billDistribuitions.get(5).amount());
+        assertEquals(Energia.getId(), billDistributions.get(4).billId());
+        assertEquals(Alceu.getId(), billDistributions.get(4).personId());
+        assertEquals(Toalha.getId(), billDistributions.get(5).personId());
+        assertEquals(new BigDecimal("68.18"), billDistributions.get(4).amount());
+        assertEquals(new BigDecimal("81.82"), billDistributions.get(5).amount());
 
-        assertEquals(Condominio.getId(), billDistribuitions.get(6).billId());
-        assertEquals(Alceu.getId(), billDistribuitions.get(6).personId());
-        assertEquals(Toalha.getId(), billDistribuitions.get(7).personId());
-        assertEquals(new BigDecimal("295.43"), billDistribuitions.get(6).amount());
-        assertEquals(new BigDecimal("354.57"), billDistribuitions.get(7).amount());
+        assertEquals(Condominio.getId(), billDistributions.get(6).billId());
+        assertEquals(Alceu.getId(), billDistributions.get(6).personId());
+        assertEquals(Toalha.getId(), billDistributions.get(7).personId());
+        assertEquals(new BigDecimal("295.43"), billDistributions.get(6).amount());
+        assertEquals(new BigDecimal("354.57"), billDistributions.get(7).amount());
 
     }
 
     @Test
     @DisplayName("Should return zero when list of bill distribuitions is empty")
-    void testReturnZeroWhenListOfBillDistribuitionsIsEmpty() {
-        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(List.of(),
+    void testReturnZeroWhenListOfBillDistributionsIsEmpty() {
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(List.of(),
                 List.of());
 
-        assertEquals(0, billDistribuitions.size());
+        assertEquals(0, billDistributions.size());
     }
 
     @Test
     @DisplayName("Should successfully calculate the total bills for each person")
     void testCalculatePersonBillsTotal() {
 
-        List<BillDistribuition> billsDistribuition = List.of(
-                new BillDistribuition(1L, 1L, new BigDecimal("50.00"), new BigDecimal("10.00")),
-                new BillDistribuition(2L, 1L, new BigDecimal("150.00"), new BigDecimal("60.00")),
-                new BillDistribuition(1L, 2L, new BigDecimal("100.00"), new BigDecimal("20.00")));
+        List<BillDistribution> billsDistribuition = List.of(
+                new BillDistribution(1L, 1L, new BigDecimal("50.00"), new BigDecimal("10.00")),
+                new BillDistribution(2L, 1L, new BigDecimal("150.00"), new BigDecimal("60.00")),
+                new BillDistribution(1L, 2L, new BigDecimal("100.00"), new BigDecimal("20.00")));
 
         BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billsDistribuition);
         BigDecimal toalhaTotal = calculationService.calculatePersonBillsTotal(Toalha, billsDistribuition);
@@ -221,9 +220,9 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
 
-        PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistribuitions);
+        PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistributions);
 
         assertEquals(Alceu, alceuData.person());
         assertEquals(new BigDecimal("45.45"), alceuData.percentage());
@@ -231,7 +230,7 @@ public class CalculationServiceTest {
         assertEquals(new BigDecimal("1090.81"), alceuData.billsTotal());
         assertEquals(new BigDecimal("1340.81"), alceuData.totalToPay());
         assertEquals(new BigDecimal("1159.19"), alceuData.remainingSalary());
-        assertEquals(4, alceuData.billDistribuitions().size());
+        assertEquals(4, alceuData.billDistributions().size());
 
     }
 
@@ -242,11 +241,11 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of();
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
 
-        PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistribuitions);
+        PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistributions);
 
-        assertEquals(0, alceuData.billDistribuitions().size());
+        assertEquals(0, alceuData.billDistributions().size());
 
     }
 
@@ -257,10 +256,10 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
 
         List<PersonData> peopleData = calculationService.calculateAllPeopleData(people, totalSalary,
-                billDistribuitions);
+                billDistributions);
 
         assertEquals(2, peopleData.size());
         assertEquals(Alceu, peopleData.get(0).person());
@@ -274,10 +273,10 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of();
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
 
         List<PersonData> peopleData = calculationService.calculateAllPeopleData(people, totalSalary,
-                billDistribuitions);
+                billDistributions);
 
         assertEquals(0, peopleData.size());
     }
