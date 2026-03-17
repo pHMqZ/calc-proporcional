@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.pms.calprop.dto.BillDistribuition;
+import com.pms.calprop.dto.PersonData;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
 import com.pms.calprop.repositories.BillRepository;
@@ -34,6 +35,7 @@ public class CalculationServiceTest {
 
     @BeforeEach
     void setUp() {
+
         Alceu = new Person();
         Alceu.setId(1L);
         Alceu.setName("Alceu");
@@ -186,4 +188,97 @@ public class CalculationServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Should return zero when list of bill distribuitions is empty")
+    void testReturnZeroWhenListOfBillDistribuitionsIsEmpty() {
+        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(List.of(),
+                List.of());
+
+        assertEquals(0, billDistribuitions.size());
+    }
+
+    @Test
+    @DisplayName("Should successfully calculate the total bills for each person")
+    void testCalculatePersonBillsTotal() {
+
+        List<BillDistribuition> billsDistribuition = List.of(
+                new BillDistribuition(1L, 1L, new BigDecimal("50.00"), new BigDecimal("10.00")),
+                new BillDistribuition(2L, 1L, new BigDecimal("150.00"), new BigDecimal("60.00")),
+                new BillDistribuition(1L, 2L, new BigDecimal("100.00"), new BigDecimal("20.00")));
+
+        BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billsDistribuition);
+        BigDecimal toalhaTotal = calculationService.calculatePersonBillsTotal(Toalha, billsDistribuition);
+
+        assertEquals(new BigDecimal("200.00"), alceuTotal);
+        assertEquals(new BigDecimal("100.00"), toalhaTotal);
+    }
+
+    @Test
+    @DisplayName("Should successfully calculate consolidate data for a person")
+    void testCalculatePersonData() {
+
+        List<Person> people = List.of(Alceu, Toalha);
+        List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
+
+        BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
+        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+
+        PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistribuitions);
+
+        assertEquals(Alceu, alceuData.person());
+        assertEquals(new BigDecimal("45.45"), alceuData.percentage());
+        assertEquals(new BigDecimal("250.00"), alceuData.reserveAmount());
+        assertEquals(new BigDecimal("1090.81"), alceuData.billsTotal());
+        assertEquals(new BigDecimal("1340.81"), alceuData.totalToPay());
+        assertEquals(new BigDecimal("1159.19"), alceuData.remainingSalary());
+        assertEquals(4, alceuData.billDistribuitions().size());
+
+    }
+
+    @Test
+    @DisplayName("Should return zero when person data is called with empty list")
+    void testReturnZeroWhenPersonDataIsCalledWithEmptyList() {
+        List<Person> people = List.of(Alceu, Toalha);
+        List<Bill> bills = List.of();
+
+        BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
+        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+
+        PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistribuitions);
+
+        assertEquals(0, alceuData.billDistribuitions().size());
+
+    }
+
+    @Test
+    @DisplayName("Should successfully calculate consolidate data for all people")
+    void testCalculateAllPeopleData() {
+        List<Person> people = List.of(Alceu, Toalha);
+        List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
+
+        BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
+        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+
+        List<PersonData> peopleData = calculationService.calculateAllPeopleData(people, totalSalary,
+                billDistribuitions);
+
+        assertEquals(2, peopleData.size());
+        assertEquals(Alceu, peopleData.get(0).person());
+        assertEquals(Toalha, peopleData.get(1).person());
+    }
+
+    @Test
+    @DisplayName("Should return zero when all people data is called with empty list")
+    void testReturnZeroWhenAllPeopleDataIsCalledWithEmptyList() {
+        List<Person> people = List.of();
+        List<Bill> bills = List.of();
+
+        BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
+        List<BillDistribuition> billDistribuitions = calculationService.calculateBillsDistribuition(bills, people);
+
+        List<PersonData> peopleData = calculationService.calculateAllPeopleData(people, totalSalary,
+                billDistribuitions);
+
+        assertEquals(0, peopleData.size());
+    }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.pms.calprop.dto.BillDistribuition;
+import com.pms.calprop.dto.PersonData;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
 
@@ -89,6 +90,42 @@ public class CalculationService {
         }
 
         return billDistribuitions;
+    }
+
+    public BigDecimal calculatePersonBillsTotal(Person person, List<BillDistribuition> billsDistribuition) {
+
+        return billsDistribuition.stream()
+                .filter(distribuition -> distribuition.personId().equals(person.getId()))
+                .map(BillDistribuition::amount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public PersonData calculatePersonData(Person person, BigDecimal totalSalary,
+            List<BillDistribuition> billDistribuitions) {
+
+        BigDecimal personPercentage = calculatePersonPercentage(person, totalSalary);
+        BigDecimal reserveAmount = calculateReserveAmount(person);
+        BigDecimal billsTotal = calculatePersonBillsTotal(person, billDistribuitions);
+        BigDecimal totalToPay = billsTotal.add(reserveAmount);
+        BigDecimal remainingSalary = person.getSalary().subtract(totalToPay);
+
+        List<BillDistribuition> personBillDistribuitions = billDistribuitions.stream()
+                .filter(distribuition -> distribuition.personId().equals(person.getId()))
+                .toList();
+
+        return new PersonData(person, personPercentage, reserveAmount, billsTotal, totalToPay, remainingSalary,
+                personBillDistribuitions);
+    }
+
+    public List<PersonData> calculateAllPeopleData(List<Person> people, BigDecimal totalSalary,
+            List<BillDistribuition> billDistribuitions) {
+        List<PersonData> peopleData = new ArrayList<>();
+
+        for (Person person : people) {
+            peopleData.add(calculatePersonData(person, totalSalary, billDistribuitions));
+        }
+
+        return peopleData;
     }
 
 }
