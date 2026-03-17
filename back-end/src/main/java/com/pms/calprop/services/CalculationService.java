@@ -20,15 +20,20 @@ public class CalculationService {
         }
 
         return totalSalary;
+
     }
 
     public BigDecimal calculatePersonPercentage(Person person, BigDecimal totalSalary) {
         BigDecimal personPercentage = BigDecimal.ZERO;
 
-        personPercentage = (person.getSalary().multiply(new BigDecimal("100")).divide(totalSalary, 2,
-                RoundingMode.HALF_UP));
+        if (totalSalary.compareTo(BigDecimal.ZERO) == 0) {
+            return personPercentage;
+        } else {
+            personPercentage = (person.getSalary().multiply(new BigDecimal("100")).divide(totalSalary, 2,
+                    RoundingMode.HALF_UP));
 
-        return personPercentage;
+            return personPercentage;
+        }
     }
 
 }

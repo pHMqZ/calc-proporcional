@@ -61,4 +61,24 @@ public class CalculationServiceTest {
         assertEquals(new BigDecimal("54.55"), toalhaPercentage);
     }
 
+    @Test
+    @DisplayName("Should return zero when list of person is empty")
+    void testReturnZeroWhenListOfPersonIsEmpty() {
+        BigDecimal totalSalary = calculationService.calculateTotalSalary(List.of());
+
+        assertEquals(BigDecimal.ZERO, totalSalary);
+    }
+
+    @Test
+    @DisplayName("Should return zero  when total salary is zero")
+    void testCalculatePercentageWhenTotalSalaryIsZero() {
+        BigDecimal totalSalary = BigDecimal.ZERO;
+
+        BigDecimal alceuPercentage = calculationService.calculatePersonPercentage(Alceu, totalSalary);
+        BigDecimal toalhaPercentage = calculationService.calculatePersonPercentage(Toalha, totalSalary);
+
+        assertEquals(BigDecimal.ZERO, alceuPercentage);
+        assertEquals(BigDecimal.ZERO, toalhaPercentage);
+    }
+
 }
