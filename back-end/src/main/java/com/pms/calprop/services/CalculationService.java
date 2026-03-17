@@ -2,10 +2,13 @@ package com.pms.calprop.services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.pms.calprop.dto.BillDistribuition;
+import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
 
 @Service
@@ -43,6 +46,49 @@ public class CalculationService {
 
         return person.getSalary().multiply(percentegaFraction)
                 .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calculateTotalBills(List<Bill> bills) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (Bill bill : bills) {
+            totalAmount = totalAmount.add(bill.getTotalAmount());
+        }
+
+        return totalAmount;
+    }
+
+    public List<BillDistribuition> calculateBillsDistribuition(List<Bill> bills, List<Person> people) {
+        List<BillDistribuition> billDistribuitions = new ArrayList<>();
+        BigDecimal totalSalary = calculateTotalSalary(people);
+
+        for (Bill bill : bills) {
+            BigDecimal sumOfAmountsCalculated = BigDecimal.ZERO;
+            for (int i = 0; i < people.size(); i++) {
+                Person person = people.get(i);
+                BigDecimal personPercentage = calculatePersonPercentage(person, totalSalary);
+
+                BigDecimal personPaysInBill;
+
+                if (i == people.size() - 1) {
+                    personPaysInBill = bill.getTotalAmount().subtract(sumOfAmountsCalculated);
+                } else {
+                    BigDecimal percentageFraction = personPercentage.divide(new BigDecimal("100"), 4,
+                            RoundingMode.HALF_UP);
+                    personPaysInBill = bill.getTotalAmount().multiply(percentageFraction).setScale(2,
+                            RoundingMode.HALF_UP);
+
+                    sumOfAmountsCalculated = sumOfAmountsCalculated.add(personPaysInBill);
+                }
+
+                billDistribuitions
+                        .add(new BillDistribuition(bill.getId(), person.getId(), personPaysInBill, personPercentage));
+
+            }
+
+        }
+
+        return billDistribuitions;
     }
 
 }
