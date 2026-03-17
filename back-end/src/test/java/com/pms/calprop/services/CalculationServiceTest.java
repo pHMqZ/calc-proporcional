@@ -32,11 +32,13 @@ public class CalculationServiceTest {
         Alceu.setId(1L);
         Alceu.setName("Alceu");
         Alceu.setSalary(new BigDecimal("2500.00"));
+        Alceu.setReservePercentage(10.0);
 
         Toalha = new Person();
         Toalha.setId(2L);
         Toalha.setName("Toalha");
         Toalha.setSalary(new BigDecimal("3000.00"));
+        Toalha.setReservePercentage(20.0);
     }
 
     @Test
@@ -79,6 +81,30 @@ public class CalculationServiceTest {
 
         assertEquals(BigDecimal.ZERO, alceuPercentage);
         assertEquals(BigDecimal.ZERO, toalhaPercentage);
+    }
+
+    @Test
+    @DisplayName("Should calculate reserve amount for person successfully")
+    void testCalculateReserveAmountForPerson() {
+
+        BigDecimal alceuReserveAmount = calculationService.calculateReserveAmount(Alceu);
+        BigDecimal toalhaReserveAmount = calculationService.calculateReserveAmount(Toalha);
+
+        assertEquals(new BigDecimal("250.00"), alceuReserveAmount);
+        assertEquals(new BigDecimal("600.00"), toalhaReserveAmount);
+    }
+
+    @Test
+    @DisplayName("Should calculate percentage when total reserve amount is zero")
+    void testCalculatePercentageWhenTotalReserveAmountIsZero() {
+        Alceu.setReservePercentage(0.0);
+        Toalha.setReservePercentage(0.0);
+
+        BigDecimal alceuReserveAmount = calculationService.calculateReserveAmount(Alceu);
+        BigDecimal toalhaReserveAmount = calculationService.calculateReserveAmount(Toalha);
+
+        assertEquals(new BigDecimal("0.00"), alceuReserveAmount);
+        assertEquals(new BigDecimal("0.00"), toalhaReserveAmount);
     }
 
 }

@@ -36,4 +36,13 @@ public class CalculationService {
         }
     }
 
+    public BigDecimal calculateReserveAmount(Person person) {
+
+        BigDecimal percentegaFraction = BigDecimal.valueOf(person.getReservePercentage())
+                .divide(new BigDecimal("100"));
+
+        return person.getSalary().multiply(percentegaFraction)
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
 }
