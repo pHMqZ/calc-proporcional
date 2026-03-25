@@ -1,5 +1,6 @@
 package com.pms.calprop.services;
 
+import com.pms.calprop.dto.PersonRequest;
 import com.pms.calprop.entities.Person;
 import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.repositories.PersonRepository;
@@ -9,7 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.mapstruct.factory.Mappers;
+import com.pms.calprop.mappers.PersonMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +32,9 @@ class PersonServiceTest {
 
     @Mock
     private PersonRepository personRepository;
+
+    @Spy
+    private PersonMapper personMapper = Mappers.getMapper(PersonMapper.class);
 
     @InjectMocks
     private PersonService personService;
@@ -116,9 +125,8 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should update user data successfully")
     void testSuccessUpdatedPerson() {
-        Person updatedInfo = new Person();
-        updatedInfo.setSalary(new BigDecimal("5000.00"));
-        updatedInfo.setReservePercentage(25.0);
+
+        PersonRequest updatedInfo = new PersonRequest("Alceu", new BigDecimal("5000.00"), null);
 
         when(personRepository.findById(1L)).thenReturn(Optional.of(elis));
         when(personRepository.save(any(Person.class))).thenReturn(elis);
@@ -133,12 +141,33 @@ class PersonServiceTest {
     }
 
     @Test
+    @DisplayName("Should update a person partially successfully, ignoring nulls via MapStruct")
+    void testPartialUpdatePerson() {
+        Person elis = new Person(1L, "Elis", new BigDecimal("4000.00"), 20.0);
+
+        when(personRepository.findById(1L)).thenReturn(Optional.of(elis));
+
+        PersonRequest requestDTO = new PersonRequest(null, new BigDecimal("5500.00"), null);
+
+        when(personRepository.save(any(Person.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        Person result = personService.updatePerson(1L, requestDTO);
+
+        assertNotNull(result);
+        assertEquals("Elis", result.getName());
+        assertEquals(new BigDecimal("5500.00"), result.getSalary());
+        assertEquals(20.0, result.getReservePercentage());
+
+        verify(personRepository, times(1)).findById(1L);
+        verify(personRepository, times(1)).save(any(Person.class));
+    }
+
+    @Test
     @DisplayName("Should throw an exception when trying to update a user that doesn't exist")
     void testNotFoundPersonToUpdate() {
         when(personRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Person updatedInfo = new Person();
-        updatedInfo.setReservePercentage(30.0);
+        PersonRequest updatedInfo = new PersonRequest("Alceu", new BigDecimal("5000.00"), null);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
                 () -> personService.updatePerson(99L, updatedInfo));
