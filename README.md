@@ -111,6 +111,7 @@ back-end/
 │   │   ├── controllers/    # Controladores REST
 │   │   ├── dto/            # Data Transfer Objects
 │   │   ├── entities/       # Entidades JPA
+│   │   ├── exceptions/     # Exceções Customizadas da API
 │   │   ├── repositories/   # Repositórios JPA
 │   │   ├── services/       # Serviços de negócio
 │   │   └── CalpropApplication.java # Aplicação Spring Boot
