@@ -87,6 +87,8 @@ class PersonServiceTest {
         verify(personRepository, times(1)).findAll();
     }
 
+    @Test
+    @DisplayName("Should find a person by ID")
     void testFindPersonById() {
         when(personRepository.findById(2L)).thenReturn(Optional.of(banguela));
 

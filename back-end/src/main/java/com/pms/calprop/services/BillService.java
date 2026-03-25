@@ -1,8 +1,12 @@
 package com.pms.calprop.services;
 
 import com.pms.calprop.entities.Bill;
+import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.repositories.BillRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +20,17 @@ public class BillService {
         return billRepository.save(newBill);
     }
 
+    public List<Bill> findAllBills() {
+        return billRepository.findAll();
+    }
+
+    public Bill findBillById(Long id) {
+        return billRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + id + " não encontrada!"));
+    }
+
     public Bill updateBill(Long id, Bill updatedBill) {
-        Bill existingBill = billRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Conta com ID " + id + " não encontrada!"));
+        Bill existingBill = this.findBillById(id);
 
         existingBill.setDescription(updatedBill.getDescription());
         existingBill.setTotalAmount(updatedBill.getTotalAmount());
@@ -27,9 +39,8 @@ public class BillService {
     }
 
     public void deleteBill(Long id) {
-        if (!billRepository.existsById(id)) {
-            throw new RuntimeException("Conta com ID " + id + " não encontrada!");
-        }
+        this.findBillById(id);
         billRepository.deleteById(id);
     }
+
 }
