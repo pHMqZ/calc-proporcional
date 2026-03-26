@@ -33,5 +33,3 @@ build/
 ### VS Code ###
 .vscode/
 
-# Ignorar os dados de teste
-**/DataConfig.java
