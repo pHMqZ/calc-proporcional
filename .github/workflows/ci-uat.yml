@@ -1,0 +1,41 @@
+name: Backend CI (UAT)
+
+# Dispara a esteira sempre que um Pull Request for aberto ou atualizado com alvo na branch "uat"
+on:
+  pull_request:
+    branches:
+      - uat
+    paths:
+      - 'back-end/**' # Só roda se o PR mexer na pasta do backend
+
+jobs:
+  test:
+    name: Maven Unit and Integration Tests
+    runs-on: ubuntu-latest
+
+    # Define a pasta raiz onde todos os comandos de terminal vão rodar
+    defaults:
+      run:
+        working-directory: ./back-end
+
+    steps:
+      # Puxa o código do seu repositório da web para o servidor do GitHub
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Instala o Java 21 Oficial (Eclipse Temurin) e configura o Cache do Maven
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Como o ambiente do GitHub Actions é Linux, garantimos que o Maven wrapper seja executável
+      - name: Make Maven Wrapper executable
+        run: chmod +x ./mvnw
+
+      # Roda a mesma suíte do MockMvc que você acabou de debugar na sua máquina
+      # O parâmetro `-B` (Batch Mode) deixa o log limpo e bonito
+      - name: Execute Tests
+        run: ./mvnw -B clean test
