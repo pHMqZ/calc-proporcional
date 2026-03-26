@@ -1,6 +1,7 @@
 package com.pms.calprop.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -136,4 +138,61 @@ public class BillControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Conta com ID 99 não encontrada!"));
     }
+
+    @Test
+    @DisplayName("Should update a bill successfully")
+    void testSuccessUpdatedBill() throws Exception {
+
+        BillRequest updatedBillDTO = new BillRequest("Aluguel", new BigDecimal("1500.00"));
+
+        Bill updatedBill = new Bill();
+        updatedBill.setId(1L);
+        updatedBill.setDescription(updatedBillDTO.description());
+        updatedBill.setTotalAmount(updatedBillDTO.totalAmount());
+
+        when(billService.updateBill(eq(1L), any(BillRequest.class))).thenReturn(updatedBill);
+
+        mockMvc.perform(patch("/api/v1/bill/1").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedBillDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.description").value(updatedBillDTO.description()))
+                .andExpect(jsonPath("$.totalAmount").value(updatedBillDTO.totalAmount().doubleValue()));
+    }
+
+    @Test
+    @DisplayName("Should return a ResourceNotFoundException when the bill is not found")
+    void testThrowExceptionWhenUpdatingBillNotFound() throws Exception {
+
+        BillRequest updatedBillDTO = new BillRequest("Aluguel", new BigDecimal("1500.00"));
+
+        when(billService.updateBill(eq(99L), any(BillRequest.class)))
+                .thenThrow(new ResourceNotFoundException("Conta com ID 99 não encontrada!"));
+
+        mockMvc.perform(patch("/api/v1/bill/99").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedBillDTO)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Conta com ID 99 não encontrada!"));
+    }
+
+    @Test
+    @DisplayName("Should delete a bill successfully")
+    void testDeleteABillSuccessfully() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/bill/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Should return a ResourceNotFoundException when the bill is not found")
+    void testThrowExceptionWhenDeletingBillNotFound() throws Exception {
+
+        Mockito.doThrow(new ResourceNotFoundException("Conta com ID 99 não encontrada!")).when(billService)
+                .deleteBill(99L);
+
+        mockMvc.perform(delete("/api/v1/bill/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Conta com ID 99 não encontrada!"));
+    }
+
 }

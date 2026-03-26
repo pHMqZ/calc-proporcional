@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +56,19 @@ public class BillController {
         Bill bill = billService.findBillById(id);
         BillResponse response = billMapper.toResponse(bill);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<BillResponse> updateBill(@PathVariable Long id, @RequestBody BillRequest request) {
+        Bill updatedBill = billService.updateBill(id, request);
+        BillResponse response = billMapper.toResponse(updatedBill);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBill(@PathVariable Long id) {
+        billService.deleteBill(id);
+        return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
