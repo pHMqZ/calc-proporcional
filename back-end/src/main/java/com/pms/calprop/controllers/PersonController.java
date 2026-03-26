@@ -23,6 +23,7 @@ import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.mappers.PersonMapper;
 import com.pms.calprop.services.PersonService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,6 +35,7 @@ public class PersonController {
 
     private final PersonMapper personMapper;
 
+    @Operation(summary = "Add a new person in calculation", description = "Need a name, salary and percentage for reserve of the person")
     @PostMapping
     public ResponseEntity<PersonResponse> addPerson(@RequestBody PersonRequest request) {
         Person person = personMapper.toEntity(request);
@@ -45,6 +47,7 @@ public class PersonController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Get all people", description = "Return all registered people")
     @GetMapping
     public ResponseEntity<List<PersonResponse>> getAllPeople() {
         List<Person> people = personService.findAllPeople();
@@ -54,6 +57,7 @@ public class PersonController {
         return ResponseEntity.ok(responses);
     }
 
+    @Operation(summary = "Get a person by id", description = "Return a person by id")
     @GetMapping("/{id}")
     public ResponseEntity<PersonResponse> getPersonById(@PathVariable Long id) {
         Person person = personService.findPersonById(id);
@@ -61,6 +65,7 @@ public class PersonController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Update a person by id", description = "Provide only the fields you want to change in the request. Null fields will be ignored and kept intact in the database.")
     @PatchMapping("/{id}")
     public ResponseEntity<PersonResponse> updatePerson(@PathVariable Long id, @RequestBody PersonRequest request) {
 
@@ -69,6 +74,7 @@ public class PersonController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Delete a person by id", description = "Delete a person by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
         personService.deletePerson(id);

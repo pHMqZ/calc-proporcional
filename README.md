@@ -82,6 +82,19 @@ cd back-end
 
 Acesse: `http://localhost:5173`
 
+## 📚 Documentação da API (Swagger)
+
+A API do Calc-Contas é autodocumentada ativamente pela especificação **Springdoc OpenAPI 3**.
+Para consultar Mocks, testar Endpoints interativamente e ver as proteções de Modelos (DTOs) sem necessitar de Postman:
+
+1. Suba a aplicação Spring Boot localmente na porta 8080.
+2. Acesse seu navegador na rota oficial: `http://localhost:8080/swagger-ui/index.html`
+
+### Endpoints RESTful 
+O Domínio do serviço é protegido por regras estritas de CORS, Null-Validation e Partial Updates:
+- **`GET`, `POST`, `PATCH`, `DELETE` 👉 `/api/v1/person`**: Gestão dos participantes da conta, incluindo salário nativo base e reserva de emergência percentual.
+- **`GET`, `POST`, `PATCH`, `DELETE` 👉 `/api/v1/bills`**: Gestão das contas universais do mês para o rateio.
+
 ## Estrutura do Projeto
 
 ```text
