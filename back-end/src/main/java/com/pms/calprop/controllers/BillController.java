@@ -23,6 +23,7 @@ import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.mappers.BillMapper;
 import com.pms.calprop.services.BillService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,6 +35,7 @@ public class BillController {
 
     private final BillMapper billMapper;
 
+    @Operation(summary = "Add a new bill in calculation", description = "Need a title and total amount of de bill")
     @PostMapping
     public ResponseEntity<BillResponse> addBill(@RequestBody BillRequest request) {
         Bill bill = billMapper.toEntity(request);
@@ -42,6 +44,7 @@ public class BillController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Get all bills", description = "Return all registered bills")
     @GetMapping
     public ResponseEntity<List<BillResponse>> getAllBills() {
         List<Bill> bills = billService.findAllBills();
@@ -51,6 +54,7 @@ public class BillController {
         return ResponseEntity.ok(responses);
     }
 
+    @Operation(summary = "Get a bill by id", description = "Return a bill by id")
     @GetMapping("/{id}")
     public ResponseEntity<BillResponse> getBillById(@PathVariable Long id) {
         Bill bill = billService.findBillById(id);
@@ -58,6 +62,7 @@ public class BillController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Update a bill by id", description = "Provide only the fields you want to change in the request. Null fields will be ignored and kept intact in the database.")
     @PatchMapping("/{id}")
     public ResponseEntity<BillResponse> updateBill(@PathVariable Long id, @RequestBody BillRequest request) {
         Bill updatedBill = billService.updateBill(id, request);
@@ -65,6 +70,7 @@ public class BillController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Delete a bill by id", description = "Delete a bill by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBill(@PathVariable Long id) {
         billService.deleteBill(id);

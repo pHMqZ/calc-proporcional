@@ -9,7 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity(name = "bills")
 public class Bill {
 
@@ -17,19 +21,14 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Preencha a descrição da conta")
+    @NotEmpty(message = "Fill in the bill description")
     private String description;
 
     @NotNull
-    @DecimalMin(value = "0.00", inclusive = false, message = "O valor da conta deve ser maior que zero")
+    @DecimalMin(value = "0.00", inclusive = false, message = "The bill amount must be greater than zero")
     private BigDecimal totalAmount;
 
-    public Bill() {
-
-    }
-
-    public Bill(Long id, String description, BigDecimal totalAmount) {
-        this.id = id;
+    public Bill(String description, BigDecimal totalAmount) {
         this.description = description;
         this.totalAmount = totalAmount;
     }
