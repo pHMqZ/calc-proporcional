@@ -23,7 +23,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -126,7 +125,7 @@ class PersonServiceTest {
     @DisplayName("Should update user data successfully")
     void testSuccessUpdatedPerson() {
 
-        PersonRequest updatedInfo = new PersonRequest("Alceu", new BigDecimal("5000.00"), null);
+        PersonRequest updatedInfo = new PersonRequest("Elis", new BigDecimal("5000.00"), 20.0);
 
         when(personRepository.findById(1L)).thenReturn(Optional.of(elis));
         when(personRepository.save(any(Person.class))).thenReturn(elis);
@@ -143,8 +142,6 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should update a person partially successfully, ignoring nulls via MapStruct")
     void testPartialUpdatePerson() {
-        Person elis = new Person(1L, "Elis", new BigDecimal("4000.00"), 20.0);
-
         when(personRepository.findById(1L)).thenReturn(Optional.of(elis));
 
         PersonRequest requestDTO = new PersonRequest(null, new BigDecimal("5500.00"), null);
@@ -156,7 +153,7 @@ class PersonServiceTest {
         assertNotNull(result);
         assertEquals("Elis", result.getName());
         assertEquals(new BigDecimal("5500.00"), result.getSalary());
-        assertEquals(20.0, result.getReservePercentage());
+        assertEquals(15.0, result.getReservePercentage());
 
         verify(personRepository, times(1)).findById(1L);
         verify(personRepository, times(1)).save(any(Person.class));
