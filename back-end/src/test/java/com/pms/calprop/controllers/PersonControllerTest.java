@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -185,6 +187,25 @@ public class PersonControllerTest {
                 mockMvc.perform(patch("/api/v1/person/99")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updatedInfo)))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
+        }
+
+        @Test
+        @DisplayName("Should delete a person successfully")
+        void testDeleteAPersonSuccessfully() throws Exception {
+                mockMvc.perform(delete("/api/v1/person/1"))
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @DisplayName("Should throw a exception when person not found")
+        void testThrowExceptionWhenDeletingPersonNotFound() throws Exception {
+
+                Mockito.doThrow(new ResourceNotFoundException("Pessoa com ID 99 não encontrada!")).when(personService)
+                                .deletePerson(99L);
+
+                mockMvc.perform(delete("/api/v1/person/99"))
                                 .andExpect(status().isNotFound())
                                 .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
         }
