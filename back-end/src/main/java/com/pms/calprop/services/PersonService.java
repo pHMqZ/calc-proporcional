@@ -1,7 +1,9 @@
 package com.pms.calprop.services;
 
+import com.pms.calprop.dto.PersonRequest;
 import com.pms.calprop.entities.Person;
 import com.pms.calprop.exceptions.ResourceNotFoundException;
+import com.pms.calprop.mappers.PersonMapper;
 import com.pms.calprop.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +18,8 @@ public class PersonService {
 
     private final PersonRepository personRepository;
 
+    private final PersonMapper personMapper;
+
     public Person addPerson(Person newPerson) {
         return personRepository.save(newPerson);
     }
@@ -29,13 +33,11 @@ public class PersonService {
                 .orElseThrow(() -> new ResourceNotFoundException("Pessoa com ID " + id + " não encontrada!"));
     }
 
-    public Person updatePerson(Long id, Person updatePerson) {
+    public Person updatePerson(Long id, PersonRequest resquest) {
 
         Person existingPerson = this.findPersonById(id);
 
-        existingPerson.setSalary(updatePerson.getSalary());
-        existingPerson.setReservePercentage(updatePerson.getReservePercentage());
-
+        personMapper.updatePersonFromRequest(resquest, existingPerson);
         return personRepository.save(existingPerson);
     }
 
