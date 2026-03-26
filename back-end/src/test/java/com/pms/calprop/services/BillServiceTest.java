@@ -1,14 +1,18 @@
 package com.pms.calprop.services;
 
+import com.pms.calprop.dto.BillRequest;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.exceptions.ResourceNotFoundException;
+import com.pms.calprop.mappers.BillMapper;
 import com.pms.calprop.repositories.BillRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -24,6 +28,9 @@ public class BillServiceTest {
 
     @Mock
     private BillRepository billRepository;
+
+    @Spy
+    private BillMapper billMapper = Mappers.getMapper(BillMapper.class);
 
     @InjectMocks
     private BillService billService;
@@ -112,9 +119,7 @@ public class BillServiceTest {
     @Test
     @DisplayName("Should update bill data successfully")
     void testSuccessUpdateBill() {
-        Bill updatedBill = new Bill();
-        updatedBill.setTotalAmount(new BigDecimal("1430.00"));
-        updatedBill.setDescription("Aluguel + IPTU");
+        BillRequest updatedBill = new BillRequest("Aluguel", new BigDecimal("1450.00"));
 
         when(billRepository.findById(1L)).thenReturn(Optional.of(aluguel));
         when(billRepository.save(any(Bill.class))).thenReturn(aluguel);
@@ -122,8 +127,27 @@ public class BillServiceTest {
         Bill result = billService.updateBill(1L, updatedBill);
 
         assertNotNull(result);
-        assertEquals(new BigDecimal("1430.00"), result.getTotalAmount());
-        assertEquals("Aluguel + IPTU", result.getDescription());
+        assertEquals(new BigDecimal("1450.00"), result.getTotalAmount());
+        assertEquals("Aluguel", result.getDescription());
+    }
+
+    @Test
+    @DisplayName("Should update a bill partially successfully, ignoring null via MapStruct")
+    void testPartialUpdateBill() {
+        when(billRepository.findById(1L)).thenReturn(Optional.of(aluguel));
+
+        BillRequest requestDTO = new BillRequest(null, new BigDecimal("1900.00"));
+
+        when(billRepository.save(any(Bill.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        Bill result = billService.updateBill(1L, requestDTO);
+
+        assertNotNull(result);
+        assertEquals("Aluguel", result.getDescription());
+        assertEquals(new BigDecimal("1900.00"), result.getTotalAmount());
+
+        verify(billRepository, times(1)).findById(1L);
+        verify(billRepository, times(1)).save(any(Bill.class));
     }
 
     @Test
@@ -131,8 +155,7 @@ public class BillServiceTest {
     void testNotFoundBillToUpdate() {
         when(billRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Bill updatedBill = new Bill();
-        updatedBill.setTotalAmount(new BigDecimal("1000.00"));
+        BillRequest updatedBill = new BillRequest("Aluguel", new BigDecimal("1000.00"));
 
         ResourceNotFoundException exp = assertThrows(ResourceNotFoundException.class,
                 () -> billService.updateBill(99L, updatedBill));
