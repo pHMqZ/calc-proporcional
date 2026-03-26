@@ -1,7 +1,9 @@
 package com.pms.calprop.services;
 
+import com.pms.calprop.dto.BillRequest;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.exceptions.ResourceNotFoundException;
+import com.pms.calprop.mappers.BillMapper;
 import com.pms.calprop.repositories.BillRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +18,8 @@ public class BillService {
 
     private final BillRepository billRepository;
 
+    private final BillMapper billMapper;
+
     public Bill addBill(Bill newBill) {
         return billRepository.save(newBill);
     }
@@ -29,11 +33,10 @@ public class BillService {
                 .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + id + " não encontrada!"));
     }
 
-    public Bill updateBill(Long id, Bill updatedBill) {
+    public Bill updateBill(Long id, BillRequest request) {
         Bill existingBill = this.findBillById(id);
 
-        existingBill.setDescription(updatedBill.getDescription());
-        existingBill.setTotalAmount(updatedBill.getTotalAmount());
+        billMapper.updateBillFromRequest(request, existingBill);
 
         return billRepository.save(existingBill);
     }
