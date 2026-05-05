@@ -1,7 +1,9 @@
 package com.pms.calprop.services;
 
-// ### 1. Imports não Utilizados ✅
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import com.pms.calprop.dto.PersonResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,12 +13,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.pms.calprop.dto.BillDistribution;
 import com.pms.calprop.dto.PersonData;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
+import com.pms.calprop.mappers.PersonMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculationServiceTest {
@@ -24,8 +28,10 @@ public class CalculationServiceTest {
     @InjectMocks
     private CalculationService calculationService;
 
+    @Mock
+    private PersonMapper personMapper;
+
     private Person Alceu;
-    // ### 2. Typo (Erro de Digitação no DTO) ✅
     private Person Toalha;
     private Bill Aluguel;
     private Bill Internet;
@@ -152,12 +158,12 @@ public class CalculationServiceTest {
     }
 
     @Test
-    @DisplayName("Should calculate bills distribuition successfully")
-    void testCalculateBillsDistribuition() {
+    @DisplayName("Should calculate bills distribution successfully")
+    void testCalculateBillsDistribution() {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
         List<Person> people = List.of(Alceu, Toalha);
 
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people);
 
         assertEquals(8, billDistributions.size());
 
@@ -190,7 +196,7 @@ public class CalculationServiceTest {
     @Test
     @DisplayName("Should return zero when list of bill distribuitions is empty")
     void testReturnZeroWhenListOfBillDistributionsIsEmpty() {
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(List.of(),
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(),
                 List.of());
 
         assertEquals(0, billDistributions.size());
@@ -220,11 +226,17 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people);
+
+        when(personMapper.toResponse(any(Person.class))).thenAnswer(invocation -> {
+            Person p = invocation.getArgument(0);
+            return new PersonResponse(p.getId(), p.getName(), p.getSalary(), p.getReservePercentage());
+        });
 
         PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistributions);
 
-        assertEquals(Alceu, alceuData.person());
+        assertEquals(Alceu.getId(), alceuData.person().id());
+        assertEquals(Alceu.getName(), alceuData.person().name());
         assertEquals(new BigDecimal("45.45"), alceuData.percentage());
         assertEquals(new BigDecimal("250.00"), alceuData.reserveAmount());
         assertEquals(new BigDecimal("1090.81"), alceuData.billsTotal());
@@ -241,12 +253,16 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of();
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people);
+
+        when(personMapper.toResponse(any(Person.class))).thenAnswer(invocation -> {
+            Person p = invocation.getArgument(0);
+            return new PersonResponse(p.getId(), p.getName(), p.getSalary(), p.getReservePercentage());
+        });
 
         PersonData alceuData = calculationService.calculatePersonData(Alceu, totalSalary, billDistributions);
 
         assertEquals(0, alceuData.billDistributions().size());
-
     }
 
     @Test
@@ -256,14 +272,19 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people);
+
+        when(personMapper.toResponse(any(Person.class))).thenAnswer(invocation -> {
+            Person p = invocation.getArgument(0);
+            return new PersonResponse(p.getId(), p.getName(), p.getSalary(), p.getReservePercentage());
+        });
 
         List<PersonData> peopleData = calculationService.calculateAllPeopleData(people, totalSalary,
                 billDistributions);
 
         assertEquals(2, peopleData.size());
-        assertEquals(Alceu, peopleData.get(0).person());
-        assertEquals(Toalha, peopleData.get(1).person());
+        assertEquals(Alceu.getId(), peopleData.get(0).person().id());
+        assertEquals(Toalha.getId(), peopleData.get(1).person().id());
     }
 
     @Test
@@ -273,7 +294,7 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of();
 
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribuition(bills, people);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people);
 
         List<PersonData> peopleData = calculationService.calculateAllPeopleData(people, totalSalary,
                 billDistributions);
