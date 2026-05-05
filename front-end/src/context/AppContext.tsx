@@ -1,182 +1,111 @@
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Bill, BillDistribution } from "../types/Bill";
-import type { Person, PersonCalculation } from "../types/Person";
-import { CalculationService } from "../services/calculation";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { Bill } from "../types/Bill";
+import type { CalculationSummary } from "../types/calculation";
+import type { Person } from "../types/Person";
+import { api } from "../services/api";
+import React from "react";
+
 
 interface AppContextType {
     people: Person[];
     bills: Bill[];
-    calculations: PersonCalculation[];
-    distribuitions: BillDistribution[];
-    totalSalary: number;
-    totalBills: number;
-    totalReserve: number;
+    summary: CalculationSummary | null;
+    isLoading: boolean;
+    error: string | null;
 
-    addPerson: (name: string) => void;
-    updatePerson: (id: string, updates: Partial<Person>) => void;
-    removePerson: (id: string) => void;
-    
-    addBill: (description?: string) => void;
-    updateBill: (id: string, updates: Partial<Bill>) => void;
-    removeBill: (id: string) => void;
-    clearBills: () => void;
+    refreshData: () => Promise<void>;
+    addPerson: (name: string) => Promise<void>;
+    updatePerson: (id: number, updates: Partial<Person>) => Promise<void>;
+    deletePerson: (id: number) => Promise<void>;
 
-    clearAllData: () => void;
+    addBill: (description?: string) => Promise<void>;
+    updateBill: (id: number, updates: Partial<Bill>) => Promise<void>;
+    deleteBill: (id: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const useAppContext = () => {
     const context = useContext(AppContext);
-    if (!context) {
-        throw new Error("useAppContext must be used within AppContextProvider");
-    }
+    if (!context) throw new Error("useAppContext must be used within AppContextProvider")
     return context;
-};
-
-interface AppProviderProps {
-    children: ReactNode;
 }
 
-//Funções de persistência
-const STORAGE_KEYS = {
-    PEOPLE: 'calculadora-contas-pessoas',
-    BILLS: 'calculadora-contas-contas'
-};
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [people, setPeople] = useState<Person[]>([]);
+    const [bills, setBills] = useState<Bill[]>([]);
+    const [summary, setSummary] = useState<CalculationSummary | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-const loadFromStorage = <T, >(key: string, defaultValue: T): T => {
-    try{
-        const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (error) {
-        console.error(`Erro ao carregar ${key}`, error);
-        return defaultValue;
-    }
-};
-
-const saveToStorage = <T, >(key: string, value: T): void => {
-    try {
-        localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error(`Erro ao salvar ${key}`, error);
-    }
-};
-
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-    //Carregar dados do localStorage
-    const [people, setPeople] = useState<Person[]>(() =>
-        loadFromStorage(STORAGE_KEYS.PEOPLE, [])
-    );
-    const [bills, setBills] = useState<Bill[]>(() =>
-        loadFromStorage(STORAGE_KEYS.BILLS, [])
-    );
-
-    //Salvar dados no localStorage
-    useEffect(() => {
-        saveToStorage(STORAGE_KEYS.PEOPLE, people);
-    }, [people]);
+    const refreshData = async () => {
+        setIsLoading(true);
+        try {
+            const [peopleData, billsData, summaryData] = await Promise.all([
+                api.getPeople(),
+                api.getBills(),
+                api.getSummary()
+            ]);
+            setPeople(peopleData);
+            setBills(billsData);
+            setSummary(summaryData);
+            setError(null);
+        } catch (err) {
+            setError("Falha ao sincronizar com o servidor");
+            console.error(err)
+        } finally {
+            setIsLoading(false)
+        }
+    };
 
     useEffect(() => {
-        saveToStorage(STORAGE_KEYS.BILLS, bills);
-    }, [bills]);
+        refreshData();
+    }, []);
 
-    //Calculos
-    const totalSalary = CalculationService.calculateTotalSalary(people);
-    const totalBills = CalculationService.calculateTotalBills(bills);
-    const distribuitions = CalculationService.calculateBillDistribution(
-        bills, 
-        people, 
-        totalSalary
-    );
-    const calculations = CalculationService.calculateAllPeopleData(people,bills);
-    const totalReserve = calculations.reduce((sum, p) => sum + p.reserveAmount, 0);
-
-    //Ações para pessoa
-    const addPerson = (name: string) => {
-        if (!name || name.trim() === '') {
-            alert("Por favor, insira um nome válido.");
-            return;
-        }
-        
-        const newPerson: Person = {
-            id: Date.now().toString(),
-            name: name,
-            salary: 0,
-            reservePercentage: 0
-        };
-        setPeople([...people, newPerson]);
+    const addPerson = async (name: string) => {
+        await api.addPerson(name);
+        await refreshData();
     };
 
-    const updatePerson = (id: string, updates: Partial<Person>) => {
-        setPeople(people.map(p => p.id === id ? { ...p, ...updates } : p));
+    const updatePerson = async (id: number, updates: Partial<Person>) => {
+        await api.updatePerson(id, updates);
+        await refreshData();
     };
 
-    const removePerson = (id: string) => {
-        if (people.length <= 0){
-            alert("Sem pessoas para remover.");
-            return;
-        }
-        setPeople(people.filter(p => p.id !== id));
+    const deletePerson = async (id: number) => {
+        await api.deletePerson(id);
+        await refreshData();
     };
 
-    //Ações para contas
-    const addBill = (description?: string) => {
-        const newBill: Bill = {
-            id: Date.now().toString(),
-            description: description || "",
-            totalAmount: 0
-        };
-        setBills([...bills, newBill]);
+    const addBill = async (description?: string) => {
+        await api.addBill(description || "");
+        await refreshData();
     };
 
-    const updateBill = (id: string, updates: Partial<Bill>) => {
-        setBills(bills.map(b => (b.id === id ? { ...b, ...updates } : b)));
+    const updateBill = async (id: number, updates: Partial<Bill>) => {
+        await api.updateBill(id, updates);
+        await refreshData();
     };
 
-    const removeBill = (id: string) => {
-        if (bills.length <= 0){
-            alert("Sem contas para remover.");
-            return;
-        }
-        setBills(bills.filter(b => b.id !== id));
+    const deleteBill = async (id: number) => {
+        await api.deleteBill(id);
+        await refreshData();
     };
 
-    const clearBills = () => {
-        setBills([]);
-    }
-
-    //Limpar todos os dados
-    const clearAllData = () => {
-        if (confirm('Tem certeza que deseja limpar todos os dados? A ação é irreversível.')) {
-            setPeople([]);
-            setBills([]);
-            localStorage.removeItem(STORAGE_KEYS.PEOPLE);
-            localStorage.removeItem(STORAGE_KEYS.BILLS);
-        }
+    const value = {
+        people,
+        bills,
+        summary,
+        isLoading,
+        error,
+        refreshData,
+        addPerson,
+        updatePerson,
+        deletePerson,
+        addBill,
+        updateBill,
+        deleteBill
     };
 
-
-    return (
-        <AppContext.Provider
-            value={{
-                people,
-                bills,
-                calculations,
-                distribuitions,
-                totalSalary,
-                totalBills,
-                totalReserve,
-                addPerson,
-                updatePerson,
-                removePerson,
-                addBill,
-                updateBill,
-                removeBill,
-                clearBills,
-                clearAllData
-            }}
-        >
-            {children}
-        </AppContext.Provider>
-    );
-};   
+    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+} 
