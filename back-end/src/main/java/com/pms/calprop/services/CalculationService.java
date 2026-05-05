@@ -9,11 +9,18 @@ import org.springframework.stereotype.Service;
 
 import com.pms.calprop.dto.BillDistribution;
 import com.pms.calprop.dto.PersonData;
+import com.pms.calprop.dto.PersonResponse;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
+import com.pms.calprop.mappers.PersonMapper;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CalculationService {
+
+    private final PersonMapper personMapper;
 
     public BigDecimal calculateTotalSalary(List<Person> people) {
 
@@ -59,7 +66,7 @@ public class CalculationService {
         return totalAmount;
     }
 
-    public List<BillDistribution> calculateBillsDistribuition(List<Bill> bills, List<Person> people) {
+    public List<BillDistribution> calculateBillsDistribution(List<Bill> bills, List<Person> people) {
         List<BillDistribution> billDistributions = new ArrayList<>();
         BigDecimal totalSalary = calculateTotalSalary(people);
 
@@ -92,10 +99,10 @@ public class CalculationService {
         return billDistributions;
     }
 
-    public BigDecimal calculatePersonBillsTotal(Person person, List<BillDistribution> billsDistribuition) {
+    public BigDecimal calculatePersonBillsTotal(Person person, List<BillDistribution> billsDistribution) {
 
-        return billsDistribuition.stream()
-                .filter(distribuition -> distribuition.personId().equals(person.getId()))
+        return billsDistribution.stream()
+                .filter(distribution -> distribution.personId().equals(person.getId()))
                 .map(BillDistribution::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -103,6 +110,7 @@ public class CalculationService {
     public PersonData calculatePersonData(Person person, BigDecimal totalSalary,
             List<BillDistribution> billDistributions) {
 
+        PersonResponse response = personMapper.toResponse(person);
         BigDecimal personPercentage = calculatePersonPercentage(person, totalSalary);
         BigDecimal reserveAmount = calculateReserveAmount(person);
         BigDecimal billsTotal = calculatePersonBillsTotal(person, billDistributions);
@@ -110,10 +118,10 @@ public class CalculationService {
         BigDecimal remainingSalary = person.getSalary().subtract(totalToPay);
 
         List<BillDistribution> personBillDistributions = billDistributions.stream()
-                .filter(distribuition -> distribuition.personId().equals(person.getId()))
+                .filter(distribution -> distribution.personId().equals(person.getId()))
                 .toList();
 
-        return new PersonData(person, personPercentage, reserveAmount, billsTotal, totalToPay, remainingSalary,
+        return new PersonData(response, personPercentage, reserveAmount, billsTotal, totalToPay, remainingSalary,
                 personBillDistributions);
     }
 
