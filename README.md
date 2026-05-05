@@ -93,7 +93,20 @@ Para consultar Mocks, testar Endpoints interativamente e ver as proteções de M
 ### Endpoints RESTful 
 O Domínio do serviço é protegido por regras estritas de CORS, Null-Validation e Partial Updates:
 - **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/person`**: Gestão dos participantes da conta, incluindo salário nativo base e reserva de emergência percentual.
-- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/bills`**: Gestão das contas universais do mês para o rateio.
+- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/bill`**: Gestão das contas universais do mês para o rateio.
+
+### Padronização de Erros
+Todas as exceções da API são capturadas globalmente e retornam um JSON estruturado para facilitar o tratamento no Frontend:
+
+```json
+{
+  "timestamp": "2024-05-05T10:00:00Z",
+  "status": 404,
+  "error": "Resource Not Found",
+  "message": "Mensagem detalhada do erro",
+  "path": "/api/v1/endpoint"
+}
+```
 
 ## Estrutura do Projeto
 
