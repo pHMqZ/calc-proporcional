@@ -147,8 +147,11 @@ public class PersonControllerTest {
                                 .thenThrow(new ResourceNotFoundException("Pessoa com ID 99 não encontrada!"));
 
                 mockMvc.perform(get("/api/v1/person/99"))
-                                .andExpect(status().isNotFound())
-                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
+                                .andExpect(jsonPath("$.timestamp").exists())
+                                .andExpect(jsonPath("$.status").value(404))
+                                .andExpect(jsonPath("$.error").value("Resource Not Found"))
+                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"))
+                                .andExpect(jsonPath("$.path").value("/api/v1/person/99"));
         }
 
         @Test
@@ -187,8 +190,11 @@ public class PersonControllerTest {
                 mockMvc.perform(patch("/api/v1/person/99")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(updatedInfo)))
-                                .andExpect(status().isNotFound())
-                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
+                                .andExpect(jsonPath("$.timestamp").exists())
+                                .andExpect(jsonPath("$.status").value(404))
+                                .andExpect(jsonPath("$.error").value("Resource Not Found"))
+                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"))
+                                .andExpect(jsonPath("$.path").value("/api/v1/person/99"));
         }
 
         @Test
@@ -206,7 +212,10 @@ public class PersonControllerTest {
                                 .deletePerson(99L);
 
                 mockMvc.perform(delete("/api/v1/person/99"))
-                                .andExpect(status().isNotFound())
-                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
+                                .andExpect(jsonPath("$.timestamp").exists())
+                                .andExpect(jsonPath("$.status").value(404))
+                                .andExpect(jsonPath("$.error").value("Resource Not Found"))
+                                .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"))
+                                .andExpect(jsonPath("$.path").value("/api/v1/person/99"));
         }
 }
