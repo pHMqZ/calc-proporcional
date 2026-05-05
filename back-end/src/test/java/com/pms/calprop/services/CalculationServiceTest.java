@@ -13,12 +13,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.pms.calprop.dto.BillDistribution;
 import com.pms.calprop.dto.PersonData;
 import com.pms.calprop.entities.Bill;
 import com.pms.calprop.entities.Person;
+import com.pms.calprop.mappers.PersonMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class CalculationServiceTest {
@@ -26,11 +28,10 @@ public class CalculationServiceTest {
     @InjectMocks
     private CalculationService calculationService;
 
-    @org.mockito.Mock
-    private com.pms.calprop.mappers.PersonMapper personMapper;
+    @Mock
+    private PersonMapper personMapper;
 
     private Person Alceu;
-    // ### 2. Typo (Erro de Digitação no DTO) ✅
     private Person Toalha;
     private Bill Aluguel;
     private Bill Internet;
@@ -157,8 +158,8 @@ public class CalculationServiceTest {
     }
 
     @Test
-    @DisplayName("Should calculate bills distribuition successfully")
-    void testCalculateBillsDistribuition() {
+    @DisplayName("Should calculate bills distribution successfully")
+    void testCalculateBillsDistribution() {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
         List<Person> people = List.of(Alceu, Toalha);
 
