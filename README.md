@@ -3,8 +3,8 @@
 > Divida contas de forma justa e proporcional à renda de cada participante.
 
 ![React](https://img.shields.io/badge/React-18.2-blue?logo=react)
-![Java](https://img.shields.io/badge/Java-17-blue?logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-blue?logo=spring)
+![Java](https://img.shields.io/badge/Java-21-blue?logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-blue?logo=spring)
 
 
 ## Sobre o Projeto
@@ -49,7 +49,7 @@ Este projeto foi desenvolvido como:
 
 ### Pré-requisitos
 - Node.js 18+ instalado
-- Java 17+ instalado
+- Java 21+ instalado
 - Maven 3.6+ instalado
 - npm ou yarn
 
@@ -92,8 +92,9 @@ Para consultar Mocks, testar Endpoints interativamente e ver as proteções de M
 
 ### Endpoints RESTful 
 O Domínio do serviço é protegido por regras estritas de CORS, Null-Validation e Partial Updates:
-- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/person`**: Gestão dos participantes da conta, incluindo salário nativo base e reserva de emergência percentual.
-- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/bill`**: Gestão das contas universais do mês para o rateio.
+- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/person`**: Gestão dos participantes, incluindo salário base e reserva.
+- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/bill`**: Gestão das contas universais do mês.
+- **`GET` -> `/api/v1/calculation`**: Endpoint motor da aplicação. Retorna o resumo completo, distribuições proporcionais e cálculos de reserva em uma única chamada.
 
 ### Padronização de Erros
 Todas as exceções da API são capturadas globalmente e retornam um JSON estruturado para facilitar o tratamento no Frontend:
