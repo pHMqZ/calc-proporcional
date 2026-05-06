@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useAppContext } from "../../context/AppContext"
+import { useAppContext } from "../../context/AppContext";
 import { PersonCard } from "./personCard";
+import React from "react";
 
-export const PeopleList: React.FC = () =>{
-    const { people, addPerson, updatePerson, removePerson, totalSalary, calculations } = useAppContext();
+export const PeopleList: React.FC = () => {
+    const { people, addPerson, updatePerson, deletePerson, summary, isLoading } = useAppContext();
     const [newPersonName, setNewPersonName] = useState("");
     const [showAddForm, setShowAddForm] = useState(false);
 
@@ -18,36 +19,40 @@ export const PeopleList: React.FC = () =>{
         maximumFractionDigits: 1,
     });
 
-   const handleAddPerson = () => {
+    const handleAddPerson = async () => {
         if (newPersonName.trim()) {
-            addPerson(newPersonName);
+            await addPerson(newPersonName);
             setNewPersonName('');
             setShowAddForm(false);
         } else {
             alert("Por favor, insira um nome válido.");
         }
-   };
+    };
 
-   const handleCancel = () => {
+    const handleCancel = () => {
         setNewPersonName('');
         setShowAddForm(false);
-   };
+    };
 
-   const totalReserve = calculations.reduce((acc, calc) => acc + calc.reserveAmount, 0);
+    if (isLoading || !summary) {
+        return <div className="card animate-pulse">Sincronizando participantes...</div>;
+    }
 
+    const totalReserve = summary.totalWithReserve - summary.totalBills;
 
-   return (
+    return (
         <div className="grid md:grid-cols-2 gap-3.5">
             <section className="card">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">Pessoas</h3>
-                    { !showAddForm ? (
+                    {!showAddForm && (
                         <button onClick={() => setShowAddForm(true)}>
-                        + Adicionar Pessoa</button>
-                    ) : null }
+                            + Adicionar Pessoa
+                        </button>
+                    )}
                 </div>
 
-                { showAddForm && (
+                {showAddForm && (
                     <div className="bg-[#eef2ff] border-2 border-dashed border-[#c7d2fe] rounded-xl p-4 mb-4">
                         <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Nova Pessoa</h4>
                         <div className="flex gap-2 items-end">
@@ -57,9 +62,10 @@ export const PeopleList: React.FC = () =>{
                                     type="text"
                                     value={newPersonName}
                                     onChange={(e) => setNewPersonName(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter'&& handleAddPerson()}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleAddPerson()}
                                     placeholder="Digite o nome"
-                                    autoFocus/>
+                                    autoFocus
+                                />
                             </div>
                             <button onClick={handleAddPerson}>Adicionar</button>
                             <button onClick={handleCancel} className="secondary">Cancelar</button>
@@ -68,67 +74,55 @@ export const PeopleList: React.FC = () =>{
                 )}
 
                 <div className="space-y-3 mb-4">
-                    {people.map((person) =>(
-                        <PersonCard 
+                    {people.map((person) => (
+                        <PersonCard
                             key={person.id}
                             person={person}
                             onUpdate={updatePerson}
-                            onRemove={removePerson}
+                            onRemove={deletePerson}
                             showRemove={people.length > 1}
                         />
                     ))}
                 </div>
 
-                {people.length === 0 &&(
-                    <div className="text-center py-8 text-[#6b7280] text-sm bg-[#f9fafb] rounded-xl border border-dashed border-[#e5e7eb]">
-                        Nenhum participante adicionado ainda.
-                    </div>
-                )}
                 {people.length > 0 && (
                     <>
-                    <div className="border-t border-[#e5e7eb] pt-4 mb-4">
-                        <div className="kpi-item">
-                            <div className="text-[#6b7280] text-xs">Salário Total</div>
-                            <div className="font-bold text-lg">{BRL.format(totalSalary)}</div>
+                        <div className="border-t border-[#e5e7eb] pt-4 mb-4">
+                            <div className="kpi-item">
+                                <div className="text-[#6b7280] text-xs">Salário Total</div>
+                                <div className="font-bold text-lg">{BRL.format(summary.totalSalary)}</div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
-                        <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Participaçao nos custos</h4>
-                        <div className="grid grid-cols-2 gap-2">
-                            {calculations.map((calc) => (
-                                <div className="kpi-item">
-                                    <div className="text-[#6b7280] text-xs">{calc.name}</div>
-                                    <div className="font-bold text-base">{PC.format(calc.percentage)}</div>
-                                </div>
-                            ))}
+                        <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+                            <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Participação nos custos</h4>
+                            <div className="grid grid-cols-2 gap-2">
+                                {summary.peopleData.map((calc) => (
+                                    <div key={calc.person.id} className="kpi-item">
+                                        <div className="text-[#6b7280] text-xs">{calc.person.name}</div>
+                                        <div className="font-bold text-base">{PC.format(calc.percentage / 100)}</div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
                     </>
                 )}
-               
             </section>
+
             <section className="card">
                 <h3 className="text-lg font-semibold mb-4">Reserva</h3>
-
                 <div className="space-y-2 mb-4">
-                    {calculations.map((calc) => (
-                        <div key={calc.id} className="pill justify-between w-full">
-                            <strong className="text-sm">{calc.name}</strong>
+                    {summary.peopleData.map((calc) => (
+                        <div key={calc.person.id} className="pill justify-between w-full">
+                            <strong className="text-sm">{calc.person.name}</strong>
                             <span className="text-sm font-semibold">
-                                {BRL.format(calc.reserveAmount)} ({calc.reservePercentage}%)
+                                {BRL.format(calc.reserveAmount)} ({calc.person.reservePercentage}%)
                             </span>
                         </div>
                     ))}
                 </div>
 
-                {calculations.length === 0 && (
-                    <div className="text-center py-8 text-[#6b7280] text-sm bg-[#f9fafb] rounded-xl border border-dashed border-[#e5e7eb]">
-                        Nenhum participante adicionado ainda.
-                    </div>
-                )}
-
-               {calculations.length > 0 && (
+                {people.length > 0 && (
                     <div className="border-t border-[#e5e7eb] pt-4 mt-4">
                         <div className="kpi-item">
                             <div className="text-[#6b7280] text-xs">Total da Reserva</div>
@@ -136,8 +130,7 @@ export const PeopleList: React.FC = () =>{
                         </div>
                     </div>
                 )}
-
             </section>
         </div>
-   )
-}
+    );
+};

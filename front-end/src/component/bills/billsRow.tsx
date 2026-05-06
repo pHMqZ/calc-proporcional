@@ -17,23 +17,23 @@ export const BillRow: React.FC<BillRowProps> = ({
     onRemove
 }) => {
     const BRL = new Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' });
-    const PC = new Intl.NumberFormat('pt-br', {maximumFractionDigits:1, minimumFractionDigits:1});
+    const PC = new Intl.NumberFormat('pt-br', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
 
-    return(
+    return (
         <tr>
             <td>
-                <input 
-                type="text" 
-                value={bill.description}
-                onChange={(e) => onUpdate(bill.id, { description: e.target.value })} 
-                placeholder="Ex: Aluguel"/>
+                <input
+                    type="text"
+                    value={bill.description}
+                    onChange={(e) => onUpdate(bill.id, { description: e.target.value })}
+                    placeholder="Ex: Aluguel" />
             </td>
             <td className="text-right">
-                <input 
-                type="number"
-                value={bill.totalAmount || '' }
-                onChange={(e) => onUpdate(bill.id, { totalAmount: Number(e.target.value) })} 
-                className="text-right w-24" />
+                <input
+                    type="number"
+                    value={bill.totalAmount || ''}
+                    onChange={(e) => onUpdate(bill.id, { totalAmount: Number(e.target.value) })}
+                    className="text-right w-24" />
             </td>
             {calculations.map((calc) => (
                 <React.Fragment key={calc.id}>
