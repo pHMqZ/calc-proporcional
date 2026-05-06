@@ -38,8 +38,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const refreshData = async () => {
-        setIsLoading(true);
+    const refreshData = async (silent = false) => {
+        if (!silent) setIsLoading(true);
         try {
             const [peopleData, billsData, summaryData] = await Promise.all([
                 api.getPeople(),
@@ -54,7 +54,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             setError("Falha ao sincronizar com o servidor");
             console.error(err)
         } finally {
-            setIsLoading(false)
+            if (!silent) setIsLoading(false)
         }
     };
 
@@ -62,34 +62,34 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         refreshData();
     }, []);
 
-    const addPerson = async (name: string) => {
-        await api.addPerson(name);
-        await refreshData();
+    const addPerson = async (name: string, salary: number, reserve: number) => {
+        await api.addPerson(name, salary, reserve);
+        await refreshData(true);
     };
 
     const updatePerson = async (id: number, updates: Partial<Person>) => {
         await api.updatePerson(id, updates);
-        await refreshData();
+        await refreshData(true);
     };
 
     const deletePerson = async (id: number) => {
         await api.deletePerson(id);
-        await refreshData();
+        await refreshData(true);
     };
 
     const addBill = async (description?: string) => {
-        await api.addBill(description || "");
-        await refreshData();
+        await api.addBill(description || "Nova Conta");
+        await refreshData(true);
     };
 
     const updateBill = async (id: number, updates: Partial<Bill>) => {
         await api.updateBill(id, updates);
-        await refreshData();
+        await refreshData(true);
     };
 
     const deleteBill = async (id: number) => {
         await api.deleteBill(id);
-        await refreshData();
+        await refreshData(true);
     };
 
     const value = {

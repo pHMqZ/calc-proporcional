@@ -1,11 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAppContext } from "../../context/AppContext";
 import { PersonCard } from "./personCard";
-import React from "react";
 
 export const PeopleList: React.FC = () => {
     const { people, addPerson, updatePerson, deletePerson, summary, isLoading } = useAppContext();
     const [newPersonName, setNewPersonName] = useState("");
+    const [newPersonSalary, setNewPersonSalary] = useState<number>(0);
+    const [newPersonReserve, setNewPersonReserve] = useState<number>(10);
     const [showAddForm, setShowAddForm] = useState(false);
 
     const BRL = new Intl.NumberFormat("pt-BR", {
@@ -14,122 +15,175 @@ export const PeopleList: React.FC = () => {
     });
 
     const PC = new Intl.NumberFormat("pt-BR", {
-        style: "percent",
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
     });
 
+    const formatBRL = (value: number) => {
+        return new Intl.NumberFormat('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value);
+    };
+
+    const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/\D/g, '');
+        const numericValue = Number(value) / 100;
+        setNewPersonSalary(numericValue);
+    };
+
     const handleAddPerson = async () => {
         if (newPersonName.trim()) {
-            await addPerson(newPersonName);
+            await addPerson(newPersonName, newPersonSalary, newPersonReserve);
             setNewPersonName('');
+            setNewPersonSalary(0);
+            setNewPersonReserve(10);
             setShowAddForm(false);
-        } else {
-            alert("Por favor, insira um nome válido.");
         }
     };
 
-    const handleCancel = () => {
-        setNewPersonName('');
-        setShowAddForm(false);
-    };
-
     if (isLoading || !summary) {
-        return <div className="card animate-pulse">Sincronizando participantes...</div>;
+        return (
+            <div className="card animate-pulse flex items-center justify-center p-20">
+                <div className="text-gray-400">Sincronizando participantes...</div>
+            </div>
+        );
     }
 
-    const totalReserve = summary.totalWithReserve - summary.totalBills;
-
     return (
-        <div className="grid md:grid-cols-2 gap-3.5">
-            <section className="card">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Pessoas</h3>
+        <div className="grid lg:grid-cols-2 gap-6">
+            {/* Seção de Participantes */}
+            <section className="card flex flex-col h-full">
+                <div className="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 className="text-xl font-bold dark:text-white">Participantes</h3>
+                        <p className="text-sm text-gray-500">Gerencie quem divide as contas.</p>
+                    </div>
                     {!showAddForm && (
-                        <button onClick={() => setShowAddForm(true)}>
-                            + Adicionar Pessoa
+                        <button 
+                            onClick={() => setShowAddForm(true)}
+                            className="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl font-medium hover:bg-blue-100 transition-colors"
+                        >
+                            + Adicionar
                         </button>
                     )}
                 </div>
 
                 {showAddForm && (
-                    <div className="bg-[#eef2ff] border-2 border-dashed border-[#c7d2fe] rounded-xl p-4 mb-4">
-                        <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Nova Pessoa</h4>
-                        <div className="flex gap-2 items-end">
-                            <div className="flex-1">
-                                <label className="text-xs text-[#6b7280] block mb-1">Nome</label>
+                    <div className="bg-blue-50/40 border-2 border-dashed border-blue-200 rounded-3xl p-6 mb-6 animate-in slide-in-from-top duration-300">
+                        <h4 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6">Novo Participante</h4>
+                        <div className="space-y-6">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block ml-[1px]">Nome Completo</label>
                                 <input
                                     type="text"
                                     value={newPersonName}
                                     onChange={(e) => setNewPersonName(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && handleAddPerson()}
-                                    placeholder="Digite o nome"
+                                    placeholder="Nome da pessoa"
+                                    className="w-full bg-transparent border-none outline-none p-0 text-xl font-bold text-gray-800 dark:text-white focus:ring-0"
                                     autoFocus
                                 />
                             </div>
-                            <button onClick={handleAddPerson}>Adicionar</button>
-                            <button onClick={handleCancel} className="secondary">Cancelar</button>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block ml-[1px]">Salário</label>
+                                    <div className="flex items-center">
+                                        <span className="text-gray-400 text-sm mr-2 font-medium">R$</span>
+                                        <input
+                                            type="text"
+                                            value={formatBRL(newPersonSalary)}
+                                            onChange={handleSalaryChange}
+                                            className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
+                                            placeholder="0,00"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block ml-[1px]">Reserva (%)</label>
+                                    <div className="flex items-center">
+                                        <span className="text-gray-400 text-sm mr-2 font-medium">%</span>
+                                        <input
+                                            type="number"
+                                            value={newPersonReserve || ''}
+                                            onChange={(e) => setNewPersonReserve(Number(e.target.value))}
+                                            placeholder="10"
+                                            className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 pt-2">
+                                <button onClick={handleAddPerson} className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none">Salvar Participante</button>
+                                <button onClick={() => setShowAddForm(false)} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50">Cancelar</button>
+                            </div>
                         </div>
                     </div>
                 )}
 
-                <div className="space-y-3 mb-4">
+                <div className="space-y-4 flex-1">
                     {people.map((person) => (
                         <PersonCard
                             key={person.id}
                             person={person}
                             onUpdate={updatePerson}
                             onRemove={deletePerson}
-                            showRemove={people.length > 1}
+                            showRemove={true}
                         />
                     ))}
                 </div>
 
-                {people.length > 0 && (
-                    <>
-                        <div className="border-t border-[#e5e7eb] pt-4 mb-4">
-                            <div className="kpi-item">
-                                <div className="text-[#6b7280] text-xs">Salário Total</div>
-                                <div className="font-bold text-lg">{BRL.format(summary.totalSalary)}</div>
-                            </div>
-                        </div>
-
-                        <div className="border-t border-[#e5e7eb] pt-4 mt-4">
-                            <h4 className="text-sm font-semibold mb-3 text-[#6b7280]">Participação nos custos</h4>
-                            <div className="grid grid-cols-2 gap-2">
-                                {summary.peopleData.map((calc) => (
-                                    <div key={calc.person.id} className="kpi-item">
-                                        <div className="text-[#6b7280] text-xs">{calc.person.name}</div>
-                                        <div className="font-bold text-base">{PC.format(calc.percentage / 100)}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </>
-                )}
+                <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+                    <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
+                        <span className="text-sm font-medium text-gray-500">Salário Total Acumulado</span>
+                        <span className="text-xl font-bold text-gray-900 dark:text-white">{BRL.format(summary.totalSalary)}</span>
+                    </div>
+                </div>
             </section>
 
-            <section className="card">
-                <h3 className="text-lg font-semibold mb-4">Reserva</h3>
-                <div className="space-y-2 mb-4">
-                    {summary.peopleData.map((calc) => (
-                        <div key={calc.person.id} className="pill justify-between w-full">
-                            <strong className="text-sm">{calc.person.name}</strong>
-                            <span className="text-sm font-semibold">
-                                {BRL.format(calc.reserveAmount)} ({calc.person.reservePercentage}%)
-                            </span>
-                        </div>
-                    ))}
+            {/* Seção de Rateio e Reserva */}
+            <section className="card flex flex-col h-full">
+                <div className="mb-6">
+                    <h3 className="text-xl font-bold dark:text-white">Cálculo de Proporcionalidade</h3>
+                    <p className="text-sm text-gray-500">Baseado no salário e reserva de cada um.</p>
                 </div>
 
-                {people.length > 0 && (
-                    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
-                        <div className="kpi-item">
-                            <div className="text-[#6b7280] text-xs">Total da Reserva</div>
-                            <div className="font-bold">{BRL.format(totalReserve)}</div>
+                <div className="space-y-6 flex-1">
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Rateio das Contas</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {summary.peopleData.map((data) => (
+                                <div key={data.person.id} className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700/50">
+                                    <div className="text-xs text-gray-500 mb-1">{data.person.name}</div>
+                                    <div className="text-lg font-bold text-gray-900 dark:text-white">{PC.format(data.percentage)}%</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                )}
+
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Valor Reservado</h4>
+                        <div className="space-y-3">
+                            {summary.peopleData.map((data) => (
+                                <div key={data.person.id} className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm">
+                                    <span className="font-medium text-gray-700 dark:text-gray-300">{data.person.name}</span>
+                                    <div className="text-right">
+                                        <div className="font-bold text-gray-900 dark:text-white">{BRL.format(data.reserveAmount)}</div>
+                                        <div className="text-[10px] text-gray-400">{data.person.reservePercentage}% do salário</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
+                    <div className="flex justify-between items-center p-4">
+                        <span className="text-sm font-medium text-gray-500">Total Reservado</span>
+                        <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                            {BRL.format(summary.totalWithReserve - summary.totalBills)}
+                        </span>
+                    </div>
+                </div>
             </section>
         </div>
     );

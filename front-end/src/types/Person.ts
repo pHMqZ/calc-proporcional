@@ -7,12 +7,12 @@ export interface Person {
     reservePercentage: number;
 }
 
-export interface PersonCalculation {
+export interface PersonData {
     person: Person;
     percentage: number;
     reserveAmount: number;
     billsTotal: number;
     totalToPay: number;
     remainingSalary: number;
-    billsDistribuitions: BillDistribution[];
+    billDistributions: BillDistribution[];
 }
