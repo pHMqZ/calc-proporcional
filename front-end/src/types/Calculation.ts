@@ -1,11 +1,11 @@
 import type { BillDistribution } from "./Bill";
-import type { PersonCalculation } from "./Person";
+import type { PersonData } from "./Person";
 
 export interface CalculationSummary {
     totalSalary: number;
     totalBills: number;
     totalWithReserve: number;
     totalRemainder: number;
-    peopleData: PersonCalculation[];
-    billDistribution: BillDistribution[];
+    peopleData: PersonData[];
+    billsDistribution: BillDistribution[];
 }

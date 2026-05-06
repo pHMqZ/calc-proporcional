@@ -17,12 +17,17 @@ export const api = {
         return response.json();
     },
 
-    async addPerson(name: string): Promise<Person> {
+    async addPerson(name: string, salary: number, reservePercentage: number): Promise<Person> {
         const response = await fetch(`${ENDPOINT}/person`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, salary: 0, reservePercentage: 0 })
+            body: JSON.stringify({ 
+                name, 
+                salary: Number(salary) || 0, 
+                reservePercentage: Number(reservePercentage) || 0 
+            })
         });
+        if (!response.ok) throw new Error("Erro ao adicionar pessoa");
         return response.json();
     },
 
@@ -32,7 +37,7 @@ export const api = {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updates)
         });
-
+        if (!response.ok) throw new Error("Erro ao atualizar pessoa");
         return response.json();
     },
 
@@ -52,9 +57,12 @@ export const api = {
         const response = await fetch(`${ENDPOINT}/bill`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ description, totalAmount: 0 })
+            body: JSON.stringify({ 
+                description: description || "Nova Conta", 
+                totalAmount: 0.0 
+            })
         });
-
+        if (!response.ok) throw new Error("Erro ao adicionar conta");
         return response.json();
     },
 
@@ -64,6 +72,7 @@ export const api = {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updates)
         });
+        if (!response.ok) throw new Error("Erro ao atualizar conta");
         return response.json();
     },
 

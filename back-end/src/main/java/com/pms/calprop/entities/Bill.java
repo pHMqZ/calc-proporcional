@@ -25,7 +25,7 @@ public class Bill {
     private String description;
 
     @NotNull
-    @DecimalMin(value = "0.00", inclusive = false, message = "The bill amount must be greater than zero")
+    @DecimalMin(value = "0.00", inclusive = true, message = "The bill amount must be 0 or greater")
     private BigDecimal totalAmount;
 
     public Bill(String description, BigDecimal totalAmount) {
