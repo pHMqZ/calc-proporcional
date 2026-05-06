@@ -115,7 +115,8 @@ public class CalculationServiceTest {
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
         Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
 
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people, percentages);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people,
+                percentages);
 
         assertEquals(8, billDistributions.size());
         assertThat(billDistributions.get(0).amount()).isEqualByComparingTo(new BigDecimal("681.75"));
@@ -127,14 +128,16 @@ public class CalculationServiceTest {
         List<Person> people = List.of(Alceu, Toalha);
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
         Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(Aluguel), people, percentages);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(Aluguel),
+                people, percentages);
 
         when(personMapper.toResponse(any(Person.class))).thenAnswer(invocation -> {
             Person p = invocation.getArgument(0);
             return new PersonResponse(p.getId(), p.getName(), p.getSalary(), p.getReservePercentage());
         });
 
-        PersonData alceuData = calculationService.calculatePersonData(Alceu, percentages.get(Alceu.getId()), billDistributions);
+        PersonData alceuData = calculationService.calculatePersonData(Alceu, percentages.get(Alceu.getId()),
+                billDistributions);
 
         assertEquals(new BigDecimal("250.00"), alceuData.reserveAmount());
         assertThat(alceuData.billsTotal()).isEqualByComparingTo(new BigDecimal("681.75"));
@@ -147,7 +150,8 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
         Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people, percentages);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people,
+                percentages);
 
         when(personMapper.toResponse(any(Person.class))).thenAnswer(invocation -> {
             Person p = invocation.getArgument(0);
@@ -187,19 +191,22 @@ public class CalculationServiceTest {
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
         Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
 
-        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(), people, percentages);
+        List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(), people,
+                percentages);
         assertEquals(0, billDistributions.size());
     }
 
     @Test
     @DisplayName("Should successfully calculate the total bills for each person")
     void testCalculatePersonBillsTotal() {
-        List<BillDistribution> billsDistribuition = List.of(
-                new BillDistribution(1L, "Aluguel", 1L, new BigDecimal("50.00"), new BigDecimal("10.00")),
-                new BillDistribution(2L, "Internet", 1L, new BigDecimal("150.00"), new BigDecimal("60.00")),
-                new BillDistribution(1L, "Aluguel", 2L, new BigDecimal("100.00"), new BigDecimal("20.00")));
+        List<BillDistribution> billDistributions = List.of(
+                new BillDistribution(1L, "Aluguel", Alceu.getId(), new BigDecimal("50.00"), new BigDecimal("10.00")),
+                new BillDistribution(2L, "Internet", Alceu.getId(), new BigDecimal("150.00"), new BigDecimal("60.00")),
+                new BillDistribution(1L, "Aluguel", Toalha.getId(), new BigDecimal("100.00"), new BigDecimal("20.00")));
+        BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billDistributions);
+        BigDecimal toalhaTotal = calculationService.calculatePersonBillsTotal(Toalha, billDistributions);
 
-        BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billsDistribuition);
-        assertEquals(new BigDecimal("200.00"), alceuTotal);
+        assertThat(alceuTotal).isEqualByComparingTo(new BigDecimal("200.00"));
+        assertThat(toalhaTotal).isEqualByComparingTo(new BigDecimal("100.00"));
     }
 }

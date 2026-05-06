@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pms.calprop.dto.PersonRequest;
 import com.pms.calprop.dto.PersonResponse;
 import com.pms.calprop.entities.Person;
-import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.mappers.PersonMapper;
 import com.pms.calprop.services.PersonService;
 

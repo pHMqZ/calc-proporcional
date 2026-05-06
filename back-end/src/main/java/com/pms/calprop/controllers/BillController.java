@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pms.calprop.dto.BillRequest;
 import com.pms.calprop.dto.BillResponse;
 import com.pms.calprop.entities.Bill;
-import com.pms.calprop.exceptions.ResourceNotFoundException;
 import com.pms.calprop.mappers.BillMapper;
 import com.pms.calprop.services.BillService;
 
