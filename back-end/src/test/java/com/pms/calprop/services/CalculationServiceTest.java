@@ -199,12 +199,14 @@ public class CalculationServiceTest {
     @Test
     @DisplayName("Should successfully calculate the total bills for each person")
     void testCalculatePersonBillsTotal() {
-        List<BillDistribution> billsDistribuition = List.of(
-                new BillDistribution(1L, 1L, new BigDecimal("50.00"), new BigDecimal("10.00")),
-                new BillDistribution(2L, 1L, new BigDecimal("150.00"), new BigDecimal("60.00")),
-                new BillDistribution(1L, 2L, new BigDecimal("100.00"), new BigDecimal("20.00")));
+        List<BillDistribution> billDistributions = List.of(
+                new BillDistribution(1L, "Aluguel", Alceu.getId(), new BigDecimal("50.00"), new BigDecimal("10.00")),
+                new BillDistribution(2L, "Internet", Alceu.getId(), new BigDecimal("150.00"), new BigDecimal("60.00")),
+                new BillDistribution(1L, "Aluguel", Toalha.getId(), new BigDecimal("100.00"), new BigDecimal("20.00")));
+        BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billDistributions);
+        BigDecimal toalhaTotal = calculationService.calculatePersonBillsTotal(Toalha, billDistributions);
 
-        BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billsDistribuition);
-        assertEquals(new BigDecimal("200.00"), alceuTotal);
+        assertThat(alceuTotal).isEqualByComparingTo(new BigDecimal("200.00"));
+        assertThat(toalhaTotal).isEqualByComparingTo(new BigDecimal("100.00"));
     }
 }

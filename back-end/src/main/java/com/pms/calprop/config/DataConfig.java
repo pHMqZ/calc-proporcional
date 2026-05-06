@@ -24,6 +24,7 @@ public class DataConfig implements CommandLineRunner {
     private final BillRepository billRepository;
 
     @Override
+    @SuppressWarnings("null")
     public void run(String... args) throws Exception {
         Person alceu = new Person("Alceu", new BigDecimal("2000.00"), 10.0);
         Person toalha = new Person("Toalha", new BigDecimal("2000.00"), 10.0);
