@@ -1,7 +1,7 @@
-import { BillsTable } from "./component/bills/billTable";
-import { PeopleList } from "./component/people/peopleList";
-import { Summary } from "./component/summary";
-import { ThemeToggle } from "./component/ThemeToggle";
+import { BillsTable } from "./components/bills/billTable";
+import { PeopleList } from "./components/people/peopleList";
+import { Summary } from "./components/summary";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import React from "react";
