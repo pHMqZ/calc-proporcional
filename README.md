@@ -2,10 +2,10 @@
 
 > Divida contas de forma justa e proporcional à renda de cada participante.
 
-![React](https://img.shields.io/badge/React-18.2-blue?logo=react)
+![React](https://img.shields.io/badge/React-19.0-blue?logo=react)
 ![Java](https://img.shields.io/badge/Java-21-blue?logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-blue?logo=spring)
-
+![Vitest](https://img.shields.io/badge/Vitest-Testing-green?logo=vitest)
 
 ## Sobre o Projeto
 
@@ -17,131 +17,96 @@ Aplicação fullstack para calcular e dividir despesas compartilhadas de forma p
 - **Múltiplos Participantes**: Adicione quantas pessoas forem necessárias
 - **Reserva Financeira**: Configure percentual de reserva individual para cada participante
 - **Gestão de Contas**: Adicione, edite e remova contas compartilhadas
-- **Cálculo Automático**: Atualização em tempo real de todos os valores
-- **Exportação PNG**: Gere imagem do resumo para compartilhar
-- **Tema Escuro**: Interface adaptável para modo claro e escuro
-- **Persistência Local**: Dados salvos automaticamente no navegador
+- **Cálculo Automático**: Toda a lógica de rateio é processada via backend
+- **Exportação PNG**: Gere imagem do resumo para compartilhamento
+- **Tema Escuro**: Interface adaptável (Modo Dark/Light)
+- **Persistência em Banco**: Dados armazenados via API REST em banco de dados H2
 
-## Motivação
+---
 
-Este projeto foi desenvolvido como:
-- Base de estudos para aprofundamento em **React + TypeScript**
-- Base de estudos para aprofundamento em **Java + Spring Boot**
-- Desenvolvimento guiado por testes (TDD) em Java
-- Prática de arquitetura escalável e modular
-- Solução real para um problema pessoal de divisão de despesas
-
-## Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 
 ### Frontend
-- **React 18.2** - Biblioteca UI
-- **Context API** - Gerenciamento de estado global
-- **Tailwind CSS 3.4** - Framework CSS utility-first
+- **React 19** com **TypeScript**
+- **Vitest + Happy-DOM**: Suíte de testes unitários e integração
+- **Tailwind CSS**: Design premium com suporte a Dark Mode
+- **Context API**: Gerenciamento de estado global e sincronização com API
 
 ### Backend
-- **Java 17** - Linguagem de programação
-- **Spring Boot 3.2** - Framework web
-- **Spring Data JPA & H2** - Camada de acesso e Banco de dados relacional
-- **JUnit 5** - Framework de testes
+- **Java 21** & **Spring Boot 3.5.3**
+- **Spring Data JPA & H2**: Persistência de dados
+- **JUnit 5 & Mockito**: Testes de validação e lógica de negócio
+- **MapStruct**: Mapeamento de DTOs e entidades
 
+---
 
-## Como Executar
+## 🚀 Como Executar
 
 ### Pré-requisitos
-- Node.js 18+ instalado
-- Java 21+ instalado
-- Maven 3.6+ instalado
-- npm ou yarn
+- Node.js 20+
+- Java 21+
+- Maven 3.6+
 
-### Instalação
+### Instalação e Execução
 
 ```bash
 # Clone o repositório
-git clone
+git clone https://github.com/seu-usuario/calc-contas.git
 
-#Passo 1: Frontend
-# Entre na pasta
-cd front-end
-
-# Instale as dependências
-npm install
-
-# Execute o projeto
-npm run dev
-
-#Passo 2: Backend
-#Entre na pasta
+# Passo 1: Backend (API)
 cd back-end
-
-# Execute os Testes Unitários (TDD)
-./mvnw test
-
-# Inicie o Servidor da API
 ./mvnw spring-boot:run
+
+# Passo 2: Frontend (Web)
+cd ../front-end
+npm install
+npm run dev
 ```
 
 Acesse: `http://localhost:5173`
 
-## 📚 Documentação da API (Swagger)
+---
 
-A API do Calc-Contas é autodocumentada ativamente pela especificação **Springdoc OpenAPI 3**.
-Para consultar Mocks, testar Endpoints interativamente e ver as proteções de Modelos (DTOs) sem necessitar de Postman:
+## 🧪 Suíte de Testes e Qualidade
 
-1. Suba a aplicação Spring Boot localmente na porta 8080.
-2. Acesse seu navegador na rota oficial: `http://localhost:8080/swagger-ui/index.html`
+### Executando Testes
+Tanto o frontend quanto o backend possuem testes automatizados que garantem a integridade das regras de negócio.
 
-### Endpoints RESTful 
-O Domínio do serviço é protegido por regras estritas de CORS, Null-Validation e Partial Updates:
-- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/person`**: Gestão dos participantes, incluindo salário base e reserva.
-- **`GET`, `POST`, `PATCH`, `DELETE` -> `/api/v1/bill`**: Gestão das contas universais do mês.
-- **`GET` -> `/api/v1/calculation`**: Endpoint motor da aplicação. Retorna o resumo completo, distribuições proporcionais e cálculos de reserva em uma única chamada.
+```bash
+# Testes do Backend (Maven)
+cd back-end
+./mvnw test
 
-### Padronização de Erros
-Todas as exceções da API são capturadas globalmente e retornam um JSON estruturado para facilitar o tratamento no Frontend:
-
-```json
-{
-  "timestamp": "2024-05-05T10:00:00Z",
-  "status": 404,
-  "error": "Resource Not Found",
-  "message": "Mensagem detalhada do erro",
-  "path": "/api/v1/endpoint"
-}
+# Testes do Frontend (Vitest)
+cd front-end
+npm test
 ```
 
-## Estrutura do Projeto
+### CI/CD (GitHub Actions)
+O projeto conta com uma esteira de integração contínua que valida automaticamente todos os **Pull Requests** para as branches `uat` e `main`. O merge só é permitido se todos os testes passarem.
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```text
 front-end/
 ├── src/
-│   ├── components/         # Componentes React
-│   │   ├── bills/          # Componentes de contas
-│   │   ├── people/         # Componentes de pessoas
-│   │   ├── ImageGenerator  # Gerador de imagem PNG
-│   │   ├── Summary         # Resumo final
-│   │   └── ThemeToggle     # Toggle de tema
-│   ├── context/            # Context API (estado global)
-│   │   ├── AppContext      # Estado da aplicação
-│   │   └── ThemeContext    # Estado do tema
-│   ├── services/           # Lógica de negócio
-│   │   └── calculation     # Serviço de cálculos
-│   ├── types/              # Definições TypeScript
-│   │   ├── Bill            # Tipos de contas
-│   │   └── Person          # Tipos de pessoas
-│   ├── App.tsx             # Componente raiz
-│   ├── main.tsx            # Entry point
-│   └── index.css           # Estilos globais
+│   ├── components/    # Componentes UI (Bills, People, Summary, etc)
+│   ├── context/       # Providers (App e Theme)
+│   ├── services/      # Integração com API (Axios)
+│   ├── tests/         # Testes Unitários e de Integração (Vitest)
+│   └── types/         # Interfaces TypeScript
 
 back-end/
 ├── src/
-│   ├── main/java/com/pms/calprop/
-│   │   ├── controllers/    # Controladores REST
-│   │   ├── dto/            # Data Transfer Objects
-│   │   ├── entities/       # Entidades JPA
-│   │   ├── exceptions/     # Exceções Customizadas da API
-│   │   ├── repositories/   # Repositórios JPA
-│   │   ├── services/       # Serviços de negócio
-│   │   └── CalpropApplication.java # Aplicação Spring Boot
-│   └── test/java/...       # Suíte de Testes Unitários (Mockito/JUnit)
-└── pom.xml                 # Gerenciador de Dependências Maven
+│   ├── main/java/...  # Camadas Controller, Service, DTO, Repository
+│   └── test/java/...  # Testes de Validação e Unidade (JUnit)
 ```
+
+---
+
+## 📚 Documentação da API (Swagger)
+
+Com o backend rodando, acesse a documentação interativa:
+`http://localhost:8080/swagger-ui/index.html`
