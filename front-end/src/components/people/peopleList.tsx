@@ -6,7 +6,7 @@ export const PeopleList: React.FC = () => {
     const { people, addPerson, updatePerson, deletePerson, summary, isLoading } = useAppContext();
     const [newPersonName, setNewPersonName] = useState("");
     const [newPersonSalary, setNewPersonSalary] = useState<number>(0);
-    const [newPersonReserve, setNewPersonReserve] = useState<number>(10);
+    const [newPersonReserve, setNewPersonReserve] = useState<number>(0);
     const [showAddForm, setShowAddForm] = useState(false);
 
     const BRL = new Intl.NumberFormat("pt-BR", {
@@ -37,7 +37,7 @@ export const PeopleList: React.FC = () => {
             await addPerson(newPersonName, newPersonSalary, newPersonReserve);
             setNewPersonName('');
             setNewPersonSalary(0);
-            setNewPersonReserve(10);
+            setNewPersonReserve(0);
             setShowAddForm(false);
         }
     };
@@ -56,13 +56,14 @@ export const PeopleList: React.FC = () => {
             <section className="card flex flex-col h-full">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h3 className="text-xl font-bold dark:text-white">Participantes</h3>
+                        <h3 className="text-xl font-bold dark:text-white" data-testid="people-list-title">Participantes</h3>
                         <p className="text-sm text-gray-500">Gerencie quem divide as contas.</p>
                     </div>
                     {!showAddForm && (
-                        <button 
+                        <button
                             onClick={() => setShowAddForm(true)}
                             className="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl font-medium hover:bg-blue-100 transition-colors"
+                            data-testid="btn-add-person-open"
                         >
                             + Adicionar
                         </button>
@@ -71,7 +72,7 @@ export const PeopleList: React.FC = () => {
 
                 {showAddForm && (
                     <div className="bg-blue-50/40 border-2 border-dashed border-blue-200 rounded-3xl p-6 mb-6 animate-in slide-in-from-top duration-300">
-                        <h4 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6">Novo Participante</h4>
+                        <h4 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6" data-testid="new-participant-title">Novo Participante</h4>
                         <div className="space-y-6">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block ml-[1px]">Nome Completo</label>
@@ -82,6 +83,7 @@ export const PeopleList: React.FC = () => {
                                     placeholder="Nome da pessoa"
                                     className="w-full bg-transparent border-none outline-none p-0 text-xl font-bold text-gray-800 dark:text-white focus:ring-0"
                                     autoFocus
+                                    data-testid="input-person-name"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-6">
@@ -95,6 +97,7 @@ export const PeopleList: React.FC = () => {
                                             onChange={handleSalaryChange}
                                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
                                             placeholder="0,00"
+                                            data-testid="input-person-salary"
                                         />
                                     </div>
                                 </div>
@@ -108,13 +111,14 @@ export const PeopleList: React.FC = () => {
                                             onChange={(e) => setNewPersonReserve(Number(e.target.value))}
                                             placeholder="10"
                                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
+                                            data-testid="input-person-reserve"
                                         />
                                     </div>
                                 </div>
                             </div>
                             <div className="flex gap-2 pt-2">
-                                <button onClick={handleAddPerson} className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none">Salvar Participante</button>
-                                <button onClick={() => setShowAddForm(false)} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50">Cancelar</button>
+                                <button onClick={handleAddPerson} className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none" data-testid="btn-save-person">Salvar Participante</button>
+                                <button onClick={() => setShowAddForm(false)} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50" data-testid="btn-cancel-person">Cancelar</button>
                             </div>
                         </div>
                     </div>
@@ -135,7 +139,7 @@ export const PeopleList: React.FC = () => {
                 <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                     <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl">
                         <span className="text-sm font-medium text-gray-500">Salário Total Acumulado</span>
-                        <span className="text-xl font-bold text-gray-900 dark:text-white">{BRL.format(summary.totalSalary)}</span>
+                        <span className="text-xl font-bold text-gray-900 dark:text-white" data-testid="total-salary-value">{BRL.format(summary.totalSalary)}</span>
                     </div>
                 </div>
             </section>
@@ -179,7 +183,7 @@ export const PeopleList: React.FC = () => {
                 <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                     <div className="flex justify-between items-center p-4">
                         <span className="text-sm font-medium text-gray-500">Total Reservado</span>
-                        <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                        <span className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="total-reserve-value">
                             {BRL.format(summary.totalWithReserve - summary.totalBills)}
                         </span>
                     </div>
