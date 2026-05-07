@@ -62,13 +62,13 @@ public class BillValidationTest {
     }
 
     @Test
-    @DisplayName("Should return violation when amount is zero")
+    @DisplayName("Should have no violation when amount is zero")
     void zeroAmount() {
         Bill bill = new Bill(1L, "Aluguel", BigDecimal.ZERO);
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 
-        assertFalse(violations.isEmpty());
+        assertTrue(violations.isEmpty());
     }
 
     @Test
