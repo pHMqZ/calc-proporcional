@@ -50,6 +50,7 @@ export const BillsTable: React.FC = () => {
                         onClick={handleAddBill} 
                         disabled={isAdding}
                         className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        data-testid="btn-add-bill"
                     > 
                         {isAdding ? "Adicionando..." : "+ Adicionar conta"}
                     </button>
@@ -94,7 +95,7 @@ export const BillsTable: React.FC = () => {
                                 <td className="p-4 text-right font-bold dark:text-white">
                                     TOTAL
                                 </td>
-                                <td className="p-4 text-right font-bold text-blue-600 dark:text-blue-400">
+                                <td className="p-4 text-right font-bold text-blue-600 dark:text-blue-400" data-testid="total-bills-value">
                                     {BRL.format(totalBills)}
                                 </td>
                                 {peopleData.map((data) => (
