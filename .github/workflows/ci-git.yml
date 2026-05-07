@@ -35,7 +35,7 @@ jobs:
       - name: Run Maven Tests
         run: ./mvnw test
         env:
-          SPRING_PROFILES_ACTIVE: ${{ github.base_ref }}
+          SPRING_PROFILES_ACTIVE: ${{ github.base_ref || github.ref_name }}
 
   # Job 2: Testes do Frontend (React + Vitest)
   frontend-tests:
