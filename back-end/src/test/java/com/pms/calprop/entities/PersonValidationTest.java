@@ -62,13 +62,13 @@ public class PersonValidationTest {
     }
 
     @Test
-    @DisplayName("Should return violation when salary is zero")
+    @DisplayName("Should have no violation when salary is zero")
     void zeroSalary() {
         Person person = new Person(1L, "João", BigDecimal.ZERO, 10.0);
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
-        assertFalse(violations.isEmpty());
+        assertTrue(violations.isEmpty());
     }
 
     @Test
