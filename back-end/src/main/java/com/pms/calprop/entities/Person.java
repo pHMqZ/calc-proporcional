@@ -27,7 +27,7 @@ public class Person {
     private String name;
 
     @NotNull
-    @DecimalMin(value = "0.00", inclusive = false, message = "The salary must be greater than zero")
+    @DecimalMin(value = "0.00", inclusive = true, message = "The salary must be 0 or greater")
     private BigDecimal salary;
 
     @Min(0)
