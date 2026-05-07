@@ -1,10 +1,11 @@
-name: Fullstack CI (UAT)
+name: Fullstack CI (UAT & Main)
 
-# Dispara a esteira sempre que um PR for aberto para "uat" envolvendo backend ou frontend
+# Dispara a esteira para PRs com alvo em uat OU main
 on:
   pull_request:
     branches:
       - uat
+      - main
     paths:
       - 'back-end/**'
       - 'front-end/**'
