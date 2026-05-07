@@ -15,7 +15,7 @@ import com.pms.calprop.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@Profile("dev")
+@Profile({"dev", "uat"})
 @RequiredArgsConstructor
 public class DataConfig implements CommandLineRunner {
 
