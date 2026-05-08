@@ -12,7 +12,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f6f7fb] dark:bg-[#111827] p-5 transition-colors duration-300">
       <div className="max-w-[1400px] mx-auto relative">
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex justify-between items-center mb-12">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold m-0 mb-1 dark:text-white">
               Calculadora de Contas Proporcionais
@@ -22,7 +22,7 @@ const AppContent: React.FC = () => {
         </div>
 
         {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-xl animate-bounce">
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 dark:bg-red-900/30 dark:text-red-400 p-4 mb-6 rounded-r-xl">
             <p className="font-bold">Atenção</p>
             <p>{error}</p>
           </div>
