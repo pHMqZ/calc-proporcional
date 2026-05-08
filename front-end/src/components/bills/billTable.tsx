@@ -58,13 +58,13 @@ export const BillsTable: React.FC = () => {
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-800">
-                <table className="w-full text-left border-collapse">
+                <table className="text-left border-collapse">
                     <thead className="bg-gray-50 dark:bg-gray-800/50">
                         <tr>
-                            <th className="p-4 font-semibold text-gray-600 dark:text-gray-300">Conta</th>
-                            <th className="p-4 text-right font-semibold text-gray-600 dark:text-gray-300">Valor Total</th>
+                            <th className="p-4 font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap min-w-[150px]">Conta</th>
+                            <th className="p-4 text-right font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap min-w-[150px]">Valor Total</th>
                             {peopleData.map((data) => (
-                                <th key={data.person.id} className="p-4 text-right font-semibold text-gray-600 dark:text-gray-300">
+                                <th key={data.person.id} className="p-4 text-right font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap ">
                                     {data.person.name} ({PC.format(data.percentage)}%)
                                 </th>
                             ))}

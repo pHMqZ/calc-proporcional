@@ -8,7 +8,7 @@ describe('Validate person card component', () => {
     const mockOnRemove = vi.fn();
 
     it('Should render person data correctly', () => {
-        render(<PersonCard person={person} onUpdate={mockOnUpdate} 
+        render(<PersonCard person={person} onUpdate={mockOnUpdate}
             onRemove={mockOnRemove} />)
 
         expect(screen.getByDisplayValue('Alceu')).toBeInTheDocument();
@@ -16,7 +16,7 @@ describe('Validate person card component', () => {
         expect(screen.getByDisplayValue('10')).toBeInTheDocument();
     });
 
-    it('Should call onUpdate with correctly parsed salary (Masking logic)', () => {
+    it('Should call onUpdate with correctly parsed salary', () => {
         render(<PersonCard person={person} onUpdate={mockOnUpdate}
             onRemove={mockOnRemove} />)
 
@@ -24,7 +24,8 @@ describe('Validate person card component', () => {
 
         // Se o usuário digita "3000", a máscara remove não-dígitos e divide por 100
         fireEvent.change(salaryInput, { target: { value: '3000' } });
-        
+        fireEvent.blur(salaryInput);
+
         // Esperamos que o backend receba 30.00
         expect(mockOnUpdate).toHaveBeenCalledWith(1, expect.objectContaining({ salary: 30 }));
     });
