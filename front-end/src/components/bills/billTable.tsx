@@ -38,20 +38,20 @@ export const BillsTable: React.FC = () => {
         }
     };
 
-    return(
+    return (
         <section className="card">
             <div className="flex justify-between items-center mb-5 flex-wrap gap-2">
                 <div>
-                    <h3 className="text-xl font-bold dark:text-white">Contas Compartilhadas</h3>
+                    <h3 className="text-xl font-bold dark:text-white" data-testid="bills-list-title">Contas Compartilhadas</h3>
                     <p className="text-sm text-gray-500">Rateio automático baseado na participação de cada um.</p>
                 </div>
                 <div className="flex gap-2 flex-wrap">
-                    <button 
-                        onClick={handleAddBill} 
+                    <button
+                        onClick={handleAddBill}
                         disabled={isAdding}
                         className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
                         data-testid="btn-add-bill"
-                    > 
+                    >
                         {isAdding ? "Adicionando..." : "+ Adicionar conta"}
                     </button>
                 </div>

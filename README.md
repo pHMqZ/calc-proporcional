@@ -5,6 +5,7 @@
 ![React](https://img.shields.io/badge/React-19.0-blue?logo=react)
 ![Java](https://img.shields.io/badge/Java-21-blue?logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.3-blue?logo=spring)
+![Playwright](https://img.shields.io/badge/Playwright-E2E-green?logo=playwright)
 ![Vitest](https://img.shields.io/badge/Vitest-Testing-green?logo=vitest)
 
 ## Sobre o Projeto
@@ -29,6 +30,8 @@ Aplicação fullstack para calcular e dividir despesas compartilhadas de forma p
 ### Frontend
 - **React 19** com **TypeScript**
 - **Vitest + Happy-DOM**: Suíte de testes unitários e integração
+- **Playwright**: Testes End-to-End (E2E) com padrão Page Object Model (POM)
+- **pure-gen**: Geração de massa de dados randômica para testes
 - **Tailwind CSS**: Design premium com suporte a Dark Mode
 - **Context API**: Gerenciamento de estado global e sincronização com API
 
@@ -69,17 +72,29 @@ Acesse: `http://localhost:5173`
 
 ## 🧪 Suíte de Testes e Qualidade
 
-### Executando Testes
-Tanto o frontend quanto o backend possuem testes automatizados que garantem a integridade das regras de negócio.
+O projeto possui uma pirâmide de testes completa, garantindo a integridade desde a unidade até o fluxo do usuário final.
 
+### 1. Testes de Unidade e Integração
 ```bash
-# Testes do Backend (Maven)
+# Backend (JUnit)
 cd back-end
 ./mvnw test
 
-# Testes do Frontend (Vitest)
+# Frontend (Vitest)
 cd front-end
 npm test
+```
+
+### 2. Testes End-to-End (E2E)
+Os testes E2E validam fluxos completos (ex: adicionar pessoa -> adicionar conta -> validar resumo) simulando o comportamento real do usuário no navegador.
+
+```bash
+# Executar todos os testes E2E (Front + Back devem estar rodando)
+cd front-end
+npm run test:e2e
+
+# Abrir interface visual do Playwright
+npx playwright test --ui
 ```
 
 ### CI/CD (GitHub Actions)
@@ -93,6 +108,10 @@ O projeto conta com uma esteira de integração contínua que valida automaticam
 front-end/
 ├── src/
 │   ├── components/    # Componentes UI (Bills, People, Summary, etc)
+│   ├── e2e-tests/     # Testes End-to-End (Playwright)
+│   │   ├── pages/     # Page Object Model (POM)
+│   │   ├── steps/     # Especificações de testes (.spec.ts)
+│   │   └── utils/     # Geradores de massa (pure-gen)
 │   ├── context/       # Providers (App e Theme)
 │   ├── services/      # Integração com API (Axios)
 │   ├── tests/         # Testes Unitários e de Integração (Vitest)

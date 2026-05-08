@@ -43,7 +43,7 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                             onChange={(e) => onUpdate(person.id, { name: e.target.value })}
                             className="text-xl font-bold bg-transparent border-none outline-none p-0 w-full text-gray-800 dark:text-white focus:ring-0"
                             placeholder="Nome"
-                            data-testid={`input-card-list-person-name`}
+                            data-testid={`input-card-list-person-name-${person.name}`}
                         />
                     </div>
                     {showRemove && (
@@ -70,7 +70,7 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                             onChange={handleSalaryChange}
                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
                             placeholder="0,00"
-                            data-testid={`input-card-person-salary`}
+                            data-testid={`input-card-person-salary-${person.name}`}
                         />
                     </div>
                 </div>
@@ -86,7 +86,7 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                             onChange={(e) => onUpdate(person.id, { reservePercentage: Number(e.target.value) })}
                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
                             placeholder="0"
-                            data-testid={`input-card-person-reserve`}
+                            data-testid={`input-card-person-reserve-${person.name}`}
                         />
                     </div>
                 </div>

@@ -6,6 +6,7 @@ declare module 'pure-gen' {
         };
         random: {
             number(options?: { min?: number; max?: number }): number;
+            arrayElement<T>(arr: T[]): T;
         };
     }
     const pure: Pure;

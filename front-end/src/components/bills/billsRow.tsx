@@ -42,7 +42,7 @@ export const BillRow: React.FC<BillRowProps> = ({
                     onChange={(e) => onUpdate(bill.id, { description: e.target.value })}
                     className="bg-transparent border-none focus:ring-0 w-full font-medium text-gray-700 dark:text-gray-200 p-0"
                     placeholder="Ex: Aluguel"
-                    data-testid={`input-bill-description`} />
+                    data-testid={`input-bill-description-${bill.description}`} />
             </td>
             <td className="p-4">
                 <div className="flex items-center justify-end">
@@ -52,7 +52,7 @@ export const BillRow: React.FC<BillRowProps> = ({
                         value={formatBRLValue(bill.totalAmount)}
                         onChange={handleAmountChange}
                         className="bg-transparent border-none text-right focus:ring-0 w-24 font-bold text-gray-900 dark:text-white p-0"
-                        data-testid={`input-bill-amount`} />
+                        data-testid={`input-bill-amount-${bill.description}`} />
                 </div>
             </td>
             {peopleData.map((data) => {
@@ -69,7 +69,7 @@ export const BillRow: React.FC<BillRowProps> = ({
                     className="text-gray-300 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all p-2 rounded-lg opacity-0 group-hover:opacity-100"
                     onClick={() => onRemove(bill.id)}
                     title="Remover conta"
-                    data-testid={`btn-remove-bill`}
+                    data-testid={`btn-remove-bill-${bill.description}`}
                 >
                     ✕
                 </button>
