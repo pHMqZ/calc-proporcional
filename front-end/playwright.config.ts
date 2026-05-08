@@ -1,4 +1,4 @@
-import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test';
+import { devices, PlaywrightTestConfig } from '@playwright/test';
 import 'dotenv/config';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
     }
   },
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */

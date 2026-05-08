@@ -12,4 +12,13 @@ export class Util {
 
         return data
     }
+
+    async generateBill() {
+        const data = {
+            description: pure.random.arrayElement(['Água', 'Mercado', 'Transporte', 'Gatos', 'Remédios', 'Outros']),
+            totalAmount: pure.random.number({ min: 100, max: 5000 })
+        }
+
+        return data;
+    }
 }

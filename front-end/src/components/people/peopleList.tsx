@@ -153,12 +153,12 @@ export const PeopleList: React.FC = () => {
 
                 <div className="space-y-6 flex-1">
                     <div>
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Rateio das Contas</h4>
+                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" data-testid="distribution-bills-title">Rateio das Contas</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {summary.peopleData.map((data) => (
                                 <div key={data.person.id} className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700/50">
-                                    <div className="text-xs text-gray-500 mb-1">{data.person.name}</div>
-                                    <div className="text-lg font-bold text-gray-900 dark:text-white">{PC.format(data.percentage)}%</div>
+                                    <div className="text-xs text-gray-500 mb-1" data-testid={`distribution-bill-person-name-${data.person.name}`}>{data.person.name}</div>
+                                    <div className="text-lg font-bold text-gray-900 dark:text-white" data-testid={`distribution-bill-percentage-${data.person.name}`}> {PC.format(data.percentage)}%</div>
                                 </div>
                             ))}
                         </div>
