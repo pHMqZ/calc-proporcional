@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { type Person } from '../../types/Person';
 
 
@@ -16,19 +16,26 @@ export const PersonCard: React.FC<PersonCardProps> = ({
     showRemove = true
 }) => {
 
-    // Função para formatar o valor numérico para string com máscara BRL
-    const formatBRL = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(value);
-    };
-
-    // Função para transformar a string com máscara de volta em número
-    const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, '');
-        const numericValue = Number(value) / 100;
-        onUpdate(person.id, { salary: numericValue });
+    // 1. Estados Locais
+    const [localName, setLocalName] = React.useState(person.name);
+    const [localSalary, setLocalSalary] = React.useState(person.salary * 100);
+    const [localReserve, setLocalReserve] = React.useState(person.reservePercentage);
+    // 2. Sincronizar se os dados mudarem externamente
+    React.useEffect(() => {
+        setLocalName(person.name);
+        setLocalSalary(person.salary * 100);
+        setLocalReserve(person.reservePercentage);
+    }, [person.name, person.salary, person.reservePercentage]);
+    // 3. Função de Salvamento Única
+    const handleSave = () => {
+        const numericSalary = localSalary / 100;
+        if (localName !== person.name || numericSalary !== person.salary || localReserve !== person.reservePercentage) {
+            onUpdate(person.id, {
+                name: localName,
+                salary: numericSalary,
+                reservePercentage: localReserve
+            });
+        }
     };
 
     return (
@@ -39,9 +46,10 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                     <div className="flex-1">
                         <input
                             type="text"
-                            value={person.name}
-                            onChange={(e) => onUpdate(person.id, { name: e.target.value })}
-                            className="text-xl font-bold bg-transparent border-none outline-none p-0 w-full text-gray-800 dark:text-white focus:ring-0"
+                            value={localName}
+                            onChange={(e) => setLocalName(e.target.value)}
+                            onBlur={handleSave}
+                            className="text-xl font-bold bg-transparent border-none outline-none px-2 py-1 w-full text-gray-800 dark:text-white focus:ring-0"
                             placeholder="Nome"
                             data-testid={`input-card-list-person-name-${person.name}`}
                         />
@@ -66,9 +74,10 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                         <span className="text-gray-400 text-sm mr-2 font-medium">R$</span>
                         <input
                             type="text"
-                            value={formatBRL(person.salary)}
-                            onChange={handleSalaryChange}
-                            className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
+                            value={new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(localSalary / 100)}
+                            onChange={(e) => setLocalSalary(Number(e.target.value.replace(/\D/g, '')))}
+                            onBlur={handleSave}
+                            className="bg-transparent border-none px-1 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
                             placeholder="0,00"
                             data-testid={`input-card-person-salary-${person.name}`}
                         />
@@ -82,9 +91,10 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                             type="number"
                             min="0"
                             max="100"
-                            value={person.reservePercentage || ''}
-                            onChange={(e) => onUpdate(person.id, { reservePercentage: Number(e.target.value) })}
-                            className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
+                            value={localReserve || ''}
+                            onChange={(e) => setLocalReserve(Number(e.target.value))}
+                            onBlur={handleSave}
+                            className="bg-transparent border-none px-1 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
                             placeholder="0"
                             data-testid={`input-card-person-reserve-${person.name}`}
                         />
