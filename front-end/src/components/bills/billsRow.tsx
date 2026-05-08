@@ -41,7 +41,8 @@ export const BillRow: React.FC<BillRowProps> = ({
                     value={bill.description}
                     onChange={(e) => onUpdate(bill.id, { description: e.target.value })}
                     className="bg-transparent border-none focus:ring-0 w-full font-medium text-gray-700 dark:text-gray-200 p-0"
-                    placeholder="Ex: Aluguel" />
+                    placeholder="Ex: Aluguel"
+                    data-testid={`input-bill-description-${bill.description}`} />
             </td>
             <td className="p-4">
                 <div className="flex items-center justify-end">
@@ -50,12 +51,13 @@ export const BillRow: React.FC<BillRowProps> = ({
                         type="text"
                         value={formatBRLValue(bill.totalAmount)}
                         onChange={handleAmountChange}
-                        className="bg-transparent border-none text-right focus:ring-0 w-24 font-bold text-gray-900 dark:text-white p-0" />
+                        className="bg-transparent border-none text-right focus:ring-0 w-24 font-bold text-gray-900 dark:text-white p-0"
+                        data-testid={`input-bill-amount-${bill.description}`} />
                 </div>
             </td>
             {peopleData.map((data) => {
                 const distribution = data.billDistributions.find(d => d.billId === bill.id);
-                
+
                 return (
                     <td key={data.person.id} className="p-4 text-right font-medium text-gray-900 dark:text-white">
                         {distribution ? BRL.format(distribution.amount) : BRL.format(0)}
@@ -63,10 +65,11 @@ export const BillRow: React.FC<BillRowProps> = ({
                 );
             })}
             <td className="p-4 text-right">
-                <button 
-                    className="text-gray-300 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all p-2 rounded-lg opacity-0 group-hover:opacity-100" 
+                <button
+                    className="text-gray-300 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all p-2 rounded-lg opacity-0 group-hover:opacity-100"
                     onClick={() => onRemove(bill.id)}
                     title="Remover conta"
+                    data-testid={`btn-remove-bill-${bill.description}`}
                 >
                     ✕
                 </button>

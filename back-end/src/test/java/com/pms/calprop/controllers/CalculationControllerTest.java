@@ -24,7 +24,6 @@ import com.pms.calprop.services.CalculationService;
 import com.pms.calprop.services.PersonService;
 
 @WebMvcTest(CalculationController.class)
-@SuppressWarnings("null")
 public class CalculationControllerTest {
 
     @Autowired
