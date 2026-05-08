@@ -52,7 +52,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
 
   useEffect(() => {
     if (summary) {
-        generateImage();
+      generateImage();
     }
   }, [summary]);
 
@@ -63,8 +63,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     const numPeople = peopleData.length;
     const minWidth = 950;
     const colWidth = 150;
-    const W = Math.max(minWidth, 480 +(numPeople * colWidth));
-  
+    const W = Math.max(minWidth, 480 + (numPeople * colWidth));
+
     const pad = 40;
     const line = 32;
 
@@ -81,15 +81,15 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
 
     const wConta = Math.min(450, W - pad * 2 - 160 - (numPeople * colWidth));
 
-    let linesNeeded = 12; 
+    let linesNeeded = 12;
     bills.forEach((bill) => {
       const wrapped = wrapText(ctx, bill.description || '(sem nome)', wConta, fRow);
       linesNeeded += Math.max(1, wrapped.length);
     });
-    linesNeeded += 18 + peopleData.length * 4; 
+    linesNeeded += 18 + peopleData.length * 4;
 
     const H = pad * 2 + linesNeeded * line + 60;
-    const dpr = 2; 
+    const dpr = 2;
 
     canvas.width = W * dpr;
     canvas.height = H * dpr;
@@ -98,7 +98,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     // Background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
-    
+
     // Draw Border
     ctx.strokeStyle = '#f3f4f6';
     ctx.lineWidth = 15;
@@ -110,9 +110,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
       ctx.fillText(txt, x, y);
     };
     const section = (txt: string, x: number, y: number) => {
-        ctx.fillStyle = '#111827';
-        ctx.font = fSection;
-        ctx.fillText(txt.toUpperCase(), x, y);
+      ctx.fillStyle = '#111827';
+      ctx.font = fSection;
+      ctx.fillText(txt.toUpperCase(), x, y);
     };
     const label = (txt: string, x: number, y: number) => {
       ctx.fillStyle = '#6b7280';
@@ -125,9 +125,9 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
       ctx.fillText(txt, x, y);
     };
     const boldText = (txt: string, x: number, y: number, color = '#111827') => {
-        ctx.fillStyle = color;
-        ctx.font = fBold;
-        ctx.fillText(txt, x, y);
+      ctx.fillStyle = color;
+      ctx.font = fBold;
+      ctx.fillText(txt, x, y);
     };
     const head = (txt: string, x: number, y: number) => {
       ctx.fillStyle = '#9ca3af';
@@ -166,11 +166,11 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     head('VALOR TOTAL', xTot, y);
 
     peopleData.forEach((data, idx) => {
-        const xPerson = xTot + 140 + (idx * colWidth);
-        head(data.person.name.toUpperCase(), xPerson, y);
+      const xPerson = xTot + 140 + (idx * colWidth);
+      head(data.person.name.toUpperCase(), xPerson, y);
     });
     y += line * 0.5;
-    
+
     ctx.strokeStyle = '#f3f4f6';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -186,14 +186,14 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
         rowT(ln, xConta, y + idx * line);
       });
       rowT(BRL.format(bill.totalAmount), xTot, y);
-      
+
       peopleData.forEach((data, idx) => {
         const distribution = data.billDistributions.find(d => d.billId === bill.id);
         const amount = distribution ? distribution.amount : 0;
         const xPerson = xTot + 140 + (idx * colWidth);
         rowT(BRL.format(amount), xPerson, y);
       });
-      
+
       y += Math.max(1, contaLines.length) * line;
     });
 
@@ -210,31 +210,31 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     section('VALORES DE RESERVA', pad + 10, y);
     y += line;
     peopleData.forEach((d) => {
-        const nameW = ctx.measureText(d.person.name + ': ').width;
-        boldText(d.person.name + ': ', pad + 10, y);
-        text(BRL.format(d.reserveAmount) + ` (${d.person.reservePercentage}% do salário)`, pad + 10 + nameW, y);
-        y += line;
+      const nameW = ctx.measureText(d.person.name + ': ').width;
+      boldText(d.person.name + ': ', pad + 10, y);
+      text(BRL.format(d.reserveAmount) + ` (${d.person.reservePercentage}% do salário)`, pad + 10 + nameW, y);
+      y += line;
     });
 
     y += line * 1.2;
     section('RESUMO FINAL (A PAGAR)', pad + 10, y);
     y += line;
     peopleData.forEach((d) => {
-        const nameW = ctx.measureText(d.person.name + ': ').width;
-        boldText(d.person.name + ': ', pad + 10, y);
-        text(BRL.format(d.totalToPay), pad + 10 + nameW, y);
-        y += line;
+      const nameW = ctx.measureText(d.person.name + ': ').width;
+      boldText(d.person.name + ': ', pad + 10, y);
+      text(BRL.format(d.totalToPay), pad + 10 + nameW, y);
+      y += line;
     });
 
     y += line * 1.2;
     section('SALDO RESTANTE DO SALÁRIO', pad + 10, y);
     y += line;
     peopleData.forEach((d) => {
-        const nameW = ctx.measureText(d.person.name + ': ').width;
-        boldText(d.person.name + ': ', pad + 10, y);
-        const color = d.remainingSalary < 0 ? '#dc2626' : '#16a34a';
-        boldText(BRL.format(d.remainingSalary), pad + 10 + nameW, y, color);
-        y += line;
+      const nameW = ctx.measureText(d.person.name + ': ').width;
+      boldText(d.person.name + ': ', pad + 10, y);
+      const color = d.remainingSalary < 0 ? '#dc2626' : '#16a34a';
+      boldText(BRL.format(d.remainingSalary), pad + 10 + nameW, y, color);
+      y += line;
     });
 
     const url = canvas.toDataURL('image/png');
@@ -270,31 +270,41 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-3xl max-w-[1000px] w-full p-6 shadow-2xl animate-in fade-in zoom-in duration-300"
+        className="bg-white dark:bg-gray-800 rounded-3xl max-w-[1000px] w-full p-5 md:p-8 shadow-2xl overflow-y-auto max-h-[95vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
-            <h3 className="text-xl font-bold m-0 text-gray-900">Pré-visualização do Relatório</h3>
-            <p className="text-sm text-gray-500">Imagem gerada para compartilhamento</p>
+            <h3 className="text-xl font-bold m-0 text-gray-900 dark:text-white">Relatório</h3>
+            <p className="text-sm text-gray-500">Imagem para compartilhamento</p>
           </div>
-          <div className="flex gap-3">
-            <button onClick={copiarImagem} className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
-                Copiar Imagem
+
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            <button
+              onClick={copiarImagem}
+              className="flex-1 md:flex-none px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-bold shadow-sm"
+            >
+              Copiar
             </button>
-            <button className="secondary px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors" onClick={baixarImagem}>
+            <button
+              className="flex-1 md:flex-none px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 transition-colors text-sm font-bold"
+              onClick={baixarImagem}
+            >
               Baixar PNG
             </button>
-            <button className="secondary px-4 py-2 text-gray-400 hover:text-gray-600" onClick={onClose}>
+            <button
+              className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm font-bold transition-colors"
+              onClick={onClose}
+            >
               Fechar
             </button>
           </div>
         </div>
-        <div className="flex justify-center items-start p-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl overflow-auto max-h-[65vh]">
+        <div className="flex justify-center items-start p-2 md:p-4 bg-gray-50 dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl overflow-auto">
           {imageUrl ? (
-            <img src={imageUrl} alt="Resumo em imagem" className="max-w-full h-auto shadow-lg rounded-sm origin-top" />
+            <img src={imageUrl} alt="Relatório" className="max-w-full h-auto shadow-lg rounded-sm" />
           ) : (
-            <div className="p-20 text-gray-400">Gerando relatório...</div>
+            <div className="p-20 text-gray-400">Gerando...</div>
           )}
         </div>
       </div>
