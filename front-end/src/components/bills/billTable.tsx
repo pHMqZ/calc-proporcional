@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppContext } from "../../context/AppContext";
 import { BillRow } from "./billsRow";
+import { BillCard } from "./billCard";
 
 
 export const BillsTable: React.FC = () => {
@@ -57,8 +58,8 @@ export const BillsTable: React.FC = () => {
                 </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-800">
-                <table className="text-left border-collapse">
+            <div className="hidden md:block overflow-x-auto rounded-xl border border-gray-100 dark:border-gray-800">
+                <table className="text-left border-collapse w-full">
                     <thead className="bg-gray-50 dark:bg-gray-800/50">
                         <tr>
                             <th className="p-4 font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap min-w-[150px]">Conta</th>
@@ -108,6 +109,45 @@ export const BillsTable: React.FC = () => {
                         </tfoot>
                     )}
                 </table>
+            </div>
+
+            <div className="block md:hidden space-y-4">
+                {bills.map((bill) => (
+                    <BillCard
+                        key={bill.id}
+                        bill={bill}
+                        peopleData={peopleData}
+                        onUpdate={updateBill}
+                        onRemove={deleteBill}
+                    />
+                ))}
+                {bills.length === 0 && (
+                    <div className="p-10 text-center text-gray-400 bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                        Nenhuma conta cadastrada. Clique em "+ Adicionar conta" para começar.
+                    </div>
+                )}
+                {/* Resumo Geral Acumulado para Mobile */}
+                {bills.length > 0 && (
+                    <div className="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-700/60 space-y-3">
+                        <div className="flex justify-between items-center font-bold text-sm">
+                            <span className="text-gray-500">VALOR TOTAL DE CONTAS</span>
+                            <span className="text-blue-600 dark:text-blue-400">
+                                {BRL.format(totalBills)}
+                            </span>
+                        </div>
+                        <div className="border-t border-gray-200 dark:border-gray-700 pt-2 space-y-2 text-xs">
+                            <span className="font-bold text-gray-400 uppercase tracking-widest text-[9px] block">Rateio Total</span>
+                            {peopleData.map((data) => (
+                                <div key={data.person.id} className="flex justify-between items-center">
+                                    <span className="text-gray-600 dark:text-gray-300">{data.person.name}</span>
+                                    <span className="font-bold text-gray-900 dark:text-white">
+                                        {BRL.format(data.billsTotal)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );
