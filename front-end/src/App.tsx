@@ -31,7 +31,7 @@ const AppContent: React.FC = () => {
         </div>
 
         {visibleError && (
-          <div 
+          <div
             className="fixed top-6 right-6 z-50 max-w-sm w-full bg-white dark:bg-gray-800 border-l-4 border-red-500 rounded-r-2xl shadow-xl shadow-gray-200/50 dark:shadow-none p-4 flex items-start gap-3 animate-in slide-in-from-top-4 duration-300"
             role="alert"
           >
@@ -39,9 +39,9 @@ const AppContent: React.FC = () => {
               <p className="font-bold text-sm text-red-600 dark:text-red-400">Atenção</p>
               <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">{visibleError}</p>
             </div>
-            <button 
+            <button
               onClick={() => setVisibleError(null)}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1"
+              className="flex-shrink-0 flex items-center justify-center font-bold text-sm bg-[#4f46e5] text-white hover:bg-[#4338ca] transition-all cursor-pointer rounded-xl h-11 px-3"
               aria-label="Fechar notificação"
             >
               ✕
