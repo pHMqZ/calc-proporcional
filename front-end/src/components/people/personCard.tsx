@@ -1,7 +1,6 @@
 import React from "react";
 import { type Person } from '../../types/Person';
 
-
 interface PersonCardProps {
     person: Person;
     onUpdate: (id: number, updates: Partial<Person>) => Promise<void>;
@@ -16,17 +15,47 @@ export const PersonCard: React.FC<PersonCardProps> = ({
     showRemove = true
 }) => {
 
-    // 1. Estados Locais
     const [localName, setLocalName] = React.useState(person.name);
     const [localSalary, setLocalSalary] = React.useState(person.salary * 100);
     const [localReserve, setLocalReserve] = React.useState(person.reservePercentage);
-    // 2. Sincronizar se os dados mudarem externamente
+
+    const [displaySalary, setDisplaySalary] = React.useState(
+        new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(person.salary)
+    );
+
     React.useEffect(() => {
         setLocalName(person.name);
         setLocalSalary(person.salary * 100);
         setLocalReserve(person.reservePercentage);
+        setDisplaySalary(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(person.salary)
+        );
     }, [person.name, person.salary, person.reservePercentage]);
-    // 3. Função de Salvamento Única
+
+    const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplaySalary("");
+            setLocalSalary(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplaySalary("");
+            setLocalSalary(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        setLocalSalary(numericValue);
+
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericValue / 100)
+        );
+    };
+
     const handleSave = () => {
         const numericSalary = localSalary / 100;
         if (localName !== person.name || numericSalary !== person.salary || localReserve !== person.reservePercentage) {
@@ -36,12 +65,20 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                 reservePercentage: localReserve
             });
         }
+
+        setDisplaySalary(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericSalary)
+        );
+    };
+
+    const setDisplayAmount = (value: string) => {
+        setDisplaySalary(value);
     };
 
     return (
         <div className="group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300" data-testid={`person-card-list-${person.name}`}>
             <div className="mb-5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1 ml-[1px]">Nome</label>
+                <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1 ml-[1px]">Nome</label>
                 <div className="flex justify-between items-center gap-6">
                     <div className="flex-1">
                         <input
@@ -69,13 +106,13 @@ export const PersonCard: React.FC<PersonCardProps> = ({
 
             <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Salário Mensal</label>
+                    <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Salário Mensal</label>
                     <div className="relative flex items-center">
-                        <span className="text-gray-400 text-sm mr-2 font-medium">R$</span>
+                        <span className="text-gray-400 dark:text-gray-500 text-sm mr-2 font-medium">R$</span>
                         <input
                             type="text"
-                            value={new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(localSalary / 100)}
-                            onChange={(e) => setLocalSalary(Number(e.target.value.replace(/\D/g, '')))}
+                            value={displaySalary}
+                            onChange={handleSalaryChange}
                             onBlur={handleSave}
                             className="bg-transparent border-none px-1 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
                             placeholder="0,00"
@@ -84,9 +121,9 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                     </div>
                 </div>
                 <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Reserva Desejada</label>
+                    <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Reserva Desejada</label>
                     <div className="relative flex items-center">
-                        <span className="text-gray-400 text-sm mr-2 font-medium">%</span>
+                        <span className="text-gray-400 dark:text-gray-500 text-sm mr-2 font-medium">%</span>
                         <input
                             type="number"
                             min="0"

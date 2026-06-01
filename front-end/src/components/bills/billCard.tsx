@@ -23,10 +23,42 @@ export const BillCard: React.FC<BillCardProps> = ({
     const [localDescription, setLocalDescription] = React.useState(bill.description);
     const [localAmount, setLocalAmount] = React.useState(bill.totalAmount * 100);
 
+    const [displayAmount, setDisplayAmount] = React.useState(
+        new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bill.totalAmount)
+    );
+
     React.useEffect(() => {
         setLocalDescription(bill.description);
         setLocalAmount(bill.totalAmount * 100);
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bill.totalAmount)
+        );
     }, [bill.description, bill.totalAmount]);
+
+
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplayAmount("");
+            setLocalAmount(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplayAmount("");
+            setLocalAmount(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        setLocalAmount(numericValue);
+
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericValue / 100)
+        );
+    };
 
     const handleSave = () => {
         const numericAmount = localAmount / 100;
@@ -36,6 +68,11 @@ export const BillCard: React.FC<BillCardProps> = ({
                 totalAmount: numericAmount
             });
         }
+
+
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericAmount)
+        );
     };
 
     return (
@@ -60,7 +97,6 @@ export const BillCard: React.FC<BillCardProps> = ({
                     />
                 </div>
 
-
                 <div className="flex-1 space-y-1">
                     <label className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block ml-[2px]">
                         Valor Total
@@ -69,8 +105,8 @@ export const BillCard: React.FC<BillCardProps> = ({
                         <span className="text-gray-400 dark:text-gray-500 mr-1 font-medium text-sm">R$</span>
                         <input
                             type="text"
-                            value={new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(localAmount / 100)}
-                            onChange={(e) => setLocalAmount(Number(e.target.value.replace(/\D/g, '')))}
+                            value={displayAmount}
+                            onChange={handleAmountChange}
                             onBlur={handleSave}
                             className="bg-transparent border-none focus:ring-0 w-full font-bold text-gray-900 dark:text-white p-0 text-left"
                             placeholder="0,00"
