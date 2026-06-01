@@ -56,7 +56,7 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                     </div>
                     {showRemove && (
                         <button
-                            className="flex-shrink-0 flex items-center justify-center font-bold text-sm bg-[#4f46e5] text-white hover:bg-[#4338ca] transition-all cursor-pointer rounded-xl h-11 px-3 mt-4"
+                            className="flex-shrink-0 flex items-center justify-center font-bold text-sm bg-[#4f46e5] text-white hover:bg-[#4338ca] transition-all cursor-pointer rounded-xl h-11 px-3 opacity-100 md:opacity-0 md:group-hover:opacity-100"
                             onClick={() => onRemove(person.id)}
                             title="Remover participante"
                             data-testid={`btn-remove-person-${person.name}`}
