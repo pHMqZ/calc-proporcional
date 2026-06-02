@@ -93,19 +93,22 @@ export class ProportionalCalculator {
 
         await personCard.scrollIntoViewIfNeeded();
 
-        await this.getInputPersonSalary(name).fill((salary * 100).toString());
+        const salaryInput = this.getInputPersonSalary(name);
+        await salaryInput.fill((salary * 100).toString());
+        await salaryInput.blur();
     }
 
     async addNewBillToTheDistribution(description: string, amount: number) {
+        await this.addNewBillButton.scrollIntoViewIfNeeded();
         await this.addNewBillButton.click();
 
-        const lastDesc = this.page.locator('[data-testid^="input-bill-description"]').last();
-        const lastAmount = this.page.locator('[data-testid^="input-bill-amount"]').last();
+        const lastDesc = this.page.locator('[data-testid^="input-bill-description"]:visible').last();
+        const lastAmount = this.page.locator('[data-testid^="input-bill-amount"]:visible').last();
 
         await lastDesc.fill(description);
         await lastAmount.fill((amount * 100).toString());
 
-        await lastAmount.press('Enter');
+        await lastAmount.blur();
     }
 
     async getTotalBillsAmountValue(): Promise<number> {

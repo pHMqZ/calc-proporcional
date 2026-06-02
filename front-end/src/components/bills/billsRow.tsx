@@ -2,7 +2,6 @@ import React from "react";
 import { type Bill } from "../../types/Bill";
 import { type PersonData } from "../../types/Person";
 
-
 interface BillRowProps {
     bill: Bill;
     peopleData: PersonData[];
@@ -18,19 +17,63 @@ export const BillRow: React.FC<BillRowProps> = ({
 }) => {
     const BRL = new Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' });
 
-    // Função para formatar o valor numérico para string com máscara BRL
-    const formatBRLValue = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(value);
+    const [localDescription, setLocalDescription] = React.useState(bill.description);
+    const [localAmount, setLocalAmount] = React.useState(bill.totalAmount * 100);
+
+
+    const [displayAmount, setDisplayAmount] = React.useState(
+        new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bill.totalAmount)
+    );
+
+
+    React.useEffect(() => {
+        setLocalDescription(bill.description);
+        setLocalAmount(bill.totalAmount * 100);
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(bill.totalAmount)
+        );
+    }, [bill.description, bill.totalAmount]);
+
+
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+
+        if (rawValue === "") {
+            setDisplayAmount("");
+            setLocalAmount(0);
+            return;
+        }
+
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplayAmount("");
+            setLocalAmount(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        setLocalAmount(numericValue);
+
+
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericValue / 100)
+        );
     };
 
-    // Função para transformar a string com máscara de volta em número
-    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, '');
-        const numericValue = Number(value) / 100;
-        onUpdate(bill.id, { totalAmount: numericValue });
+    const handleSave = () => {
+        const numericAmount = localAmount / 100;
+        if (localDescription !== bill.description || numericAmount !== bill.totalAmount) {
+            onUpdate(bill.id, {
+                description: localDescription,
+                totalAmount: numericAmount
+            });
+        }
+
+        setDisplayAmount(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericAmount)
+        );
     };
 
     return (
@@ -38,21 +81,25 @@ export const BillRow: React.FC<BillRowProps> = ({
             <td className="p-4">
                 <input
                     type="text"
-                    value={bill.description}
-                    onChange={(e) => onUpdate(bill.id, { description: e.target.value })}
-                    className="bg-transparent border-none focus:ring-0 w-full font-medium text-gray-700 dark:text-gray-200 p-0"
+                    value={localDescription}
+                    onChange={(e) => setLocalDescription(e.target.value)}
+                    onBlur={handleSave}
+                    className="bg-transparent border-none focus:ring-0 w-full font-medium text-gray-700 dark:text-gray-200 px-2 py-1"
                     placeholder="Ex: Aluguel"
-                    data-testid={`input-bill-description-${bill.description}`} />
+                    data-testid={`input-bill-description-${bill.description}`}
+                />
             </td>
             <td className="p-4">
                 <div className="flex items-center justify-end">
                     <span className="text-gray-400 text-xs mr-2 font-medium">R$</span>
                     <input
                         type="text"
-                        value={formatBRLValue(bill.totalAmount)}
+                        value={displayAmount}
                         onChange={handleAmountChange}
-                        className="bg-transparent border-none text-right focus:ring-0 w-24 font-bold text-gray-900 dark:text-white p-0"
-                        data-testid={`input-bill-amount-${bill.description}`} />
+                        onBlur={handleSave}
+                        className="bg-transparent border-none text-right focus:ring-0 w-full font-bold text-gray-900 dark:text-white px-2 py-1"
+                        data-testid={`input-bill-amount-${bill.description}`}
+                    />
                 </div>
             </td>
             {peopleData.map((data) => {
@@ -76,4 +123,4 @@ export const BillRow: React.FC<BillRowProps> = ({
             </td>
         </tr>
     );
-}
+};
