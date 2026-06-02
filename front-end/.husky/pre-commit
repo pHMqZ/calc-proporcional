@@ -1,51 +1,40 @@
 #!/bin/sh
 
-echo "=================================================="
-echo "    Executando Validações de Pre-commit (Husky)   "
-echo "=================================================="
+echo "Running Pre-commit Checks..."
 
-# Captura os arquivos que estão no stage (staged)
+# Verifica arquivos alterados
 STAGED_FILES=$(git diff --cached --name-only)
 
 if [ -z "$STAGED_FILES" ]; then
-    echo "Nenhum arquivo em stage. Commit liberado."
+    echo "No files in the stage. Commit enabled."
     exit 0
 fi
 
-# --------------------------------------------------
-# 1. Validação do Front-end (Vitest)
-# --------------------------------------------------
+#Verifica alterações no Front
 CHANGES_FRONT=$(echo "$STAGED_FILES" | grep '^front-end/')
 
 if [ -n "$CHANGES_FRONT" ]; then
-    echo "-> Alterações detectadas no Front-end. Executando testes unitários..."
+    echo "Running frontend unit tests"
     cd front-end
-    
-    # Executa os testes usando o Vitest de forma não-interativa
-    CI=true npm test -- --run
+    npm test -- --run
     FRONT_STATUS=$?
-    
     cd ..
-    
+
     if [ $FRONT_STATUS -ne 0 ]; then
-        echo "❌ ERRO: Testes unitários do Front-end falharam! Corrija os testes antes de fazer o commit."
+        echo "Frontend unit tests failed. Please fix them committ"
         exit 1
     fi
-    echo "✅ Testes unitários do Front-end passaram com sucesso!"
+    echo "Frontend tests passed successfully"
 else
-    echo "-> Nenhuma alteração detectada no Front-end."
+    echo "No frontend changes"
 fi
 
-# --------------------------------------------------
-# 2. Validação do Back-end (Maven/JUnit)
-# --------------------------------------------------
+#Verifica alterações de backend
 CHANGES_BACKEND=$(echo "$STAGED_FILES" | grep '^back-end/')
 
 if [ -n "$CHANGES_BACKEND" ]; then
-    echo "-> Alterações detectadas no Back-end. Executando testes unitários..."
+    echo "Running backend unit tests"
     cd back-end
-    
-    # Determina o comando apropriado (Windows vs Unix)
     if [ -f "./mvnw.cmd" ] && [ -n "$COMSPEC" ]; then
         ./mvnw.cmd test
     else
@@ -53,19 +42,16 @@ if [ -n "$CHANGES_BACKEND" ]; then
         ./mvnw test
     fi
     BACK_STATUS=$?
-    
     cd ..
-    
+
     if [ $BACK_STATUS -ne 0 ]; then
-        echo "❌ ERRO: Testes unitários do Back-end falharam! Corrija os testes antes de fazer o commit."
+        echo "Backend unit tests failed. Please fix them committ"
         exit 1
     fi
-    echo "✅ Testes unitários do Back-end passaram com sucesso!"
+    echo "Backend tests passed successfully"
 else
-    echo "-> Nenhuma alteração detectada no Back-end."
+    echo "No backend changes"
 fi
 
-echo "=================================================="
-echo "🎉 Todas as validações passaram! Commit permitido."
-echo "=================================================="
+echo "Commit passed"
 exit 0
