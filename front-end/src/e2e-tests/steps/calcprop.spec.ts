@@ -11,6 +11,7 @@ let billData: any;
 const util = new Util()
 
 test.describe('Proportional calculator page', () => {
+
   test.beforeEach(async ({ page }) => {
     commonPage = new Common(page);
     proportionalCalculatorPage = new ProportionalCalculator(page)
