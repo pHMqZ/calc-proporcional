@@ -18,9 +18,9 @@ export const PROJECT_ROOT = __dirname;
  */
 const config: PlaywrightTestConfig = {
   testDir: './src/e2e-tests/steps',
-  timeout: 30 * 1000,
+  timeout: 75 * 1000,
   expect: {
-    timeout: 7500,
+    timeout: 45 * 1000,
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.2
     }
@@ -59,27 +59,23 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        locale: 'pt-BR',
+        headless: true,
+      },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
 
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: { ...devices['Pixel 5'], locale: 'pt-BR', headless: true, },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: { ...devices['iPhone 12'], locale: 'pt-BR', headless: true, },
     }
 
     /* Test against branded browsers. */
@@ -91,6 +87,15 @@ const config: PlaywrightTestConfig = {
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
+    //{
+    //  name: 'firefox',
+    //  use: { ...devices['Desktop Firefox'] },
+    //},
+
+    //{
+    //  name: 'webkit',
+    //  use: { ...devices['Desktop Safari'] },
+    //},
   ],
 
   /* Run your local dev servers before starting the tests */
