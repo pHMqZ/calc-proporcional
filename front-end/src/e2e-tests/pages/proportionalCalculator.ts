@@ -18,6 +18,8 @@ export class ProportionalCalculator {
 
     readonly distributionBillsTitle: Locator;
 
+    readonly generateImageButton: Locator;
+
     constructor(page: Page) {
         this.page = page;
         this.financialSummaryTitle = page.getByTestId('summary-title');
@@ -36,6 +38,7 @@ export class ProportionalCalculator {
 
         this.distributionBillsTitle = page.getByTestId('distribution-bills-title');
 
+        this.generateImageButton = page.getByTestId('generate-image-button');
     }
 
     getParticipantCard(name: string): Locator {
