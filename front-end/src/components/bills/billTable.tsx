@@ -85,7 +85,7 @@ export const BillsTable: React.FC = () => {
                         {bills.length === 0 && (
                             <tr>
                                 <td colSpan={3 + peopleData.length} className="p-10 text-center text-gray-400">
-                                    Nenhuma conta cadastrada. Clique em "Adicionar conta" para começar.
+                                    Nenhuma conta cadastrada. Clique em "+ Adicionar conta" para começar.
                                 </td>
                             </tr>
                         )}
