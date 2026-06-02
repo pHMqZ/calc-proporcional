@@ -45,5 +45,9 @@ test.describe('Empty states in proportional calculator page', () => {
 
         await expect(page.getByTestId('summary-person-section')).toHaveCount(0);
         await expect(page.getByTestId('summary-remaining-section')).toHaveCount(0);
+
+        await expect(page.getByText('Nenhum participante cadastrado. Clique em "+ Adicionar" para começar.')).toBeVisible();
+        await expect(page.getByText('Cadastre participantes para visualizar o cálculo de proporcionalidade.')).toBeVisible();
+        await expect(page.getByText('Nenhuma conta cadastrada. Clique em "+ Adicionar conta" para começar.').first()).toBeVisible();
     });
 })
