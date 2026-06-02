@@ -75,7 +75,7 @@ test.describe('Proportional calculator page', () => {
 
   test('Should update summary total when a new bill is added', async () => {
     const newBillAmount = 1500;
-    const description = "Móveis";
+    const description = "Moveis";
 
     billData = { description, totalAmount: newBillAmount }
 
