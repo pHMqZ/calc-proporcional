@@ -67,6 +67,10 @@ jobs:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     defaults:
       run:
         working-directory: ./front-end
@@ -99,10 +103,25 @@ jobs:
         env:
           CI: true
 
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        if: always()
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         if: always()
         with:
-          name: playwright-report
           path: front-end/playwright-report/
-          retention-days: 30
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        if: always()
+
+      - name: Publish Playwright Report Link
+        if: always() && steps.deployment.outputs.page_url != ''
+        run: |
+          echo "### 🎭 Relatório dos Testes E2E (Playwright)" >> $GITHUB_STEP_SUMMARY
+          echo "O relatório interativo foi hospedado com sucesso e está disponível online!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **[Acessar Relatório Playwright](${{ steps.deployment.outputs.page_url }})**" >> $GITHUB_STEP_SUMMARY
