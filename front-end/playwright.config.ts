@@ -18,9 +18,9 @@ export const PROJECT_ROOT = __dirname;
  */
 const config: PlaywrightTestConfig = {
   testDir: './src/e2e-tests/steps',
-  timeout: 60 * 1000,
+  timeout: 30 * 1000,
   expect: {
-    timeout: 10000,
+    timeout: 7500,
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.2
     }
@@ -36,14 +36,14 @@ const config: PlaywrightTestConfig = {
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [
-        ['list'],
-        ['github'],
-        ['html']
-      ]
+      ['list'],
+      ['github'],
+      ['html']
+    ]
     : [
-        ['list'],
-        ['html']
-      ],
+      ['list'],
+      ['html']
+    ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
