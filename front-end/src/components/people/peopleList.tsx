@@ -7,6 +7,8 @@ export const PeopleList: React.FC = () => {
     const [newPersonName, setNewPersonName] = useState("");
     const [newPersonSalary, setNewPersonSalary] = useState<number>(0);
     const [newPersonReserve, setNewPersonReserve] = useState<number>(0);
+
+    const [displaySalary, setDisplaySalary] = useState("0,00");
     const [showAddForm, setShowAddForm] = useState(false);
 
     const BRL = new Intl.NumberFormat("pt-BR", {
@@ -27,9 +29,26 @@ export const PeopleList: React.FC = () => {
     };
 
     const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, '');
-        const numericValue = Number(value) / 100;
-        setNewPersonSalary(numericValue);
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplaySalary("");
+            setNewPersonSalary(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplaySalary("");
+            setNewPersonSalary(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        setNewPersonSalary(numericValue / 100);
+        setDisplaySalary(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericValue / 100)
+        );
     };
 
     const handleAddPerson = async () => {
@@ -38,8 +57,17 @@ export const PeopleList: React.FC = () => {
             setNewPersonName('');
             setNewPersonSalary(0);
             setNewPersonReserve(0);
+            setDisplaySalary("0,00");
             setShowAddForm(false);
         }
+    };
+
+    const handleCancelAdd = () => {
+        setNewPersonName('');
+        setNewPersonSalary(0);
+        setNewPersonReserve(0);
+        setDisplaySalary("0,00");
+        setShowAddForm(false);
     };
 
     if (isLoading || !summary) {
@@ -52,7 +80,6 @@ export const PeopleList: React.FC = () => {
 
     return (
         <div className="grid lg:grid-cols-2 gap-6">
-            {/* Seção de Participantes */}
             <section className="card flex flex-col h-full">
                 <div className="flex justify-between items-center mb-6">
                     <div>
@@ -93,7 +120,7 @@ export const PeopleList: React.FC = () => {
                                         <span className="text-gray-400 text-sm mr-2 font-medium">R$</span>
                                         <input
                                             type="text"
-                                            value={formatBRL(newPersonSalary)}
+                                            value={displaySalary}
                                             onChange={handleSalaryChange}
                                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
                                             placeholder="0,00"
@@ -118,7 +145,7 @@ export const PeopleList: React.FC = () => {
                             </div>
                             <div className="flex gap-2 pt-2">
                                 <button onClick={handleAddPerson} className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none" data-testid="btn-save-person">Salvar Participante</button>
-                                <button onClick={() => setShowAddForm(false)} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50" data-testid="btn-cancel-person">Cancelar</button>
+                                <button onClick={handleCancelAdd} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50" data-testid="btn-cancel-person">Cancelar</button>
                             </div>
                         </div>
                     </div>
@@ -144,7 +171,6 @@ export const PeopleList: React.FC = () => {
                 </div>
             </section>
 
-            {/* Seção de Rateio e Reserva */}
             <section className="card flex flex-col h-full">
                 <div className="mb-6">
                     <h3 className="text-xl font-bold dark:text-white">Cálculo de Proporcionalidade</h3>
