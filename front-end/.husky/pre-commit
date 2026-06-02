@@ -1,0 +1,51 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running Pre-commit Checks..."
+
+# Verifica arquivos alterados
+STAGED_FILES=$(git diff --cached --name-only)
+
+#Verifica alterações no Front
+CHANGES_FRONT=$(echo "$STAGED_FILES" | grep '^front-end/')
+
+if [ -n "$CHANGES_FRONT" ]; then
+    echo "Running frontend unit tests"
+    cd front-end
+    npm test -- --run
+    FRONT_STATUS=$?
+    cd ..
+
+    if [ $FRONT_STATUS -ne 0 ]; then
+        echo "Frontend unit tests failed. Please fix them committ"
+        exit 1
+    fi
+    echo "Frontend tests passed successfully"
+else
+    echo "No frontend changes"
+fi
+
+#Verifica alterações de backend
+CHANGES_BACKEND=$(echo "$STAGED_FILES" | grep '^back-end/')
+
+if [ -n "$CHANGES_BACKEND" ]; then
+    if [ -f "./mvnw.cmd "] && [ -n "$COMSPEC" ]; then
+        ./mvnw.cmd test
+    else
+        chmod +x ./mvnw
+        ./mvnw test
+    fi
+    BACK_STATUS=$?
+    cd ..
+
+    if [ $BACK_STATUS -ne 0]; then
+        echo "Backend unit tests failed. Please fix them committ"
+        exit 1
+    fi
+    echo "Frontend tests passed successfully"
+else
+    echo "No frontend changes"
+fi
+
+echo "Commit passed"
+exit 0
