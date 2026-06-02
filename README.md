@@ -75,6 +75,7 @@ Acesse: `http://localhost:5173`
 O projeto possui uma pirâmide de testes completa, garantindo a integridade desde a unidade até o fluxo do usuário final.
 
 ### 1. Testes de Unidade e Integração
+Testes unitarios validam se a implementação e alterações realizadas estão funcionando como esperado.
 ```bash
 # Backend (JUnit)
 cd back-end
@@ -97,8 +98,27 @@ npm run test:e2e
 npx playwright test --ui
 ```
 
+### 3. Validações de alterações pre-commits (Husky & Git Hooks)
+Para que os testes unitarios sejam validados automaticamente antes de enviar as alterações para o repositório remoto, foi adicionado via **Husky** uma validação pré-commit.
+Se os testes falharem o commit não é realizado, aguardando do ajuste nos testes unitarios.
+
+* **Modificações em `front-end/`:** Dispara a suíte de testes unitários do React via `Vitest`.
+* **Modificações em `back-end/`:** Dispara a suíte de testes do Spring Boot via `JUnit 5` e `Maven`.
+* **Modificações em ambas:** Executa sequencialmente ambas as suítes de teste de forma automatizada.
+* **Nenhuma alteração em código:** O commit é liberado de imediato, garantindo agilidade.
+
+#### Como ativar o uso do Husky
+Como a pasta `.git` reside na raiz do repositório, mas as configurações do Husky estão centralizadas no subdiretório do frontend, é necessário registrar o caminho dos hooks executando o seguinte comando uma única vez:
+
+```bash
+# Execute este comando na raiz do projeto:
+git config core.hooksPath front-end/.husky
+```
+
+Depois de ativado, o Husky interceptará os commits e rodará as validações locais de forma transparente!
+
 ### CI/CD (GitHub Actions)
-O projeto conta com uma esteira de integração contínua que valida automaticamente todos os **Pull Requests** para as branches `uat` e `main`. O merge só é permitido se todos os testes passarem.
+O projeto conta com uma esteira de integração contínua que valida automaticamente todos os **Pull Requests** para as branches `uat` e `main`. O merge só é permitido se todos os testes E2E passarem.
 
 ---
 
@@ -129,3 +149,11 @@ back-end/
 
 Com o backend rodando, acesse a documentação interativa:
 `http://localhost:8080/swagger-ui/index.html`
+
+---
+
+## 📄 Status e Licença
+
+Este projeto está sob a [Licença MIT](LICENSE).
+
+O software encontra-se em **desenvolvimento ativo** e o código está totalmente aberto. Sinta-se à vontade para clonar, estudar e sugerir melhorias no projeto, desde que seja mantido o aviso original de direitos autorais.
