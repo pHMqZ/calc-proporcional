@@ -9,6 +9,7 @@ export const PeopleList: React.FC = () => {
     const [newPersonReserve, setNewPersonReserve] = useState<number>(0);
 
     const [displaySalary, setDisplaySalary] = useState("0,00");
+    const [displayReserve, setDisplayReserve] = useState("0,00");
     const [showAddForm, setShowAddForm] = useState(false);
 
     const BRL = new Intl.NumberFormat("pt-BR", {
@@ -51,6 +52,33 @@ export const PeopleList: React.FC = () => {
         );
     };
 
+    const handleReserveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplayReserve("");
+            setNewPersonReserve(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplayReserve("");
+            setNewPersonReserve(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        const percentageValue = numericValue / 100;
+        
+        if (percentageValue <= 100) {
+            setNewPersonReserve(percentageValue);
+            setDisplayReserve(
+                new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(percentageValue)
+            );
+        }
+    };
+
     const handleAddPerson = async () => {
         if (newPersonName.trim()) {
             await addPerson(newPersonName, newPersonSalary, newPersonReserve);
@@ -58,6 +86,7 @@ export const PeopleList: React.FC = () => {
             setNewPersonSalary(0);
             setNewPersonReserve(0);
             setDisplaySalary("0,00");
+            setDisplayReserve("0,00");
             setShowAddForm(false);
         }
     };
@@ -67,6 +96,7 @@ export const PeopleList: React.FC = () => {
         setNewPersonSalary(0);
         setNewPersonReserve(0);
         setDisplaySalary("0,00");
+        setDisplayReserve("0,00");
         setShowAddForm(false);
     };
 
@@ -133,10 +163,11 @@ export const PeopleList: React.FC = () => {
                                     <div className="flex items-center">
                                         <span className="text-gray-400 text-sm mr-2 font-medium">%</span>
                                         <input
-                                            type="number"
-                                            value={newPersonReserve || ''}
-                                            onChange={(e) => setNewPersonReserve(Number(e.target.value))}
-                                            placeholder="10"
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={displayReserve}
+                                            onChange={handleReserveChange}
+                                            placeholder="0,00"
                                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
                                             data-testid="input-person-reserve"
                                         />
