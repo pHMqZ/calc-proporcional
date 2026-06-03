@@ -22,6 +22,9 @@ export const PersonCard: React.FC<PersonCardProps> = ({
     const [displaySalary, setDisplaySalary] = React.useState(
         new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(person.salary)
     );
+    const [displayReserve, setDisplayReserve] = React.useState(
+        new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(person.reservePercentage)
+    );
 
     React.useEffect(() => {
         setLocalName(person.name);
@@ -29,6 +32,9 @@ export const PersonCard: React.FC<PersonCardProps> = ({
         setLocalReserve(person.reservePercentage);
         setDisplaySalary(
             new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(person.salary)
+        );
+        setDisplayReserve(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(person.reservePercentage)
         );
     }, [person.name, person.salary, person.reservePercentage]);
 
@@ -54,6 +60,33 @@ export const PersonCard: React.FC<PersonCardProps> = ({
         setDisplayAmount(
             new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericValue / 100)
         );
+    };
+
+    const handleReserveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplayReserve("");
+            setLocalReserve(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplayReserve("");
+            setLocalReserve(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        const percentageValue = numericValue / 100;
+        
+        if (percentageValue <= 100) {
+            setLocalReserve(percentageValue);
+            setDisplayReserve(
+                new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(percentageValue)
+            );
+        }
     };
 
     const handleSave = () => {
@@ -125,14 +158,13 @@ export const PersonCard: React.FC<PersonCardProps> = ({
                     <div className="relative flex items-center">
                         <span className="text-gray-400 dark:text-gray-500 text-sm mr-2 font-medium">%</span>
                         <input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={localReserve || ''}
-                            onChange={(e) => setLocalReserve(Number(e.target.value))}
+                            type="text"
+                            inputMode="numeric"
+                            value={displayReserve}
+                            onChange={handleReserveChange}
                             onBlur={handleSave}
                             className="bg-transparent border-none px-1 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0 text-left"
-                            placeholder="0"
+                            placeholder="0,00"
                             data-testid={`input-card-person-reserve-${person.name}`}
                         />
                     </div>
