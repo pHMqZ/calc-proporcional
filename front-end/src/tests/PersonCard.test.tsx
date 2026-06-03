@@ -13,7 +13,7 @@ describe('Validate person card component', () => {
 
         expect(screen.getByDisplayValue('Alceu')).toBeInTheDocument();
         expect(screen.getByDisplayValue('3.000,00')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('10')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('10,00')).toBeInTheDocument();
     });
 
     it('Should call onUpdate with correctly parsed salary', () => {
@@ -22,11 +22,9 @@ describe('Validate person card component', () => {
 
         const salaryInput = screen.getByDisplayValue('3.000,00');
 
-        // Se o usuário digita "3000", a máscara remove não-dígitos e divide por 100
         fireEvent.change(salaryInput, { target: { value: '3000' } });
         fireEvent.blur(salaryInput);
 
-        // Esperamos que o backend receba 30.00
         expect(mockOnUpdate).toHaveBeenCalledWith(1, expect.objectContaining({ salary: 30 }));
     });
 
