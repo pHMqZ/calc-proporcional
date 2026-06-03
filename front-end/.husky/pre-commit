@@ -14,14 +14,21 @@ fi
 CHANGES_FRONT=$(echo "$STAGED_FILES" | grep '^front-end/')
 
 if [ -n "$CHANGES_FRONT" ]; then
+    echo "Running frontend Linters"
+    cd front end
+    npm run lint
+    if [ $? -ne o]; then
+        echo "Frontend Lint failed. Please fix issues before commit"
+        exit 1
+    fi
+    echo "Frontend lint passed"
     echo "Running frontend unit tests"
-    cd front-end
     npm test -- --run
     FRONT_STATUS=$?
     cd ..
 
     if [ $FRONT_STATUS -ne 0 ]; then
-        echo "Frontend unit tests failed. Please fix them committ"
+        echo "Frontend unit tests failed. Please fix them before committ"
         exit 1
     fi
     echo "Frontend tests passed successfully"
@@ -33,6 +40,20 @@ fi
 CHANGES_BACKEND=$(echo "$STAGED_FILES" | grep '^back-end/')
 
 if [ -n "$CHANGES_BACKEND" ]; then
+    echo "Running backend linters (Checkstyle)"
+    cd back-end
+    if [ -f "./mvnw.cmd" ] && [ -n "$COMSPEC" ]; then
+        MVN_CMD="./mvnw.cmd"
+    else
+        chmod +x ./mvnw
+        MVN_CMD="./mvnw"
+    fi
+    $MVN_CMD checkstyle:check
+    if [ $? -ne 0 ]; then
+        echo "Backend Lint failed. Please fix code issues before commit"
+        exit 1
+    fi
+    echo "Backend Checkstyle passed"
     echo "Running backend unit tests"
     cd back-end
     if [ -f "./mvnw.cmd" ] && [ -n "$COMSPEC" ]; then
@@ -45,7 +66,7 @@ if [ -n "$CHANGES_BACKEND" ]; then
     cd ..
 
     if [ $BACK_STATUS -ne 0 ]; then
-        echo "Backend unit tests failed. Please fix them committ"
+        echo "Backend unit tests failed. Please fix them before committ"
         exit 1
     fi
     echo "Backend tests passed successfully"
@@ -53,5 +74,5 @@ else
     echo "No backend changes"
 fi
 
-echo "Commit passed"
+echo "Commit passed all quality checks"
 exit 0
