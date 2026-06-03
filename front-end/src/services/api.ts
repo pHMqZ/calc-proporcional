@@ -13,21 +13,38 @@ const getHeaders = (extraHeaders = {}) => {
     }
 }
 
+const handleResponse = async (response: Response) => {
+    if (!response.ok) {
+        let errorMessage = "Erro de servidor";
+
+        try {
+            const errorData = await response.json();
+            if (errorData.message) {
+                errorMessage = errorData.message;
+            }
+        } catch (parseError) {
+
+        }
+
+        throw new Error(errorMessage);
+    }
+
+    return response.json();
+}
+
 export const api = {
     async getSummary(): Promise<CalculationSummary> {
         const response = await fetch(`${ENDPOINT}/calculation`, {
             headers: getHeaders()
         });
-        if (!response.ok) throw new Error("Erro ao buscar resumo de cálculo");
-        return response.json();
+        return handleResponse(response);
     },
 
     async getPeople(): Promise<Person[]> {
         const response = await fetch(`${ENDPOINT}/person`, {
             headers: getHeaders()
         });
-        if (!response.ok) throw new Error("Erro ao buscar pessoas");
-        return response.json();
+        return handleResponse(response);
     },
 
     async addPerson(name: string, salary: number, reservePercentage: number): Promise<Person> {
@@ -40,8 +57,7 @@ export const api = {
                 reservePercentage: Number(reservePercentage) || 0
             })
         });
-        if (!response.ok) throw new Error("Erro ao adicionar pessoa");
-        return response.json();
+        return handleResponse(response);
     },
 
     async updatePerson(id: number, updates: Partial<Person>): Promise<Person> {
@@ -50,8 +66,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(updates)
         });
-        if (!response.ok) throw new Error("Erro ao atualizar pessoa");
-        return response.json();
+        return handleResponse(response);
     },
 
     async deletePerson(id: number): Promise<void> {
@@ -65,8 +80,7 @@ export const api = {
         const response = await fetch(`${ENDPOINT}/bill`, {
             headers: getHeaders()
         });
-        if (!response.ok) throw new Error("Erro ao buscar contas");
-        return response.json();
+        return handleResponse(response);
     },
 
     async addBill(description: string): Promise<Bill> {
@@ -78,8 +92,7 @@ export const api = {
                 totalAmount: 0.0
             })
         });
-        if (!response.ok) throw new Error("Erro ao adicionar conta");
-        return response.json();
+        return handleResponse(response);
     },
 
     async updateBill(id: number, updates: Partial<Bill>): Promise<Bill> {
@@ -88,8 +101,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(updates)
         });
-        if (!response.ok) throw new Error("Erro ao atualizar conta");
-        return response.json();
+        return handleResponse(response);
     },
 
     async deleteBill(id: number): Promise<void> {

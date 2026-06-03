@@ -50,9 +50,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             setBills(billsData);
             setSummary(summaryData);
             setError(null);
-        } catch (err) {
-            setError("Falha ao sincronizar com o servidor");
-            console.error(err)
+        } catch (err: any) {
+            if (err.message === 'Failed to fetch') {
+                setError("Falha ao sincronizar com o servidor, aguarde a reinicialização.");
+
+                const reconnectionInterval = setInterval(async () => {
+                    try {
+                        const check = await fetch(`${import.meta.env.VITE_API_URL}/calculation`, {
+                            cache: 'no-store'
+                        });
+
+                        if (check) {
+                            clearInterval(reconnectionInterval);
+                            window.location.reload();
+                        }
+                    } catch (e) {
+                    }
+                }, 5000);
+            } else {
+                setError(err.message || "Erro desconhecido ao comunicar com a API.");
+            }
+            console.error(err);
+
         } finally {
             if (!silent) setIsLoading(false)
         }

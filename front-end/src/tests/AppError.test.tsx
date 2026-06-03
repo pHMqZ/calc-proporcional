@@ -13,8 +13,9 @@ vi.mock('../services/api', () => ({
 
 describe('Global error flow', () => {
     it('Should display error banner when API fails', async () => {
-        const errorMessage = 'Falha ao sincronizar com o servidor';
-        (api.api.getSummary as any).mockRejectedValue(new Error('API Error'));
+        const errorMessage = 'API Error';
+
+        (api.api.getSummary as any).mockRejectedValue(new Error(errorMessage));
         (api.api.getPeople as any).mockResolvedValue([]);
         (api.api.getBills as any).mockResolvedValue([]);
 
