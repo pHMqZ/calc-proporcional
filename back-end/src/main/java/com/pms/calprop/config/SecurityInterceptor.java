@@ -25,7 +25,7 @@ public class SecurityInterceptor implements HandlerInterceptor {
 
             String clientId = request.getHeader("X-Client-Id");
 
-            if ("seeder-client".equals(clientId) && !activeProfile.contains("prod")) {
+            if ("seeder-client-dev".equals(clientId) && !activeProfile.contains("prod")) {
                 return true;
             }
 
