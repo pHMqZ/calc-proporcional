@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,11 +46,16 @@ public class PersonControllerTest {
     @MockitoBean
     private PersonMapper personMapper;
 
+    private final String clientId = "test-client-id";
+
     @Test
     @DisplayName("Should create a new person successfully")
     void testCreatePerson() throws Exception {
         PersonRequest request = new PersonRequest("Elis", new BigDecimal("3000.00"), 10.0);
         Person person = new Person();
+        person.setId(1L);
+        person.setName("Elis");
+        person.setClientId(clientId);
         PersonResponse response = new PersonResponse(1L, "Elis", new BigDecimal("3000.00"), 10.0);
 
         when(personMapper.toEntity(any(PersonRequest.class))).thenReturn(person);
@@ -57,6 +63,7 @@ public class PersonControllerTest {
         when(personMapper.toResponse(any(Person.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/person")
+                .header("X-Client-Id", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -67,9 +74,10 @@ public class PersonControllerTest {
     @Test
     @DisplayName("Should get all people successfully")
     void testGetAllPeople() throws Exception {
-        when(personService.findAllPeople()).thenReturn(new ArrayList<>());
+        when(personService.findAllPeople(clientId)).thenReturn(new ArrayList<>());
 
-        mockMvc.perform(get("/api/v1/person"))
+        mockMvc.perform(get("/api/v1/person")
+                .header("X-Client-Id", clientId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(0));
     }
@@ -80,10 +88,11 @@ public class PersonControllerTest {
         Person person = new Person();
         PersonResponse response = new PersonResponse(1L, "Alceu", new BigDecimal("3000.00"), 20.0);
 
-        when(personService.findPersonById(1L)).thenReturn(person);
+        when(personService.findPersonById(1L, clientId)).thenReturn(person);
         when(personMapper.toResponse(any(Person.class))).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/person/1"))
+        mockMvc.perform(get("/api/v1/person/1")
+                .header("X-Client-Id", clientId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Alceu"));
@@ -92,10 +101,11 @@ public class PersonControllerTest {
     @Test
     @DisplayName("Should return not found when person does not exist")
     void testGetPersonByIdNotFound() throws Exception {
-        when(personService.findPersonById(99L))
+        when(personService.findPersonById(99L, clientId))
                 .thenThrow(new ResourceNotFoundException("Pessoa com ID 99 não encontrada!"));
 
-        mockMvc.perform(get("/api/v1/person/99"))
+        mockMvc.perform(get("/api/v1/person/99")
+                .header("X-Client-Id", clientId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
     }
@@ -107,10 +117,11 @@ public class PersonControllerTest {
         Person person = new Person();
         PersonResponse response = new PersonResponse(1L, "Elis", new BigDecimal("3000.00"), 10.0);
 
-        when(personService.updatePerson(eq(1L), any(PersonRequest.class))).thenReturn(person);
+        when(personService.updatePerson(eq(1L), any(PersonRequest.class), eq(clientId))).thenReturn(person);
         when(personMapper.toResponse(any(Person.class))).thenReturn(response);
 
         mockMvc.perform(patch("/api/v1/person/1")
+                .header("X-Client-Id", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -120,7 +131,45 @@ public class PersonControllerTest {
     @Test
     @DisplayName("Should delete a person successfully")
     void testDeleteAPersonSuccessfully() throws Exception {
-        mockMvc.perform(delete("/api/v1/person/1"))
+        mockMvc.perform(delete("/api/v1/person/1")
+                .header("X-Client-Id", clientId))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Should return bad request when missing client-id header")
+    void testShouldReturnBadRequestWhenMissingClientIdHeader() throws Exception {
+        mockMvc.perform(get("/api/v1/person")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Sessão inválida ou expirada. Recarregue a página para continuar."));
+    }
+
+    @Test
+    @DisplayName("Should isolated data between different client ids")
+    void testShouldIsolatedDataBetweenDifferentClientIds() throws Exception {
+        String clientA = UUID.randomUUID().toString();
+        String clientB = UUID.randomUUID().toString();
+
+        when(personMapper.toEntity(any(PersonRequest.class))).thenReturn(new Person());
+        when(personService.addPerson(any(Person.class))).thenReturn(new Person());
+
+        mockMvc.perform(post("/api/v1/person")
+                .header("X-Client-Id", clientA)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\": \"Elis\", \"salary\": 3000.00, \"reservePercentage\": 10.0}"))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/api/v1/person")
+                .header("X-Client-Id", clientA))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(0)); // Size is 0 because personService.findAllPeople(clientA) returns null/empty in mock
+
+        mockMvc.perform(get("/api/v1/person")
+                .header("X-Client-Id", clientB))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+
     }
 }

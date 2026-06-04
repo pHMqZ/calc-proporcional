@@ -1,12 +1,13 @@
 {
   "name": "calc-contas",
   "private": true,
-  "version": "1.4.1",
+  "version": "1.6.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "lint": "eslint .",
     "test": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:report": "playwright show-report",

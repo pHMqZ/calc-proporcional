@@ -24,25 +24,25 @@ public class PersonService {
         return personRepository.save(newPerson);
     }
 
-    public List<Person> findAllPeople() {
-        return personRepository.findAll();
+    public List<Person> findAllPeople(String clientId) {
+        return personRepository.findByClientId(clientId);
     }
 
-    public Person findPersonById(Long id) {
-        return personRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pessoa com ID " + id + " não encontrada!"));
+    public Person findPersonById(Long id, String clientId) {
+        return personRepository.findByIdAndClientId(id, clientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Participante não encontrado."));
     }
 
-    public Person updatePerson(Long id, PersonRequest resquest) {
+    public Person updatePerson(Long id, PersonRequest resquest, String clientId) {
 
-        Person existingPerson = this.findPersonById(id);
+        Person existingPerson = this.findPersonById(id, clientId);
 
         personMapper.updatePersonFromRequest(resquest, existingPerson);
         return personRepository.save(existingPerson);
     }
 
-    public void deletePerson(Long id) {
-        this.findPersonById(id);
+    public void deletePerson(Long id, String clientId) {
+        this.findPersonById(id, clientId);
         personRepository.deleteById(id);
     }
 

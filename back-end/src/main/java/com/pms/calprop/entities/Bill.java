@@ -2,6 +2,7 @@ package com.pms.calprop.entities;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,9 +29,13 @@ public class Bill {
     @DecimalMin(value = "0.00", inclusive = true, message = "The bill amount must be 0 or greater")
     private BigDecimal totalAmount;
 
-    public Bill(String description, BigDecimal totalAmount) {
+    @Column(name = "client_id", nullable = false, updatable = false)
+    private String clientId;
+
+    public Bill(String description, BigDecimal totalAmount, String clientId) {
         this.description = description;
         this.totalAmount = totalAmount;
+        this.clientId = clientId;
     }
 
     public Long getId() {
@@ -55,5 +60,13 @@ public class Bill {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }
