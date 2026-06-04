@@ -15,20 +15,24 @@ CHANGES_FRONT=$(echo "$STAGED_FILES" | grep '^front-end/')
 
 if [ -n "$CHANGES_FRONT" ]; then
     echo "Running frontend Linters"
-    cd front end
+    cd front-end
     npm run lint
-    if [ $? -ne o]; then
+    
+    if [ $? -ne 0 ]; then
         echo "Frontend Lint failed. Please fix issues before commit"
         exit 1
     fi
     echo "Frontend lint passed"
+    
     echo "Running frontend unit tests"
+    
     npm test -- --run
+    
     FRONT_STATUS=$?
     cd ..
 
     if [ $FRONT_STATUS -ne 0 ]; then
-        echo "Frontend unit tests failed. Please fix them before committ"
+        echo "Frontend unit tests failed. Please fix them before commit"
         exit 1
     fi
     echo "Frontend tests passed successfully"
@@ -66,7 +70,7 @@ if [ -n "$CHANGES_BACKEND" ]; then
     cd ..
 
     if [ $BACK_STATUS -ne 0 ]; then
-        echo "Backend unit tests failed. Please fix them before committ"
+        echo "Backend unit tests failed. Please fix them before commit"
         exit 1
     fi
     echo "Backend tests passed successfully"
