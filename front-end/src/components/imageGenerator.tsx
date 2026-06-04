@@ -20,8 +20,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
   ): string[] => {
     ctx.font = font;
     const words = String(text).split(/\s+/);
-    let line = '',
-      lines: string[] = [];
+    let line = '';
+    const lines: string[] = [];
 
     for (const w of words) {
       const test = line ? line + ' ' + w : w;
@@ -54,12 +54,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     if (summary) {
       generateImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [summary]);
 
   const generateImage = () => {
     if (!summary) return;
 
-    const { peopleData, totalSalary, totalBills } = summary;
+    const { peopleData, totalSalary } = summary;
     const numPeople = peopleData.length;
     const minWidth = 950;
     const colWidth = 150;
@@ -308,7 +309,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
       } else {
         baixarImagem();
       }
-    } catch (e) {
+    } catch {
       baixarImagem();
     }
   };
