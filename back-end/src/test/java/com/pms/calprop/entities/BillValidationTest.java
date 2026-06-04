@@ -24,7 +24,7 @@ public class BillValidationTest {
     @Test
     @DisplayName("Should have no violation when data is valid")
     void valideBill() {
-        Bill bill = new Bill(1L, "Aluguel", new BigDecimal("1500.00"));
+        Bill bill = new Bill(1L, "Aluguel", new BigDecimal("1500.00"), "test-client");
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 
@@ -34,7 +34,7 @@ public class BillValidationTest {
     @Test
     @DisplayName("Should return violation when description is empty")
     void emptyDescription() {
-        Bill bill = new Bill(1L, "", new BigDecimal("1500.00"));
+        Bill bill = new Bill(1L, "", new BigDecimal("1500.00"), "test-client");
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 
@@ -44,7 +44,7 @@ public class BillValidationTest {
     @Test
     @DisplayName("Should return violation when description is null")
     void nullDescription() {
-        Bill bill = new Bill(1L, null, new BigDecimal("1500.00"));
+        Bill bill = new Bill(1L, null, new BigDecimal("1500.00"), "test-client");
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 
@@ -54,7 +54,7 @@ public class BillValidationTest {
     @Test
     @DisplayName("Should return violation when amount is null")
     void nullAmount() {
-        Bill bill = new Bill(1L, "Aluguel", null);
+        Bill bill = new Bill(1L, "Aluguel", null, "test-client");
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 
@@ -64,7 +64,7 @@ public class BillValidationTest {
     @Test
     @DisplayName("Should have no violation when amount is zero")
     void zeroAmount() {
-        Bill bill = new Bill(1L, "Aluguel", BigDecimal.ZERO);
+        Bill bill = new Bill(1L, "Aluguel", BigDecimal.ZERO, "test-client");
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 
@@ -74,7 +74,7 @@ public class BillValidationTest {
     @Test
     @DisplayName("Should return violation when amount is negative")
     void negativeAmount() {
-        Bill bill = new Bill(1L, "Aluguel", new BigDecimal("-100.00"));
+        Bill bill = new Bill(1L, "Aluguel", new BigDecimal("-100.00"), "test-client");
 
         Set<ConstraintViolation<Bill>> violations = validator.validate(bill);
 

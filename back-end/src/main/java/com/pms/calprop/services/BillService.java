@@ -24,25 +24,25 @@ public class BillService {
         return billRepository.save(newBill);
     }
 
-    public List<Bill> findAllBills() {
-        return billRepository.findAll();
+    public List<Bill> findAllBills(String clientId) {
+        return billRepository.findByClientId(clientId);
     }
 
-    public Bill findBillById(Long id) {
-        return billRepository.findById(id)
+    public Bill findBillById(Long id, String clientId) {
+        return billRepository.findByIdAndClientId(id, clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + id + " não encontrada!"));
     }
 
-    public Bill updateBill(Long id, BillRequest request) {
-        Bill existingBill = this.findBillById(id);
+    public Bill updateBill(Long id, BillRequest request, String clientId) {
+        Bill existingBill = this.findBillById(id, clientId);
 
         billMapper.updateBillFromRequest(request, existingBill);
 
         return billRepository.save(existingBill);
     }
 
-    public void deleteBill(Long id) {
-        this.findBillById(id);
+    public void deleteBill(Long id, String clientId) {
+        this.findBillById(id, clientId);
         billRepository.deleteById(id);
     }
 

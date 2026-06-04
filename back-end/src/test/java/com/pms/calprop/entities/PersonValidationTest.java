@@ -24,7 +24,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should have no violation when data is valid")
     void validPerson() {
-        Person person = new Person(1L, "João", new BigDecimal("1500.00"), 10.0);
+        Person person = new Person(1L, "João", new BigDecimal("1500.00"), 10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -34,7 +34,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when name is empty")
     void emptyName() {
-        Person person = new Person(1L, "", new BigDecimal("1500.00"), 10.0);
+        Person person = new Person(1L, "", new BigDecimal("1500.00"), 10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -44,7 +44,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when name is null")
     void nullName() {
-        Person person = new Person(1L, null, new BigDecimal("1500.00"), 10.0);
+        Person person = new Person(1L, null, new BigDecimal("1500.00"), 10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -54,7 +54,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when salary is null")
     void nullSalary() {
-        Person person = new Person(1L, "João", null, 10.0);
+        Person person = new Person(1L, "João", null, 10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -64,7 +64,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should have no violation when salary is zero")
     void zeroSalary() {
-        Person person = new Person(1L, "João", BigDecimal.ZERO, 10.0);
+        Person person = new Person(1L, "João", BigDecimal.ZERO, 10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -74,7 +74,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when salary is negative")
     void negativeSalary() {
-        Person person = new Person(1L, "João", new BigDecimal("-100.00"), 10.0);
+        Person person = new Person(1L, "João", new BigDecimal("-100.00"), 10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -84,7 +84,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when reservePercentage is null")
     void nullReservePercentage() {
-        Person person = new Person(1L, "João", new BigDecimal("1500.00"), null);
+        Person person = new Person(1L, "João", new BigDecimal("1500.00"), null, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -94,7 +94,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when reservePercentage is negative")
     void negativeReservePercentage() {
-        Person person = new Person(1L, "João", new BigDecimal("1500.00"), -10.0);
+        Person person = new Person(1L, "João", new BigDecimal("1500.00"), -10.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
@@ -104,7 +104,7 @@ public class PersonValidationTest {
     @Test
     @DisplayName("Should return violation when reservePercentage is greater than 100")
     void greaterThan100ReservePercentage() {
-        Person person = new Person(1L, "João", new BigDecimal("1500.00"), 110.0);
+        Person person = new Person(1L, "João", new BigDecimal("1500.00"), 110.0, "test-client");
 
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
 
