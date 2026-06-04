@@ -22,8 +22,8 @@ const handleResponse = async (response: Response) => {
             if (errorData.message) {
                 errorMessage = errorData.message;
             }
-        } catch (parseError) {
-
+        } catch {
+            // ignore
         }
 
         throw new Error(errorMessage);
