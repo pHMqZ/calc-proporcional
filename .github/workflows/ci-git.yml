@@ -61,11 +61,14 @@ jobs:
         if: always()
         with:
           path: front-end/playwright-report/
+          name: github-pages-${{ github.run_attempt }}
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         if: always()
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
 
       - name: Publish Playwright Report Link
         if: always() && steps.deployment.outputs.page_url != ''
