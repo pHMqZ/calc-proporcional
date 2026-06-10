@@ -22,13 +22,6 @@ export const PeopleList: React.FC = () => {
         maximumFractionDigits: 1,
     });
 
-    const formatBRL = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(value);
-    };
-
     const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const rawValue = e.target.value;
 
