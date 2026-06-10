@@ -2,6 +2,7 @@ package com.pms.calprop.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +25,10 @@ public class CalculationController {
 
     @Operation(summary = "Get the full calculation summary", description = "Return the full calculation summary")
     @GetMapping
-    public ResponseEntity<CalculationSummaryResponse> getSummary() {
-        var people = personService.findAllPeople();
-        var bills = billService.findAllBills();
+    public ResponseEntity<CalculationSummaryResponse> getSummary(
+            @RequestHeader(value = "X-Client-Id", required = true) String clientId) {
+        var people = personService.findAllPeople(clientId);
+        var bills = billService.findAllBills(clientId);
         var summary = calculationService.calculateSummaryData(bills, people);
         return ResponseEntity.ok(summary);
     }

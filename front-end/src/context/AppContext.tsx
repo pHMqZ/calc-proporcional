@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Bill } from "../types/Bill";
 import type { CalculationSummary } from "../types/calculation";
@@ -50,9 +51,30 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             setBills(billsData);
             setSummary(summaryData);
             setError(null);
-        } catch (err) {
-            setError("Falha ao sincronizar com o servidor");
-            console.error(err)
+        } catch (err: unknown) {
+            const error = err as Error;
+            if (error.message === 'Failed to fetch') {
+                setError("Falha ao sincronizar com o servidor, aguarde a reinicialização.");
+
+                const reconnectionInterval = setInterval(async () => {
+                    try {
+                        const check = await fetch(`${import.meta.env.VITE_API_URL}/calculation`, {
+                            cache: 'no-store'
+                        });
+
+                        if (check) {
+                            clearInterval(reconnectionInterval);
+                            window.location.reload();
+                        }
+                    } catch {
+                        // ignore
+                    }
+                }, 5000);
+            } else {
+                setError(error.message || "Erro desconhecido ao comunicar com a API.");
+            }
+            console.error(err);
+
         } finally {
             if (!silent) setIsLoading(false)
         }

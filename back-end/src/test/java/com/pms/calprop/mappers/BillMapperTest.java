@@ -25,7 +25,7 @@ class BillMapperTest {
     @Test
     @DisplayName("Should convert Bill entity to BillResponse successfully")
     void shouldMapBillToBillResponse() {
-        Bill bill = new Bill("Aluguel", new BigDecimal("1200.00"));
+        Bill bill = new Bill("Aluguel", new BigDecimal("1200.00"), "test-client");
         bill.setId(10L);
 
         BillResponse response = billMapper.toResponse(bill);
@@ -54,7 +54,7 @@ class BillMapperTest {
     void shouldUpdateBillFromRequest() {
 
         Long originalId = 55L;
-        Bill existingBill = new Bill("Energia", new BigDecimal("150.00"));
+        Bill existingBill = new Bill("Energia", new BigDecimal("150.00"), "test-client");
         existingBill.setId(originalId);
 
         BillRequest updateRequest = new BillRequest("Energia", new BigDecimal("200.00"));

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Common } from "../pages/common";
 import { ProportionalCalculator } from "../pages/proportionalCalculator";
 import { Util } from "../utils/main";

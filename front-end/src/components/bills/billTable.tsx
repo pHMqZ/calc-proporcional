@@ -16,6 +16,8 @@ export const BillsTable: React.FC = () => {
     const BRL = new Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' });
     const PC = new Intl.NumberFormat('pt-br', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
 
+    const [isAdding, setIsAdding] = React.useState(false);
+
     if (!summary) {
         return (
             <section className="card animate-pulse">
@@ -27,8 +29,6 @@ export const BillsTable: React.FC = () => {
     }
 
     const { peopleData, totalBills } = summary;
-
-    const [isAdding, setIsAdding] = React.useState(false);
 
     const handleAddBill = async () => {
         setIsAdding(true);

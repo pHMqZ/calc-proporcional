@@ -26,7 +26,7 @@ class PersonMapperTest {
     @DisplayName("successfully convert the Person entity to PersonResponse.")
     void shouldMapPersonToPersonResponse() {
 
-        Person person = new Person("Alceu", new BigDecimal("4500.00"), 10.0);
+        Person person = new Person("Alceu", new BigDecimal("4500.00"), 10.0, "test-client");
         person.setId(1L);
 
         PersonResponse response = personMapper.toResponse(person);
@@ -58,7 +58,7 @@ class PersonMapperTest {
     void shouldUpdatePersonFromRequest() {
 
         Long originalId = 99L;
-        Person existingPerson = new Person("Alceu", new BigDecimal("2000.00"), 5.0);
+        Person existingPerson = new Person("Alceu", new BigDecimal("2000.00"), 5.0, "test-client");
         existingPerson.setId(originalId);
 
         PersonRequest updateRequest = new PersonRequest("Elis", new BigDecimal("3500.00"), 20.0);
