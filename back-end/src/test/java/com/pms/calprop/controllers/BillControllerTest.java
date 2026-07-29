@@ -45,7 +45,7 @@ public class BillControllerTest {
     @MockitoBean
     private BillMapper billMapper;
 
-    private final String clientId = "test-client-id";
+    private final String clientId = "123e4567-e89b-12d3-a456-426614174000";
 
     @Test
     @DisplayName("Should create a new bill successfully")

@@ -46,7 +46,7 @@ public class PersonControllerTest {
     @MockitoBean
     private PersonMapper personMapper;
 
-    private final String clientId = "test-client-id";
+    private final String clientId = "123e4567-e89b-12d3-a456-426614174000";
 
     @Test
     @DisplayName("Should create a new person successfully")
@@ -170,6 +170,16 @@ public class PersonControllerTest {
                 .header("X-Client-Id", clientB))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
+    }
 
+    @Test
+    @DisplayName("Should return bad gateway when client-id is invalid UUID format")
+    void testShouldReturnBadGatewayWhenInvalidClientIdFormat() throws Exception {
+        mockMvc.perform(get("/api/v1/person")
+                .header("X-Client-Id", "invalid-uuid-format")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.message")
+                        .value("Sessão inválida ou expirada. Recarregue a página para continuar."));
     }
 }
