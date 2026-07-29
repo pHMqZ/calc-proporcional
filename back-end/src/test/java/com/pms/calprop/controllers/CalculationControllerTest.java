@@ -38,7 +38,7 @@ public class CalculationControllerTest {
     @MockitoBean
     private CalculationService calculationService;
 
-    private final String clientId = "test-client-id";
+    private final String clientId = "123e4567-e89b-12d3-a456-426614174000";
 
     @Test
     @DisplayName("Should return the full calculation summary from database")
