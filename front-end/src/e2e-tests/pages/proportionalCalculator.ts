@@ -103,9 +103,14 @@ export class ProportionalCalculator {
 
     async addNewBillToTheDistribution(description: string, amount: number) {
         await this.addNewBillButton.scrollIntoViewIfNeeded();
+        
+        const initialCount = await this.page.locator('[data-testid^="input-bill-description"]:visible').count();
+        
         await this.addNewBillButton.click();
 
         const lastDesc = this.page.locator('[data-testid^="input-bill-description"]:visible').last();
+        await expect(this.page.locator('[data-testid^="input-bill-description"]:visible')).toHaveCount(initialCount + 1);
+
         const lastAmount = this.page.locator('[data-testid^="input-bill-amount"]:visible').last();
 
         await lastDesc.fill(description);

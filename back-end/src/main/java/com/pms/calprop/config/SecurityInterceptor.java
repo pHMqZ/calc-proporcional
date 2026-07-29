@@ -15,7 +15,8 @@ public class SecurityInterceptor implements HandlerInterceptor {
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;
 
-    public boolean preHandler(HttpServletRequest request, HttpServletResponse response, Object handler)
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
 
         if (request.getRequestURI().startsWith("/api")) {
@@ -29,7 +30,7 @@ public class SecurityInterceptor implements HandlerInterceptor {
                 return true;
             }
 
-            if (clientId == null || !clientId.matches(UUID_REGEX)) {
+            if (clientId != null && !clientId.matches(UUID_REGEX)) {
                 response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
