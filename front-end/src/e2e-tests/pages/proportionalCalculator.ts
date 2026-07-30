@@ -108,14 +108,16 @@ export class ProportionalCalculator {
         
         await this.addNewBillButton.click();
 
-        const lastDesc = this.page.locator('[data-testid^="input-bill-description"]:visible').last();
         await expect(this.page.locator('[data-testid^="input-bill-description"]:visible')).toHaveCount(initialCount + 1);
 
-        const lastAmount = this.page.locator('[data-testid^="input-bill-amount"]:visible').last();
-
+        const lastDesc = this.page.locator('[data-testid="input-bill-description-Nova Conta"]:visible').last();
         await lastDesc.fill(description);
-        await lastAmount.fill((amount * 100).toString());
+        await lastDesc.blur();
 
+        const lastAmount = this.page.locator(`[data-testid="input-bill-amount-${description}"]:visible`).last();
+        await expect(lastAmount).toBeVisible();
+
+        await lastAmount.fill((amount * 100).toString());
         await lastAmount.blur();
     }
 
