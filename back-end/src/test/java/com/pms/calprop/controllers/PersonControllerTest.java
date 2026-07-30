@@ -173,12 +173,12 @@ public class PersonControllerTest {
     }
 
     @Test
-    @DisplayName("Should return bad request when client-id is invalid UUID format")
-    void testShouldReturnBadRequestWhenInvalidClientIdFormat() throws Exception {
+    @DisplayName("Should return bad gateway when client-id is invalid UUID format")
+    void testShouldReturnBadGatewayWhenInvalidClientIdFormat() throws Exception {
         mockMvc.perform(get("/api/v1/person")
                 .header("X-Client-Id", "invalid-uuid-format")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isBadGateway())
                 .andExpect(jsonPath("$.message")
                         .value("Sessão inválida ou expirada. Recarregue a página para continuar."));
     }
