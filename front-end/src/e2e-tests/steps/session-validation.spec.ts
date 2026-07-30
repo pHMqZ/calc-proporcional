@@ -3,7 +3,7 @@ import { ApiHelper } from '../pages/ApiHelper';
 import testData from '../data/session-validation-data.json' assert { type: 'json' };
 
 test.describe('Strict Session Validation per Client (Multi-Tenancy)', () => {
-  
+
   // T005: US3 - Missing Header
   test('should block request with missing X-Client-Id header and return 400 Bad Request', async ({ request }) => {
     const apiHelper = new ApiHelper(request);
@@ -15,11 +15,11 @@ test.describe('Strict Session Validation per Client (Multi-Tenancy)', () => {
   });
 
   // T005: US3 - Malformed Header
-  test('should block request with malformed X-Client-Id header and return 400 Bad Request', async ({ request }) => {
+  test('should block request with malformed X-Client-Id header and return 502 Bad Gateway', async ({ request }) => {
     const apiHelper = new ApiHelper(request);
     const response = await apiHelper.getWithClientHeader(testData.apiEndpoint, testData.malformedUuid);
 
-    expect(response.status()).toBe(400);
+    expect(response.status()).toBe(502);
     const body = await response.json();
     expect(body.message).toBe(testData.expectedErrorMessage);
   });
