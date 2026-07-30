@@ -1,0 +1,7 @@
+{
+  "apiEndpoint": "http://localhost:8080/api/users",
+  "validUuid": "e3d7a8c9-8d4f-4d9f-bc98-b0a64931a29f",
+  "malformedUuid": "abc-123",
+  "devSeederId": "seeder-client-dev",
+  "expectedErrorMessage": "Sessão inválida ou expirada. Recarregue a página para continuar."
+}
