@@ -51,7 +51,7 @@ test.describe('PostgreSQL Database Resilience', () => {
             return res.status();
           }
           return 0;
-        } catch (e) {
+        } catch {
           return 0; // Backend may be reconnecting to DB
         }
       },
@@ -68,7 +68,7 @@ test.describe('PostgreSQL Database Resilience', () => {
     const peopleData = await getPersonResponse.json();
 
     // Assert person exists
-    const person = peopleData.find((p: any) => p.name === 'Carlos');
+    const person = peopleData.find((p: { name: string; salary: number }) => p.name === 'Carlos');
     expect(person).toBeDefined();
     expect(person.salary).toBe(5000);
 
@@ -78,7 +78,7 @@ test.describe('PostgreSQL Database Resilience', () => {
     const billData = await getBillResponse.json();
 
     // Assert bill exists
-    const bill = billData.find((b: any) => b.description === 'Aluguel');
+    const bill = billData.find((b: { description: string; totalAmount: number }) => b.description === 'Aluguel');
     expect(bill).toBeDefined();
     expect(bill.totalAmount).toBe(2000);
   });
