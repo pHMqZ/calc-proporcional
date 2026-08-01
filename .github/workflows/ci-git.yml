@@ -44,6 +44,10 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Start PostgreSQL via Docker Compose
+        run: docker compose up -d postgres
+        working-directory: ./
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
