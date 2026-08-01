@@ -38,18 +38,20 @@ public class CalculationControllerTest {
     @MockitoBean
     private CalculationService calculationService;
 
+    private final String clientId = "123e4567-e89b-12d3-a456-426614174000";
+
     @Test
     @DisplayName("Should return the full calculation summary from database")
     void testCalculateDistribution() throws Exception {
         List<Person> people = new ArrayList<>();
-        people.add(new Person("Alceu", new BigDecimal("2500"), 10.0));
-        people.add(new Person("Toalha", new BigDecimal("3000"), 20.0));
+        people.add(new Person("Alceu", new BigDecimal("2500"), 10.0, clientId));
+        people.add(new Person("Toalha", new BigDecimal("3000"), 20.0, clientId));
 
         List<Bill> bills = new ArrayList<>();
-        bills.add(new Bill("Aluguel", new BigDecimal("1500")));
-        bills.add(new Bill("Condominio", new BigDecimal("650")));
-        bills.add(new Bill("Internet", new BigDecimal("100")));
-        bills.add(new Bill("Energia", new BigDecimal("150")));
+        bills.add(new Bill("Aluguel", new BigDecimal("1500"), clientId));
+        bills.add(new Bill("Condominio", new BigDecimal("650"), clientId));
+        bills.add(new Bill("Internet", new BigDecimal("100"), clientId));
+        bills.add(new Bill("Energia", new BigDecimal("150"), clientId));
 
         CalculationSummaryResponse expectedResponse = new CalculationSummaryResponse(
                 new BigDecimal("5500"),
@@ -59,16 +61,16 @@ public class CalculationControllerTest {
                 List.of(),
                 List.of());
 
-        when(personService.findAllPeople()).thenReturn(people);
-        when(billService.findAllBills()).thenReturn(bills);
+        when(personService.findAllPeople(clientId)).thenReturn(people);
+        when(billService.findAllBills(clientId)).thenReturn(bills);
         when(calculationService.calculateSummaryData(bills, people)).thenReturn(expectedResponse);
 
-        mockMvc.perform(get("/api/v1/calculation"))
+        mockMvc.perform(get("/api/v1/calculation")
+                .header("X-Client-Id", clientId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalSalary").value(expectedResponse.totalSalary().doubleValue()))
                 .andExpect(jsonPath("$.totalBills").value(expectedResponse.totalBills().doubleValue()))
                 .andExpect(jsonPath("$.totalWithReserve").value(expectedResponse.totalWithReserve().doubleValue()))
                 .andExpect(jsonPath("$.totalRemainder").value(expectedResponse.totalRemainder().doubleValue()));
     }
-
 }

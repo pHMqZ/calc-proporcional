@@ -20,8 +20,8 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
   ): string[] => {
     ctx.font = font;
     const words = String(text).split(/\s+/);
-    let line = '',
-      lines: string[] = [];
+    let line = '';
+    const lines: string[] = [];
 
     for (const w of words) {
       const test = line ? line + ' ' + w : w;
@@ -54,12 +54,13 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     if (summary) {
       generateImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [summary]);
 
   const generateImage = () => {
     if (!summary) return;
 
-    const { peopleData, totalSalary, totalBills } = summary;
+    const { peopleData, totalSalary } = summary;
     const numPeople = peopleData.length;
     const minWidth = 950;
     const colWidth = 150;
@@ -81,14 +82,51 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
 
     const wConta = Math.min(450, W - pad * 2 - 160 - (numPeople * colWidth));
 
-    let linesNeeded = 12;
-    bills.forEach((bill) => {
-      const wrapped = wrapText(ctx, bill.description || '(sem nome)', wConta, fRow);
-      linesNeeded += Math.max(1, wrapped.length);
-    });
-    linesNeeded += 18 + peopleData.length * 4;
+    let simulatedY = pad + 15;
 
-    const H = pad * 2 + linesNeeded * line + 60;
+    //Título e data
+    simulatedY += line * 3;
+
+    //Participantes, Rateio e Salários integrados
+    simulatedY += line;        // section('PARTICIPANTES E RATEIO')
+    simulatedY += line;        // proporções de rateio
+    simulatedY += line;        // label('Salários')
+    simulatedY += line;        // valores de salários
+    simulatedY += line * 1.5;  // margem pós-bloco
+
+    //Detalhamento de contas (Cabeçalho)
+    simulatedY += line + line * 0.5 + line;
+
+    //Linhas de contas
+    bills.forEach((bill) => {
+      const billLines = wrapText(ctx, bill.description || '(sem nome)', wConta, fRow);
+
+      simulatedY += Math.max(1, billLines.length) * line;
+    });
+
+    //Espaçamento
+    simulatedY += line * 2;
+
+    //Valores de reserva
+    simulatedY += line;
+    peopleData.forEach(() => {
+      simulatedY += line;
+    });
+
+    //Resumo final
+    simulatedY += line * 1.2 + line;
+    peopleData.forEach(() => {
+      simulatedY += line;
+    });
+
+    //Saldo restante
+    simulatedY += line * 1.2 + line;
+    peopleData.forEach(() => {
+      simulatedY += line;
+    });
+
+    //Altura final
+    const H = simulatedY + pad;
     const dpr = 2;
 
     canvas.width = W * dpr;
@@ -142,28 +180,40 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
 
     let y = pad + 15;
 
-    title('Relatório de Rateio Proporcional', pad + 10, y);
+    title('Relatório de Contas Compartilhadas', pad + 10, y);
     y += line;
     text(new Date().toLocaleDateString('pt-BR', { dateStyle: 'long' }), pad + 10, y);
     y += line * 2;
 
-    section('PARTICIPANTES E RATEIO', pad + 10, y);
+    section('Participantes e Rateio', pad + 10, y);
     y += line;
+
+    //Proporções
     const participants = peopleData
       .map((d) => `${d.person.name}: ${PC.format(d.percentage)}%`)
       .join('   |   ');
     text(participants, pad + 10, y);
+    y += line;
+
+    //Salários
+    label('Salários', pad + 10, y);
+    y += line;
+
+    const salarieText = peopleData
+      .map((d) => `${d.person.name}: ${BRL.format(d.person.salary)}`)
+      .join('   |   ') + ` | Total: ${BRL.format(totalSalary)}`;
+    text(salarieText, pad + 10, y);
     y += line * 1.5;
 
-    section('DETALHAMENTO DAS CONTAS', pad + 10, y);
+    section('Detalhamento das Contas', pad + 10, y);
     y += line;
 
     // Table header
     const xConta = pad + 10;
     const xTot = xConta + wConta;
 
-    head('CONTA', xConta, y);
-    head('VALOR TOTAL', xTot, y);
+    head('Conta', xConta, y);
+    head('Valor Total', xTot, y);
 
     peopleData.forEach((data, idx) => {
       const xPerson = xTot + 140 + (idx * colWidth);
@@ -207,7 +257,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     ctx.setLineDash([]);
     y += line * 2;
 
-    section('VALORES DE RESERVA', pad + 10, y);
+    section('Valores para Reserva', pad + 10, y);
     y += line;
     peopleData.forEach((d) => {
       const nameW = ctx.measureText(d.person.name + ': ').width;
@@ -217,7 +267,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     });
 
     y += line * 1.2;
-    section('RESUMO FINAL (A PAGAR)', pad + 10, y);
+    section('Contas + Reserva', pad + 10, y);
     y += line;
     peopleData.forEach((d) => {
       const nameW = ctx.measureText(d.person.name + ': ').width;
@@ -227,7 +277,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
     });
 
     y += line * 1.2;
-    section('SALDO RESTANTE DO SALÁRIO', pad + 10, y);
+    section('Saldo Restante', pad + 10, y);
     y += line;
     peopleData.forEach((d) => {
       const nameW = ctx.measureText(d.person.name + ': ').width;
@@ -259,7 +309,7 @@ export const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onClose }) => {
       } else {
         baixarImagem();
       }
-    } catch (e) {
+    } catch {
       baixarImagem();
     }
   };

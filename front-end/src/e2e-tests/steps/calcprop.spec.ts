@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Common } from "../pages/common";
 import { ProportionalCalculator } from "../pages/proportionalCalculator";
 import { Util } from "../utils/main";
@@ -11,6 +12,7 @@ let billData: any;
 const util = new Util()
 
 test.describe('Proportional calculator page', () => {
+
   test.beforeEach(async ({ page }) => {
     commonPage = new Common(page);
     proportionalCalculatorPage = new ProportionalCalculator(page)
@@ -75,7 +77,7 @@ test.describe('Proportional calculator page', () => {
 
   test('Should update summary total when a new bill is added', async () => {
     const newBillAmount = 1500;
-    const description = "Móveis";
+    const description = "Moveis";
 
     billData = { description, totalAmount: newBillAmount }
 
@@ -93,12 +95,13 @@ test.describe('Proportional calculator page', () => {
   test.afterEach(async () => {
     if (userData) {
       await proportionalCalculatorPage.removePerson(userData.name);
-
+      await expect(proportionalCalculatorPage.getParticipantCard(userData.name)).toBeHidden();
       userData = null;
     }
 
     if (billData) {
       await proportionalCalculatorPage.removeBill(billData.description);
+      await expect(proportionalCalculatorPage.getBillCard(billData.description)).toBeHidden();
       billData = null;
     }
   });

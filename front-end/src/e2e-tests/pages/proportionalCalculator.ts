@@ -18,6 +18,8 @@ export class ProportionalCalculator {
 
     readonly distributionBillsTitle: Locator;
 
+    readonly generateImageButton: Locator;
+
     constructor(page: Page) {
         this.page = page;
         this.financialSummaryTitle = page.getByTestId('summary-title');
@@ -36,6 +38,7 @@ export class ProportionalCalculator {
 
         this.distributionBillsTitle = page.getByTestId('distribution-bills-title');
 
+        this.generateImageButton = page.getByTestId('generate-image-button');
     }
 
     getParticipantCard(name: string): Locator {
@@ -93,19 +96,29 @@ export class ProportionalCalculator {
 
         await personCard.scrollIntoViewIfNeeded();
 
-        await this.getInputPersonSalary(name).fill((salary * 100).toString());
+        const salaryInput = this.getInputPersonSalary(name);
+        await salaryInput.fill((salary * 100).toString());
+        await salaryInput.blur();
     }
 
     async addNewBillToTheDistribution(description: string, amount: number) {
+        await this.addNewBillButton.scrollIntoViewIfNeeded();
+        
+        const initialCount = await this.page.locator('[data-testid^="input-bill-description"]:visible').count();
+        
         await this.addNewBillButton.click();
 
-        const lastDesc = this.page.locator('[data-testid^="input-bill-description"]').last();
-        const lastAmount = this.page.locator('[data-testid^="input-bill-amount"]').last();
+        await expect(this.page.locator('[data-testid^="input-bill-description"]:visible')).toHaveCount(initialCount + 1);
 
+        const lastDesc = this.page.locator('[data-testid="input-bill-description-Nova Conta"]:visible').last();
         await lastDesc.fill(description);
-        await lastAmount.fill((amount * 100).toString());
+        await lastDesc.blur();
 
-        await lastAmount.press('Enter');
+        const lastAmount = this.page.locator(`[data-testid="input-bill-amount-${description}"]:visible`).last();
+        await expect(lastAmount).toBeVisible();
+
+        await lastAmount.fill((amount * 100).toString());
+        await lastAmount.blur();
     }
 
     async getTotalBillsAmountValue(): Promise<number> {

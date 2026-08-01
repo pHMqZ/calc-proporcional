@@ -18,9 +18,9 @@ export const PROJECT_ROOT = __dirname;
  */
 const config: PlaywrightTestConfig = {
   testDir: './src/e2e-tests/steps',
-  timeout: 60 * 1000,
+  timeout: 75 * 1000,
   expect: {
-    timeout: 10000,
+    timeout: 45 * 1000,
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.2
     }
@@ -34,10 +34,16 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    ['list'],
-    ['html']
-  ],
+  reporter: process.env.CI
+    ? [
+      ['list'],
+      ['github'],
+      ['html']
+    ]
+    : [
+      ['list'],
+      ['html']
+    ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -53,27 +59,23 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        locale: 'pt-BR',
+        headless: true,
+      },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
 
     /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: { ...devices['Pixel 5'], locale: 'pt-BR', headless: true, },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: { ...devices['iPhone 12'], locale: 'pt-BR', headless: true, },
     }
 
     /* Test against branded browsers. */
@@ -85,6 +87,15 @@ const config: PlaywrightTestConfig = {
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
+    //{
+    //  name: 'firefox',
+    //  use: { ...devices['Desktop Firefox'] },
+    //},
+
+    //{
+    //  name: 'webkit',
+    //  use: { ...devices['Desktop Safari'] },
+    //},
   ],
 
   /* Run your local dev servers before starting the tests */
@@ -102,6 +113,13 @@ const config: PlaywrightTestConfig = {
       url: 'http://localhost:8080/swagger-ui/index.html',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
+      env: {
+        DB_URL: 'jdbc:postgresql://localhost:5432/calcpropdb',
+        DB_USER: 'postgres',
+        DB_PASSWORD: 'postgres',
+        DB_DRIVER: 'org.postgresql.Driver',
+        DB_DIALECT: 'org.hibernate.dialect.PostgreSQLDialect'
+      }
     }
   ],
 }

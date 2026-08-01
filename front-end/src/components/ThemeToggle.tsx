@@ -1,12 +1,12 @@
 import { useTheme } from "../context/ThemeContext";
 
 export const ThemeToggle: React.FC = () => {
-    const {theme, toggleTheme} = useTheme();
+    const { theme, toggleTheme } = useTheme();
 
     return (
-        <button 
+        <button
             onClick={toggleTheme}
-            className="fixed top-5 right-5 p-3 rounded-full bg-white dark:bg-[#1f2937] border border-[#e5e7eb] dark:border-[#374151] shadow-lg hover:shadow-xl transition-all z-50"
+            className="p-3 rounded-full bg-white dark:bg-[#1f2937] border border-[#e5e7eb] dark:border-[#374151] shadow-lg hover:shadow-xl transition-all"
             title={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
         >
             {theme === 'light' ? (

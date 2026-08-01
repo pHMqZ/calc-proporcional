@@ -2,6 +2,7 @@ package com.pms.calprop.entities;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class Person {
 
     @NotNull
     @DecimalMin(value = "0.00", inclusive = true, message = "The salary must be 0 or greater")
+    @Column(precision = 38, scale = 2)
     private BigDecimal salary;
 
     @Min(0)
@@ -35,10 +37,14 @@ public class Person {
     @NotNull
     private Double reservePercentage;
 
-    public Person(String name, BigDecimal salary, Double reservePercentage) {
+    @Column(name = "client_id", nullable = false, updatable = false)
+    private String clientId;
+
+    public Person(String name, BigDecimal salary, Double reservePercentage, String clientId) {
         this.name = name;
         this.salary = salary;
         this.reservePercentage = reservePercentage;
+        this.clientId = clientId;
     }
 
     public Long getId() {
@@ -71,5 +77,13 @@ public class Person {
 
     public void setReservePercentage(Double reservePercentage) {
         this.reservePercentage = reservePercentage;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }

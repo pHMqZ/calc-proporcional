@@ -7,6 +7,9 @@ export const PeopleList: React.FC = () => {
     const [newPersonName, setNewPersonName] = useState("");
     const [newPersonSalary, setNewPersonSalary] = useState<number>(0);
     const [newPersonReserve, setNewPersonReserve] = useState<number>(0);
+
+    const [displaySalary, setDisplaySalary] = useState("0,00");
+    const [displayReserve, setDisplayReserve] = useState("0,00");
     const [showAddForm, setShowAddForm] = useState(false);
 
     const BRL = new Intl.NumberFormat("pt-BR", {
@@ -19,17 +22,54 @@ export const PeopleList: React.FC = () => {
         maximumFractionDigits: 1,
     });
 
-    const formatBRL = (value: number) => {
-        return new Intl.NumberFormat('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(value);
+    const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplaySalary("");
+            setNewPersonSalary(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplaySalary("");
+            setNewPersonSalary(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        setNewPersonSalary(numericValue / 100);
+        setDisplaySalary(
+            new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(numericValue / 100)
+        );
     };
 
-    const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, '');
-        const numericValue = Number(value) / 100;
-        setNewPersonSalary(numericValue);
+    const handleReserveChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === "") {
+            setDisplayReserve("");
+            setNewPersonReserve(0);
+            return;
+        }
+
+        const digits = rawValue.replace(/\D/g, '');
+        if (digits === "") {
+            setDisplayReserve("");
+            setNewPersonReserve(0);
+            return;
+        }
+
+        const numericValue = Number(digits);
+        const percentageValue = numericValue / 100;
+        
+        if (percentageValue <= 100) {
+            setNewPersonReserve(percentageValue);
+            setDisplayReserve(
+                new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2 }).format(percentageValue)
+            );
+        }
     };
 
     const handleAddPerson = async () => {
@@ -38,8 +78,19 @@ export const PeopleList: React.FC = () => {
             setNewPersonName('');
             setNewPersonSalary(0);
             setNewPersonReserve(0);
+            setDisplaySalary("0,00");
+            setDisplayReserve("0,00");
             setShowAddForm(false);
         }
+    };
+
+    const handleCancelAdd = () => {
+        setNewPersonName('');
+        setNewPersonSalary(0);
+        setNewPersonReserve(0);
+        setDisplaySalary("0,00");
+        setDisplayReserve("0,00");
+        setShowAddForm(false);
     };
 
     if (isLoading || !summary) {
@@ -52,7 +103,6 @@ export const PeopleList: React.FC = () => {
 
     return (
         <div className="grid lg:grid-cols-2 gap-6">
-            {/* Seção de Participantes */}
             <section className="card flex flex-col h-full">
                 <div className="flex justify-between items-center mb-6">
                     <div>
@@ -93,7 +143,7 @@ export const PeopleList: React.FC = () => {
                                         <span className="text-gray-400 text-sm mr-2 font-medium">R$</span>
                                         <input
                                             type="text"
-                                            value={formatBRL(newPersonSalary)}
+                                            value={displaySalary}
                                             onChange={handleSalaryChange}
                                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
                                             placeholder="0,00"
@@ -106,10 +156,11 @@ export const PeopleList: React.FC = () => {
                                     <div className="flex items-center">
                                         <span className="text-gray-400 text-sm mr-2 font-medium">%</span>
                                         <input
-                                            type="number"
-                                            value={newPersonReserve || ''}
-                                            onChange={(e) => setNewPersonReserve(Number(e.target.value))}
-                                            placeholder="10"
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={displayReserve}
+                                            onChange={handleReserveChange}
+                                            placeholder="0,00"
                                             className="bg-transparent border-none p-0 w-full font-semibold text-gray-700 dark:text-gray-200 focus:ring-0"
                                             data-testid="input-person-reserve"
                                         />
@@ -118,13 +169,19 @@ export const PeopleList: React.FC = () => {
                             </div>
                             <div className="flex gap-2 pt-2">
                                 <button onClick={handleAddPerson} className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-none" data-testid="btn-save-person">Salvar Participante</button>
-                                <button onClick={() => setShowAddForm(false)} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50" data-testid="btn-cancel-person">Cancelar</button>
+                                <button onClick={handleCancelAdd} className="secondary px-6 rounded-xl bg-white/50 dark:bg-gray-800/50" data-testid="btn-cancel-person">Cancelar</button>
                             </div>
                         </div>
                     </div>
                 )}
 
                 <div className="space-y-4 flex-1">
+                    {people.length === 0 && (
+                        <div className="p-10 text-center text-gray-400 bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                            Nenhum participante cadastrado. Clique em "+ Adicionar" para começar.
+                        </div>
+                    )}
+
                     {people.map((person) => (
                         <PersonCard
                             key={person.id}
@@ -144,7 +201,6 @@ export const PeopleList: React.FC = () => {
                 </div>
             </section>
 
-            {/* Seção de Rateio e Reserva */}
             <section className="card flex flex-col h-full">
                 <div className="mb-6">
                     <h3 className="text-xl font-bold dark:text-white">Cálculo de Proporcionalidade</h3>
@@ -152,32 +208,39 @@ export const PeopleList: React.FC = () => {
                 </div>
 
                 <div className="space-y-6 flex-1">
-                    <div>
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" data-testid="distribution-bills-title">Rateio das Contas</h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {summary.peopleData.map((data) => (
-                                <div key={data.person.id} className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700/50">
-                                    <div className="text-xs text-gray-500 mb-1" data-testid={`distribution-bill-person-name-${data.person.name}`}>{data.person.name}</div>
-                                    <div className="text-lg font-bold text-gray-900 dark:text-white" data-testid={`distribution-bill-percentage-${data.person.name}`}> {PC.format(data.percentage)}%</div>
-                                </div>
-                            ))}
+                    {people.length === 0 ? (
+                        <div className="h-full flex items-center justify-center p-10 text-center text-gray-400 bg-gray-50/50 dark:bg-gray-800/20 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 min-h-[150px]">
+                            Cadastre participantes para visualizar o cálculo de proporcionalidade.
                         </div>
-                    </div>
-
-                    <div>
-                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Valor Reservado</h4>
-                        <div className="space-y-3">
-                            {summary.peopleData.map((data) => (
-                                <div key={data.person.id} className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm">
-                                    <span className="font-medium text-gray-700 dark:text-gray-300">{data.person.name}</span>
-                                    <div className="text-right">
-                                        <div className="font-bold text-gray-900 dark:text-white">{BRL.format(data.reserveAmount)}</div>
-                                        <div className="text-[10px] text-gray-400">{data.person.reservePercentage}% do salário</div>
-                                    </div>
+                    ) : (
+                        <>
+                            <div>
+                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" data-testid="distribution-bills-title">Rateio das Contas</h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {summary.peopleData.map((data) => (
+                                        <div key={data.person.id} className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700/50">
+                                            <div className="text-xs text-gray-500 mb-1" data-testid={`distribution-bill-person-name-${data.person.name}`}>{data.person.name}</div>
+                                            <div className="text-lg font-bold text-gray-900 dark:text-white" data-testid={`distribution-bill-percentage-${data.person.name}`}> {PC.format(data.percentage)}%</div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
+                            </div>
+                            <div>
+                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Valor Reservado</h4>
+                                <div className="space-y-3">
+                                    {summary.peopleData.map((data) => (
+                                        <div key={data.person.id} className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm">
+                                            <span className="font-medium text-gray-700 dark:text-gray-300">{data.person.name}</span>
+                                            <div className="text-right">
+                                                <div className="font-bold text-gray-900 dark:text-white">{BRL.format(data.reserveAmount)}</div>
+                                                <div className="text-[10px] text-gray-400">{data.person.reservePercentage}% do salário</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
