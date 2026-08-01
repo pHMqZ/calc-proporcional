@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { api } from '../services/api';
 
 describe('Api service(Fetch)', () => {
     beforeEach(() => {
-        sessionStorage.clear();
+        localStorage.clear();
 
         vi.stubGlobal('fetch', vi.fn(() =>
             Promise.resolve({
@@ -19,7 +19,8 @@ describe('Api service(Fetch)', () => {
     it('Should inject header X-Client-Id in request fetch', async () => {
 
         const myTestId = '123e4567-e89b-12d3-a456-426614174000';
-        sessionStorage.setItem('X-Client-Id', myTestId);
+        const futureExpiry = Date.now() + 10000;
+        localStorage.setItem('X-Client-Id-Data', JSON.stringify({ value: myTestId, expiry: futureExpiry }));
 
         await api.getPeople();
 
