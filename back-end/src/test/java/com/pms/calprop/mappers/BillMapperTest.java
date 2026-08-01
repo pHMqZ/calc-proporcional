@@ -3,6 +3,7 @@ package com.pms.calprop.mappers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ class BillMapperTest {
     @DisplayName("Should convert Bill entity to BillResponse successfully")
     void shouldMapBillToBillResponse() {
         Bill bill = new Bill("Aluguel", new BigDecimal("1200.00"), "test-client");
-        bill.setId(10L);
+        bill.setId(UUID.randomUUID());
 
         BillResponse response = billMapper.toResponse(bill);
 
@@ -53,7 +54,7 @@ class BillMapperTest {
     @DisplayName("Should update Bill entity from BillRequest preservando the ID.")
     void shouldUpdateBillFromRequest() {
 
-        Long originalId = 55L;
+        UUID originalId = UUID.randomUUID();
         Bill existingBill = new Bill("Energia", new BigDecimal("150.00"), "test-client");
         existingBill.setId(originalId);
 

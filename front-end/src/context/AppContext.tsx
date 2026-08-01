@@ -16,12 +16,12 @@ interface AppContextType {
 
     refreshData: () => Promise<void>;
     addPerson: (name: string) => Promise<void>;
-    updatePerson: (id: number, updates: Partial<Person>) => Promise<void>;
-    deletePerson: (id: number) => Promise<void>;
+    updatePerson: (id: string, updates: Partial<Person>) => Promise<void>;
+    deletePerson: (id: string) => Promise<void>;
 
     addBill: (description?: string) => Promise<void>;
-    updateBill: (id: number, updates: Partial<Bill>) => Promise<void>;
-    deleteBill: (id: number) => Promise<void>;
+    updateBill: (id: string, updates: Partial<Bill>) => Promise<void>;
+    deleteBill: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -89,12 +89,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         await refreshData(true);
     };
 
-    const updatePerson = async (id: number, updates: Partial<Person>) => {
+    const updatePerson = async (id: string, updates: Partial<Person>) => {
         await api.updatePerson(id, updates);
         await refreshData(true);
     };
 
-    const deletePerson = async (id: number) => {
+    const deletePerson = async (id: string) => {
         await api.deletePerson(id);
         await refreshData(true);
     };
@@ -104,12 +104,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         await refreshData(true);
     };
 
-    const updateBill = async (id: number, updates: Partial<Bill>) => {
+    const updateBill = async (id: string, updates: Partial<Bill>) => {
         await api.updateBill(id, updates);
         await refreshData(true);
     };
 
-    const deleteBill = async (id: number) => {
+    const deleteBill = async (id: string) => {
         await api.deleteBill(id);
         await refreshData(true);
     };

@@ -8,6 +8,7 @@ import com.pms.calprop.repositories.BillRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -28,12 +29,12 @@ public class BillService {
         return billRepository.findByClientId(clientId);
     }
 
-    public Bill findBillById(Long id, String clientId) {
+    public Bill findBillById(UUID id, String clientId) {
         return billRepository.findByIdAndClientId(id, clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta com ID " + id + " não encontrada!"));
     }
 
-    public Bill updateBill(Long id, BillRequest request, String clientId) {
+    public Bill updateBill(UUID id, BillRequest request, String clientId) {
         Bill existingBill = this.findBillById(id, clientId);
 
         billMapper.updateBillFromRequest(request, existingBill);
@@ -41,7 +42,7 @@ public class BillService {
         return billRepository.save(existingBill);
     }
 
-    public void deleteBill(Long id, String clientId) {
+    public void deleteBill(UUID id, String clientId) {
         this.findBillById(id, clientId);
         billRepository.deleteById(id);
     }

@@ -3,8 +3,8 @@ import { type Person } from '../../types/Person';
 
 interface PersonCardProps {
     person: Person;
-    onUpdate: (id: number, updates: Partial<Person>) => Promise<void>;
-    onRemove: (id: number) => Promise<void>;
+    onUpdate: (id: string, updates: Partial<Person>) => Promise<void>;
+    onRemove: (id: string) => Promise<void>;
     showRemove?: boolean;
 }
 

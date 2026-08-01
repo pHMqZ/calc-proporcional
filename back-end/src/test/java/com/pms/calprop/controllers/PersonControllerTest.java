@@ -53,10 +53,10 @@ public class PersonControllerTest {
     void testCreatePerson() throws Exception {
         PersonRequest request = new PersonRequest("Elis", new BigDecimal("3000.00"), 10.0);
         Person person = new Person();
-        person.setId(1L);
+        person.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         person.setName("Elis");
         person.setClientId(clientId);
-        PersonResponse response = new PersonResponse(1L, "Elis", new BigDecimal("3000.00"), 10.0);
+        PersonResponse response = new PersonResponse(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Elis", new BigDecimal("3000.00"), 10.0);
 
         when(personMapper.toEntity(any(PersonRequest.class))).thenReturn(person);
         when(personService.addPerson(any(Person.class))).thenReturn(person);
@@ -67,7 +67,7 @@ public class PersonControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value("00000000-0000-0000-0000-000000000001"))
                 .andExpect(jsonPath("$.name").value("Elis"));
     }
 
@@ -86,25 +86,25 @@ public class PersonControllerTest {
     @DisplayName("Should get a person by id successfully")
     void testGetPersonById() throws Exception {
         Person person = new Person();
-        PersonResponse response = new PersonResponse(1L, "Alceu", new BigDecimal("3000.00"), 20.0);
+        PersonResponse response = new PersonResponse(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Alceu", new BigDecimal("3000.00"), 20.0);
 
-        when(personService.findPersonById(1L, clientId)).thenReturn(person);
+        when(personService.findPersonById(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(person);
         when(personMapper.toResponse(any(Person.class))).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/person/1")
+        mockMvc.perform(get("/api/v1/person/00000000-0000-0000-0000-000000000001")
                 .header("X-Client-Id", clientId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value("00000000-0000-0000-0000-000000000001"))
                 .andExpect(jsonPath("$.name").value("Alceu"));
     }
 
     @Test
     @DisplayName("Should return not found when person does not exist")
     void testGetPersonByIdNotFound() throws Exception {
-        when(personService.findPersonById(99L, clientId))
+        when(personService.findPersonById(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId))
                 .thenThrow(new ResourceNotFoundException("Pessoa com ID 99 não encontrada!"));
 
-        mockMvc.perform(get("/api/v1/person/99")
+        mockMvc.perform(get("/api/v1/person/00000000-0000-0000-0000-000000000099")
                 .header("X-Client-Id", clientId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Pessoa com ID 99 não encontrada!"));
@@ -115,23 +115,23 @@ public class PersonControllerTest {
     void testSuccessUpdatedPerson() throws Exception {
         PersonRequest request = new PersonRequest("Elis", new BigDecimal("3000.00"), 10.0);
         Person person = new Person();
-        PersonResponse response = new PersonResponse(1L, "Elis", new BigDecimal("3000.00"), 10.0);
+        PersonResponse response = new PersonResponse(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Elis", new BigDecimal("3000.00"), 10.0);
 
-        when(personService.updatePerson(eq(1L), any(PersonRequest.class), eq(clientId))).thenReturn(person);
+        when(personService.updatePerson(eq(UUID.fromString("00000000-0000-0000-0000-000000000001")), any(PersonRequest.class), eq(clientId))).thenReturn(person);
         when(personMapper.toResponse(any(Person.class))).thenReturn(response);
 
-        mockMvc.perform(patch("/api/v1/person/1")
+        mockMvc.perform(patch("/api/v1/person/00000000-0000-0000-0000-000000000001")
                 .header("X-Client-Id", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.id").value("00000000-0000-0000-0000-000000000001"));
     }
 
     @Test
     @DisplayName("Should delete a person successfully")
     void testDeleteAPersonSuccessfully() throws Exception {
-        mockMvc.perform(delete("/api/v1/person/1")
+        mockMvc.perform(delete("/api/v1/person/00000000-0000-0000-0000-000000000001")
                 .header("X-Client-Id", clientId))
                 .andExpect(status().isNoContent());
     }

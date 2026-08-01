@@ -1,13 +1,13 @@
 export interface Bill {
-    id: number;
+    id: string;
     description: string;
     totalAmount: number;
 }
 
 export interface BillDistribution {
-    billId: number;
+    billId: string;
     billDescription: string;
-    personId: number;
+    personId: string;
     amount: number;
     percentage: number;
 }

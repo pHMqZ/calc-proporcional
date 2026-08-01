@@ -43,4 +43,18 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<StandardError> handleTypeMismatch(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+        // Log on the server side only (do not expose to the client)
+        System.err.println("Type Mismatch: " + e.getMessage());
+
+        StandardError err = new StandardError(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                "ID inválido",
+                request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
 }

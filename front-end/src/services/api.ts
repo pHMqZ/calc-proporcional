@@ -60,7 +60,7 @@ export const api = {
         return handleResponse(response);
     },
 
-    async updatePerson(id: number, updates: Partial<Person>): Promise<Person> {
+    async updatePerson(id: string, updates: Partial<Person>): Promise<Person> {
         const response = await fetch(`${ENDPOINT}/person/${id}`, {
             method: "PATCH",
             headers: getHeaders(),
@@ -69,7 +69,7 @@ export const api = {
         return handleResponse(response);
     },
 
-    async deletePerson(id: number): Promise<void> {
+    async deletePerson(id: string): Promise<void> {
         await fetch(`${ENDPOINT}/person/${id}`, {
             method: 'DELETE',
             headers: getHeaders()
@@ -95,7 +95,7 @@ export const api = {
         return handleResponse(response);
     },
 
-    async updateBill(id: number, updates: Partial<Bill>): Promise<Bill> {
+    async updateBill(id: string, updates: Partial<Bill>): Promise<Bill> {
         const response = await fetch(`${ENDPOINT}/bill/${id}`, {
             method: "PATCH",
             headers: getHeaders(),
@@ -104,7 +104,7 @@ export const api = {
         return handleResponse(response);
     },
 
-    async deleteBill(id: number): Promise<void> {
+    async deleteBill(id: string): Promise<void> {
         await fetch(`${ENDPOINT}/bill/${id}`, {
             method: 'DELETE',
             headers: getHeaders()

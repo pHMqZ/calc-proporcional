@@ -5,8 +5,8 @@ import { type PersonData } from "../../types/Person";
 interface BillRowProps {
     bill: Bill;
     peopleData: PersonData[];
-    onUpdate: (id: number, updates: Partial<Bill>) => Promise<void>;
-    onRemove: (id: number) => Promise<void>;
+    onUpdate: (id: string, updates: Partial<Bill>) => Promise<void>;
+    onRemove: (id: string) => Promise<void>;
 }
 
 export const BillRow: React.FC<BillRowProps> = ({
