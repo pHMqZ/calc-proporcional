@@ -113,6 +113,13 @@ const config: PlaywrightTestConfig = {
       url: 'http://localhost:8080/swagger-ui/index.html',
       reuseExistingServer: !process.env.CI,
       timeout: 180 * 1000,
+      env: {
+        DB_URL: 'jdbc:postgresql://localhost:5432/calcpropdb',
+        DB_USER: 'postgres',
+        DB_PASSWORD: 'postgres',
+        DB_DRIVER: 'org.postgresql.Driver',
+        DB_DIALECT: 'org.hibernate.dialect.PostgreSQLDialect'
+      }
     }
   ],
 }

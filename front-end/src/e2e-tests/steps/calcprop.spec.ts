@@ -95,12 +95,13 @@ test.describe('Proportional calculator page', () => {
   test.afterEach(async () => {
     if (userData) {
       await proportionalCalculatorPage.removePerson(userData.name);
-
+      await expect(proportionalCalculatorPage.getParticipantCard(userData.name)).toBeHidden();
       userData = null;
     }
 
     if (billData) {
       await proportionalCalculatorPage.removeBill(billData.description);
+      await expect(proportionalCalculatorPage.getBillCard(billData.description)).toBeHidden();
       billData = null;
     }
   });

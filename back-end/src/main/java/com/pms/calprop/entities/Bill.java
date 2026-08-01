@@ -27,6 +27,7 @@ public class Bill {
 
     @NotNull
     @DecimalMin(value = "0.00", inclusive = true, message = "The bill amount must be 0 or greater")
+    @Column(precision = 38, scale = 2)
     private BigDecimal totalAmount;
 
     @Column(name = "client_id", nullable = false, updatable = false)
