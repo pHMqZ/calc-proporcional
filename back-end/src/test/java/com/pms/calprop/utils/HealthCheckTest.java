@@ -1,4 +1,4 @@
-package com.pms.calprop;
+package com.pms.calprop.utils;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
