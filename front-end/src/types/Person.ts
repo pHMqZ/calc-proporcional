@@ -1,7 +1,7 @@
 import type { BillDistribution } from "./Bill";
 
 export interface Person {
-    id: number;
+    id: string;
     name: string;
     salary: number;
     reservePercentage: number;

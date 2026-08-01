@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class CalculationService {
                 }
 
                 public List<BillDistribution> calculateBillsDistribution(List<Bill> bills, List<Person> people,
-                                Map<Long, BigDecimal> percentages) {
+                                Map<UUID, BigDecimal> percentages) {
 
                         List<BillDistribution> billDistributions = new ArrayList<>();
 
@@ -117,7 +118,7 @@ public class CalculationService {
                                         personBillDistributions);
                 }
 
-                public List<PersonData> calculateAllPeopleData(List<Person> people, Map<Long, BigDecimal> percentages,
+                public List<PersonData> calculateAllPeopleData(List<Person> people, Map<UUID, BigDecimal> percentages,
                                 List<BillDistribution> billDistributions) {
                         return people.stream()
                                         .map(person -> calculatePersonData(person, percentages.get(person.getId()),
@@ -130,7 +131,7 @@ public class CalculationService {
                         BigDecimal totalSalary = calculateTotalSalary(people);
                         BigDecimal totalBills = calculateTotalBills(bills);
 
-                        Map<Long, BigDecimal> percentages = people.stream()
+                        Map<UUID, BigDecimal> percentages = people.stream()
                                         .collect(Collectors.toMap(Person::getId,
                                                         p -> calculatePersonPercentage(p, totalSalary)));
 

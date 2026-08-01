@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,39 +46,39 @@ public class CalculationServiceTest {
     @BeforeEach
     void setUp() {
         Alceu = new Person();
-        Alceu.setId(1L);
+        Alceu.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         Alceu.setName("Alceu");
         Alceu.setSalary(new BigDecimal("2500.00"));
         Alceu.setReservePercentage(10.0);
 
         Toalha = new Person();
-        Toalha.setId(2L);
+        Toalha.setId(UUID.fromString("00000000-0000-0000-0000-000000000002"));
         Toalha.setName("Toalha");
         Toalha.setSalary(new BigDecimal("3000.00"));
         Toalha.setReservePercentage(20.0);
 
         Aluguel = new Bill();
-        Aluguel.setId(1L);
+        Aluguel.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         Aluguel.setDescription("Aluguel");
         Aluguel.setTotalAmount(new BigDecimal("1500.00"));
 
         Internet = new Bill();
-        Internet.setId(2L);
+        Internet.setId(UUID.fromString("00000000-0000-0000-0000-000000000002"));
         Internet.setDescription("Internet");
         Internet.setTotalAmount(new BigDecimal("100.00"));
 
         Energia = new Bill();
-        Energia.setId(3L);
+        Energia.setId(UUID.fromString("00000000-0000-0000-0000-000000000003"));
         Energia.setDescription("Energia");
         Energia.setTotalAmount(new BigDecimal("150.00"));
 
         Condominio = new Bill();
-        Condominio.setId(4L);
+        Condominio.setId(UUID.fromString("00000000-0000-0000-0000-000000000004"));
         Condominio.setDescription("Condominio");
         Condominio.setTotalAmount(new BigDecimal("650.00"));
     }
 
-    private Map<Long, BigDecimal> getPercentagesMap(List<Person> people, BigDecimal totalSalary) {
+    private Map<UUID, BigDecimal> getPercentagesMap(List<Person> people, BigDecimal totalSalary) {
         return people.stream().collect(Collectors.toMap(
                 Person::getId,
                 p -> calculationService.calculatePersonPercentage(p, totalSalary)));
@@ -113,7 +114,7 @@ public class CalculationServiceTest {
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
         List<Person> people = List.of(Alceu, Toalha);
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
+        Map<UUID, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
 
         List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people,
                 percentages);
@@ -127,7 +128,7 @@ public class CalculationServiceTest {
     void testCalculatePersonData() {
         List<Person> people = List.of(Alceu, Toalha);
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
+        Map<UUID, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
         List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(Aluguel),
                 people, percentages);
 
@@ -149,7 +150,7 @@ public class CalculationServiceTest {
         List<Person> people = List.of(Alceu, Toalha);
         List<Bill> bills = List.of(Aluguel, Internet, Energia, Condominio);
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
+        Map<UUID, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
         List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(bills, people,
                 percentages);
 
@@ -189,7 +190,7 @@ public class CalculationServiceTest {
     void testReturnZeroWhenListOfBillDistributionsIsEmpty() {
         List<Person> people = List.of(Alceu);
         BigDecimal totalSalary = calculationService.calculateTotalSalary(people);
-        Map<Long, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
+        Map<UUID, BigDecimal> percentages = getPercentagesMap(people, totalSalary);
 
         List<BillDistribution> billDistributions = calculationService.calculateBillsDistribution(List.of(), people,
                 percentages);
@@ -200,9 +201,9 @@ public class CalculationServiceTest {
     @DisplayName("Should successfully calculate the total bills for each person")
     void testCalculatePersonBillsTotal() {
         List<BillDistribution> billDistributions = List.of(
-                new BillDistribution(1L, "Aluguel", Alceu.getId(), new BigDecimal("50.00"), new BigDecimal("10.00")),
-                new BillDistribution(2L, "Internet", Alceu.getId(), new BigDecimal("150.00"), new BigDecimal("60.00")),
-                new BillDistribution(1L, "Aluguel", Toalha.getId(), new BigDecimal("100.00"), new BigDecimal("20.00")));
+                new BillDistribution(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Aluguel", Alceu.getId(), new BigDecimal("50.00"), new BigDecimal("10.00")),
+                new BillDistribution(UUID.fromString("00000000-0000-0000-0000-000000000002"), "Internet", Alceu.getId(), new BigDecimal("150.00"), new BigDecimal("60.00")),
+                new BillDistribution(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Aluguel", Toalha.getId(), new BigDecimal("100.00"), new BigDecimal("20.00")));
         BigDecimal alceuTotal = calculationService.calculatePersonBillsTotal(Alceu, billDistributions);
         BigDecimal toalhaTotal = calculationService.calculatePersonBillsTotal(Toalha, billDistributions);
 

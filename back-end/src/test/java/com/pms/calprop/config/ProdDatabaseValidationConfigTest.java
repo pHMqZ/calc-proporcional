@@ -17,6 +17,7 @@ class ProdDatabaseValidationConfigTest {
                 "--spring.datasource.url=jdbc:h2:mem:test",
                 "--spring.datasource.driver-class-name=org.h2.Driver",
                 "--spring.jpa.hibernate.ddl-auto=none",
+                "--spring.flyway.enabled=false",
                 "--server.port=0"
             );
             if (ctx != null) {

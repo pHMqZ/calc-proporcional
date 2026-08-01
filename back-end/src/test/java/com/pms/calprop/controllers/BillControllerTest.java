@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,11 +53,11 @@ public class BillControllerTest {
     void testCreateBill() throws Exception {
         BillRequest requestDTO = new BillRequest("Aluguel", new BigDecimal("1500.00"));
         Bill bill = new Bill();
-        bill.setId(1L);
+        bill.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         bill.setDescription("Aluguel");
         bill.setTotalAmount(new BigDecimal("1500.00"));
         bill.setClientId(clientId);
-        BillResponse response = new BillResponse(1L, "Aluguel", new BigDecimal("1500.00"));
+        BillResponse response = new BillResponse(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Aluguel", new BigDecimal("1500.00"));
 
         when(billMapper.toEntity(any(BillRequest.class))).thenReturn(bill);
         when(billService.addBill(any(Bill.class))).thenReturn(bill);
@@ -67,7 +68,7 @@ public class BillControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value("00000000-0000-0000-0000-000000000001"))
                 .andExpect(jsonPath("$.description").value("Aluguel"));
     }
 
@@ -85,28 +86,28 @@ public class BillControllerTest {
     @DisplayName("Should get a bill by id successfully")
     void testGetBillById() throws Exception {
         Bill bill = new Bill();
-        BillResponse response = new BillResponse(1L, "Aluguel", new BigDecimal("1500.00"));
+        BillResponse response = new BillResponse(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Aluguel", new BigDecimal("1500.00"));
 
-        when(billService.findBillById(1L, clientId)).thenReturn(bill);
+        when(billService.findBillById(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(bill);
         when(billMapper.toResponse(any(Bill.class))).thenReturn(response);
 
-        mockMvc.perform(get("/api/v1/bill/1")
+        mockMvc.perform(get("/api/v1/bill/00000000-0000-0000-0000-000000000001")
                 .header("X-Client-Id", clientId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.id").value("00000000-0000-0000-0000-000000000001"))
                 .andExpect(jsonPath("$.description").value("Aluguel"));
     }
 
     @Test
     @DisplayName("Should return a ResourceNotFoundException when the bill is not found")
     void testGetBillByIdNotFound() throws Exception {
-        when(billService.findBillById(99L, clientId))
-                .thenThrow(new ResourceNotFoundException("Conta com ID 99 não encontrada!"));
+        when(billService.findBillById(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId))
+                .thenThrow(new ResourceNotFoundException("Conta com ID 00000000-0000-0000-0000-000000000099 não encontrada!"));
 
-        mockMvc.perform(get("/api/v1/bill/99")
+        mockMvc.perform(get("/api/v1/bill/00000000-0000-0000-0000-000000000099")
                 .header("X-Client-Id", clientId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Conta com ID 99 não encontrada!"));
+                .andExpect(jsonPath("$.message").value("Conta com ID 00000000-0000-0000-0000-000000000099 não encontrada!"));
     }
 
     @Test
@@ -114,23 +115,23 @@ public class BillControllerTest {
     void testSuccessUpdatedBill() throws Exception {
         BillRequest request = new BillRequest("Aluguel", new BigDecimal("1500.00"));
         Bill bill = new Bill();
-        BillResponse response = new BillResponse(1L, "Aluguel", new BigDecimal("1500.00"));
+        BillResponse response = new BillResponse(UUID.fromString("00000000-0000-0000-0000-000000000001"), "Aluguel", new BigDecimal("1500.00"));
 
-        when(billService.updateBill(eq(1L), any(BillRequest.class), eq(clientId))).thenReturn(bill);
+        when(billService.updateBill(eq(UUID.fromString("00000000-0000-0000-0000-000000000001")), any(BillRequest.class), eq(clientId))).thenReturn(bill);
         when(billMapper.toResponse(any(Bill.class))).thenReturn(response);
 
-        mockMvc.perform(patch("/api/v1/bill/1")
+        mockMvc.perform(patch("/api/v1/bill/00000000-0000-0000-0000-000000000001")
                 .header("X-Client-Id", clientId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+                .andExpect(jsonPath("$.id").value("00000000-0000-0000-0000-000000000001"));
     }
 
     @Test
     @DisplayName("Should delete a bill successfully")
     void testDeleteABillSuccessfully() throws Exception {
-        mockMvc.perform(delete("/api/v1/bill/1")
+        mockMvc.perform(delete("/api/v1/bill/00000000-0000-0000-0000-000000000001")
                 .header("X-Client-Id", clientId))
                 .andExpect(status().isNoContent());
     }

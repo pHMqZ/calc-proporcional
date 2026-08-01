@@ -2,6 +2,7 @@ package com.pms.calprop.controllers;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +62,7 @@ public class PersonController {
     @Operation(summary = "Get a person by id", description = "Return a person by id")
     @GetMapping("/{id}")
     public ResponseEntity<PersonResponse> getPersonById(
-            @RequestHeader(value = "X-Client-Id", required = true) String clientId, @PathVariable Long id) {
+            @RequestHeader(value = "X-Client-Id", required = true) String clientId, @PathVariable UUID id) {
         Person person = personService.findPersonById(id, clientId);
         PersonResponse response = personMapper.toResponse(person);
         return ResponseEntity.ok(response);
@@ -70,7 +71,7 @@ public class PersonController {
     @Operation(summary = "Update a person by id", description = "Provide only the fields you want to change in the request. Null fields will be ignored and kept intact in the database.")
     @PatchMapping("/{id}")
     public ResponseEntity<PersonResponse> updatePerson(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestHeader(value = "X-Client-Id", required = true) String clientId,
             @RequestBody PersonRequest request) {
 
@@ -82,7 +83,7 @@ public class PersonController {
     @Operation(summary = "Delete a person by id", description = "Delete a person by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePerson(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestHeader(value = "X-Client-Id", required = true) String clientId) {
         personService.deletePerson(id, clientId);
         return ResponseEntity.noContent().build();

@@ -8,6 +8,7 @@ import com.pms.calprop.repositories.PersonRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -28,12 +29,12 @@ public class PersonService {
         return personRepository.findByClientId(clientId);
     }
 
-    public Person findPersonById(Long id, String clientId) {
+    public Person findPersonById(UUID id, String clientId) {
         return personRepository.findByIdAndClientId(id, clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Participante não encontrado."));
     }
 
-    public Person updatePerson(Long id, PersonRequest resquest, String clientId) {
+    public Person updatePerson(UUID id, PersonRequest resquest, String clientId) {
 
         Person existingPerson = this.findPersonById(id, clientId);
 
@@ -41,7 +42,7 @@ public class PersonService {
         return personRepository.save(existingPerson);
     }
 
-    public void deletePerson(Long id, String clientId) {
+    public void deletePerson(UUID id, String clientId) {
         this.findPersonById(id, clientId);
         personRepository.deleteById(id);
     }

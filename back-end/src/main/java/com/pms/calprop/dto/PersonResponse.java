@@ -1,7 +1,8 @@
 package com.pms.calprop.dto;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-public record PersonResponse(Long id, String name, BigDecimal salary, Double reservePercentage) {
+public record PersonResponse(UUID id, String name, BigDecimal salary, Double reservePercentage) {
 
 }

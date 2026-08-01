@@ -2,6 +2,7 @@ package com.pms.calprop.controllers;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,7 @@ public class BillController {
     @Operation(summary = "Get a bill by id", description = "Return a bill by id")
     @GetMapping("/{id}")
     public ResponseEntity<BillResponse> getBillById(
-            @RequestHeader(value = "X-Client-Id", required = true) String clientId, @PathVariable Long id) {
+            @RequestHeader(value = "X-Client-Id", required = true) String clientId, @PathVariable UUID id) {
         Bill bill = billService.findBillById(id, clientId);
         BillResponse response = billMapper.toResponse(bill);
         return ResponseEntity.ok(response);
@@ -67,7 +68,7 @@ public class BillController {
     @Operation(summary = "Update a bill by id", description = "Provide only the fields you want to change in the request. Null fields will be ignored and kept intact in the database.")
     @PatchMapping("/{id}")
     public ResponseEntity<BillResponse> updateBill(
-            @RequestHeader(value = "X-Client-Id", required = true) String clientId, @PathVariable Long id,
+            @RequestHeader(value = "X-Client-Id", required = true) String clientId, @PathVariable UUID id,
             @RequestBody BillRequest request) {
         Bill updatedBill = billService.updateBill(id, request, clientId);
         BillResponse response = billMapper.toResponse(updatedBill);
@@ -77,7 +78,7 @@ public class BillController {
     @Operation(summary = "Delete a bill by id", description = "Delete a bill by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBill(@RequestHeader(value = "X-Client-Id", required = true) String clientId,
-            @PathVariable Long id) {
+            @PathVariable UUID id) {
         billService.deleteBill(id, clientId);
         return ResponseEntity.noContent().build();
     }

@@ -18,6 +18,7 @@ import com.pms.calprop.mappers.PersonMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,14 +47,14 @@ class PersonServiceTest {
     @BeforeEach
     void setUp() {
         elis = new Person();
-        elis.setId(1L);
+        elis.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         elis.setName("Elis");
         elis.setSalary(new BigDecimal("3000.00"));
         elis.setReservePercentage(15.0);
         elis.setClientId(clientId);
 
         banguela = new Person();
-        banguela.setId(2L);
+        banguela.setId(UUID.fromString("00000000-0000-0000-0000-000000000002"));
         banguela.setName("Banguela");
         banguela.setSalary(new BigDecimal("5000.00"));
         banguela.setReservePercentage(25.0);
@@ -102,27 +103,27 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should find a person by ID")
     void testFindPersonById() {
-        when(personRepository.findByIdAndClientId(2L, clientId)).thenReturn(Optional.of(banguela));
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000002"), clientId)).thenReturn(Optional.of(banguela));
 
-        Person result = personService.findPersonById(2L, clientId);
+        Person result = personService.findPersonById(UUID.fromString("00000000-0000-0000-0000-000000000002"), clientId);
 
         assertNotNull(result);
         assertEquals("Banguela", result.getName());
 
-        verify(personRepository, times(1)).findByIdAndClientId(2L, clientId);
+        verify(personRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000002"), clientId);
     }
 
     @Test
     @DisplayName("Should throw an exception when trying to find a user that doesn't exist")
     void testNotFoundPersonToFind() {
-        when(personRepository.findByIdAndClientId(99L, clientId)).thenReturn(Optional.empty());
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> personService.findPersonById(99L, clientId));
+                () -> personService.findPersonById(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId));
 
         assertEquals("Participante não encontrado.", exception.getMessage());
 
-        verify(personRepository, times(1)).findByIdAndClientId(99L, clientId);
+        verify(personRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId);
     }
 
     @Test
@@ -131,47 +132,47 @@ class PersonServiceTest {
 
         PersonRequest updatedInfo = new PersonRequest("Elis", new BigDecimal("5000.00"), 20.0);
 
-        when(personRepository.findByIdAndClientId(1L, clientId)).thenReturn(Optional.of(elis));
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(Optional.of(elis));
         when(personRepository.save(any(Person.class))).thenReturn(elis);
 
-        Person result = personService.updatePerson(1L, updatedInfo, clientId);
+        Person result = personService.updatePerson(UUID.fromString("00000000-0000-0000-0000-000000000001"), updatedInfo, clientId);
 
         assertNotNull(result);
         assertEquals(new BigDecimal("5000.00"), result.getSalary());
 
-        verify(personRepository, times(1)).findByIdAndClientId(1L, clientId);
+        verify(personRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
         verify(personRepository, times(1)).save(any(Person.class));
     }
 
     @Test
     @DisplayName("Should update a person partially successfully, ignoring nulls via MapStruct")
     void testPartialUpdatePerson() {
-        when(personRepository.findByIdAndClientId(1L, clientId)).thenReturn(Optional.of(elis));
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(Optional.of(elis));
 
         PersonRequest requestDTO = new PersonRequest(null, new BigDecimal("5500.00"), null);
 
         when(personRepository.save(any(Person.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        Person result = personService.updatePerson(1L, requestDTO, clientId);
+        Person result = personService.updatePerson(UUID.fromString("00000000-0000-0000-0000-000000000001"), requestDTO, clientId);
 
         assertNotNull(result);
         assertEquals("Elis", result.getName());
         assertEquals(new BigDecimal("5500.00"), result.getSalary());
         assertEquals(15.0, result.getReservePercentage());
 
-        verify(personRepository, times(1)).findByIdAndClientId(1L, clientId);
+        verify(personRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
         verify(personRepository, times(1)).save(any(Person.class));
     }
 
     @Test
     @DisplayName("Should throw an exception when trying to update a user that doesn't exist")
     void testNotFoundPersonToUpdate() {
-        when(personRepository.findByIdAndClientId(99L, clientId)).thenReturn(Optional.empty());
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId)).thenReturn(Optional.empty());
 
         PersonRequest updatedInfo = new PersonRequest("Alceu", new BigDecimal("5000.00"), null);
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> personService.updatePerson(99L, updatedInfo, clientId));
+                () -> personService.updatePerson(UUID.fromString("00000000-0000-0000-0000-000000000099"), updatedInfo, clientId));
 
         assertEquals("Participante não encontrado.", exception.getMessage());
 
@@ -182,24 +183,24 @@ class PersonServiceTest {
     @Test
     @DisplayName("Should delete a user successfully")
     void testSuccessDeletePerson() {
-        when(personRepository.findByIdAndClientId(2L, clientId)).thenReturn(Optional.of(banguela));
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000002"), clientId)).thenReturn(Optional.of(banguela));
 
-        personService.deletePerson(2L, clientId);
+        personService.deletePerson(UUID.fromString("00000000-0000-0000-0000-000000000002"), clientId);
 
-        verify(personRepository, times(1)).findByIdAndClientId(2L, clientId);
-        verify(personRepository, times(1)).deleteById(2L);
+        verify(personRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000002"), clientId);
+        verify(personRepository, times(1)).deleteById(UUID.fromString("00000000-0000-0000-0000-000000000002"));
     }
 
     @Test
     @DisplayName("Should throw an exception when trying to delete a user that doesn't exist")
     void testNotFoundPersonToDelete() {
-        when(personRepository.findByIdAndClientId(99L, clientId)).thenReturn(Optional.empty());
+        when(personRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> personService.deletePerson(99L, clientId));
+                () -> personService.deletePerson(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId));
 
         assertEquals("Participante não encontrado.", exception.getMessage());
-        verify(personRepository, never()).deleteById(anyLong());
+        verify(personRepository, never()).deleteById(any(UUID.class));
     }
 
 }

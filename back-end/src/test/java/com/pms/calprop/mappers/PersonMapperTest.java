@@ -3,6 +3,7 @@ package com.pms.calprop.mappers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,7 @@ class PersonMapperTest {
     void shouldMapPersonToPersonResponse() {
 
         Person person = new Person("Alceu", new BigDecimal("4500.00"), 10.0, "test-client");
-        person.setId(1L);
+        person.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
 
         PersonResponse response = personMapper.toResponse(person);
 
@@ -57,7 +58,7 @@ class PersonMapperTest {
     @DisplayName("Should update Person entity from PersonRequest preservando the ID.")
     void shouldUpdatePersonFromRequest() {
 
-        Long originalId = 99L;
+        UUID originalId = UUID.fromString("00000000-0000-0000-0000-000000000099");
         Person existingPerson = new Person("Alceu", new BigDecimal("2000.00"), 5.0, "test-client");
         existingPerson.setId(originalId);
 

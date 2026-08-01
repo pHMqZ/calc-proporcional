@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,13 +44,13 @@ public class BillServiceTest {
     @BeforeEach
     void setUp() {
         aluguel = new Bill();
-        aluguel.setId(1L);
+        aluguel.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         aluguel.setDescription("Aluguel");
         aluguel.setTotalAmount(new BigDecimal("1500.00"));
         aluguel.setClientId(clientId);
 
         condominio = new Bill();
-        condominio.setId(2L);
+        condominio.setId(UUID.fromString("00000000-0000-0000-0000-000000000002"));
         condominio.setDescription("Condomínio");
         condominio.setTotalAmount(new BigDecimal("500.00"));
         condominio.setClientId(clientId);
@@ -97,27 +98,27 @@ public class BillServiceTest {
     @Test
     @DisplayName("Should find a bill by ID")
     void testFindBillById() {
-        when(billRepository.findByIdAndClientId(1L, clientId)).thenReturn(Optional.of(aluguel));
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(Optional.of(aluguel));
 
-        Bill result = billService.findBillById(1L, clientId);
+        Bill result = billService.findBillById(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
 
         assertNotNull(result);
         assertEquals("Aluguel", result.getDescription());
 
-        verify(billRepository, times(1)).findByIdAndClientId(1L, clientId);
+        verify(billRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
     }
 
     @Test
     @DisplayName("Should throw an exception when trying to find a bill that doesn't exist")
     void testNotFoundBillToFind() {
-        when(billRepository.findByIdAndClientId(99L, clientId)).thenReturn(Optional.empty());
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> billService.findBillById(99L, clientId));
+                () -> billService.findBillById(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId));
 
-        assertEquals("Conta com ID 99 não encontrada!", exception.getMessage());
+        assertEquals("Conta com ID 00000000-0000-0000-0000-000000000099 não encontrada!", exception.getMessage());
 
-        verify(billRepository, times(1)).findByIdAndClientId(99L, clientId);
+        verify(billRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId);
     }
 
     @Test
@@ -125,10 +126,10 @@ public class BillServiceTest {
     void testSuccessUpdateBill() {
         BillRequest updatedBill = new BillRequest("Aluguel", new BigDecimal("1450.00"));
 
-        when(billRepository.findByIdAndClientId(1L, clientId)).thenReturn(Optional.of(aluguel));
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(Optional.of(aluguel));
         when(billRepository.save(any(Bill.class))).thenReturn(aluguel);
 
-        Bill result = billService.updateBill(1L, updatedBill, clientId);
+        Bill result = billService.updateBill(UUID.fromString("00000000-0000-0000-0000-000000000001"), updatedBill, clientId);
 
         assertNotNull(result);
         assertEquals(new BigDecimal("1450.00"), result.getTotalAmount());
@@ -138,33 +139,33 @@ public class BillServiceTest {
     @Test
     @DisplayName("Should update a bill partially successfully, ignoring null via MapStruct")
     void testPartialUpdateBill() {
-        when(billRepository.findByIdAndClientId(1L, clientId)).thenReturn(Optional.of(aluguel));
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(Optional.of(aluguel));
 
         BillRequest requestDTO = new BillRequest(null, new BigDecimal("1900.00"));
 
         when(billRepository.save(any(Bill.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        Bill result = billService.updateBill(1L, requestDTO, clientId);
+        Bill result = billService.updateBill(UUID.fromString("00000000-0000-0000-0000-000000000001"), requestDTO, clientId);
 
         assertNotNull(result);
         assertEquals("Aluguel", result.getDescription());
         assertEquals(new BigDecimal("1900.00"), result.getTotalAmount());
 
-        verify(billRepository, times(1)).findByIdAndClientId(1L, clientId);
+        verify(billRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
         verify(billRepository, times(1)).save(any(Bill.class));
     }
 
     @Test
     @DisplayName("Should throw an expection when trying to update a bill that doesn't exist")
     void testNotFoundBillToUpdate() {
-        when(billRepository.findByIdAndClientId(99L, clientId)).thenReturn(Optional.empty());
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId)).thenReturn(Optional.empty());
 
         BillRequest updatedBill = new BillRequest("Aluguel", new BigDecimal("1000.00"));
 
         ResourceNotFoundException exp = assertThrows(ResourceNotFoundException.class,
-                () -> billService.updateBill(99L, updatedBill, clientId));
+                () -> billService.updateBill(UUID.fromString("00000000-0000-0000-0000-000000000099"), updatedBill, clientId));
 
-        assertEquals("Conta com ID 99 não encontrada!", exp.getMessage());
+        assertEquals("Conta com ID 00000000-0000-0000-0000-000000000099 não encontrada!", exp.getMessage());
 
         verify(billRepository, never()).save(any(Bill.class));
     }
@@ -172,23 +173,23 @@ public class BillServiceTest {
     @Test
     @DisplayName("Should delete a bill successfully")
     void testSuccessDeleteBill() {
-        when(billRepository.findByIdAndClientId(1L, clientId)).thenReturn(Optional.of(aluguel));
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId)).thenReturn(Optional.of(aluguel));
 
-        billService.deleteBill(1L, clientId);
+        billService.deleteBill(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
 
-        verify(billRepository, times(1)).findByIdAndClientId(1L, clientId);
-        verify(billRepository, times(1)).deleteById(1L);
+        verify(billRepository, times(1)).findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000001"), clientId);
+        verify(billRepository, times(1)).deleteById(UUID.fromString("00000000-0000-0000-0000-000000000001"));
     }
 
     @Test
     @DisplayName("Should throw an exception when trying to delete a bill that doesn't exist")
     void testNotFoundBillToDelete() {
-        when(billRepository.findByIdAndClientId(99L, clientId)).thenReturn(Optional.empty());
+        when(billRepository.findByIdAndClientId(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exp = assertThrows(ResourceNotFoundException.class,
-                () -> billService.deleteBill(99L, clientId));
+                () -> billService.deleteBill(UUID.fromString("00000000-0000-0000-0000-000000000099"), clientId));
 
-        assertEquals("Conta com ID 99 não encontrada!", exp.getMessage());
-        verify(billRepository, never()).deleteById(anyLong());
+        assertEquals("Conta com ID 00000000-0000-0000-0000-000000000099 não encontrada!", exp.getMessage());
+        verify(billRepository, never()).deleteById(any(UUID.class));
     }
 }

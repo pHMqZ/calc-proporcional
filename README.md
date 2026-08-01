@@ -22,6 +22,7 @@ Aplicação fullstack para calcular e dividir despesas compartilhadas de forma p
 - **Exportação PNG**: Gere imagem do resumo para compartilhamento
 - **Tema Escuro**: Interface adaptável (Modo Dark/Light)
 - **Persistência em Banco**: Dados armazenados via API REST em banco de dados H2
+- **Identificadores UUID**: Modelagem de dados baseada em UUID para escalabilidade distribuída e previsibilidade estrutural.
 
 ---
 
@@ -40,6 +41,7 @@ Aplicação fullstack para calcular e dividir despesas compartilhadas de forma p
 - **Spring Data JPA & H2**: Persistência de dados
 - **JUnit 5 & Mockito**: Testes de validação e lógica de negócio
 - **MapStruct**: Mapeamento de DTOs e entidades
+- **Flyway**: Versionamento e automação de scripts de banco de dados (Migrations)
 
 ---
 
