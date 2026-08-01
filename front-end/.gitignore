@@ -11,6 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+
+# Variáveis de ambiente locais (Não comitar)
+.env.*
+!.env.example
+.env
 
 # Editor directories and files
 .vscode/*
